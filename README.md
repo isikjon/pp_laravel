@@ -1,106 +1,105 @@
-# ProstitutkiMoscow - Laravel Project
+# Laravel Project
 
-Микросервисная архитектура с полной интеграцией верстки.
+A web application built with Laravel framework.
 
-## 🚀 Быстрый старт
+## Requirements
 
-### 1. Копирование assets из верстки (выполни в Git Bash):
+- PHP >= 8.1
+- Composer
+- SQLite or MySQL
+- Node.js & NPM (for frontend assets)
 
+## Installation
+
+1. Clone the repository:
 ```bash
-cp verstka/style.css public/css/style.css
-cp verstka/adaptive.css public/css/adaptive.css
-cp verstka/app.js public/js/app.js
-cp -r verstka/img/* public/img/
+git clone <repository-url>
+cd <project-directory>
 ```
 
-### 2. Запуск проекта:
+2. Install PHP dependencies:
+```bash
+composer install
+```
 
+3. Install Node.js dependencies:
+```bash
+npm install
+```
+
+4. Copy the environment file:
+```bash
+cp .env.example .env
+```
+
+5. Generate application key:
+```bash
+php artisan key:generate
+```
+
+6. Configure your database in `.env` file:
+```env
+DB_CONNECTION=sqlite
+# DB_DATABASE=/absolute/path/to/database.sqlite
+
+# OR for MySQL:
+# DB_CONNECTION=mysql
+# DB_HOST=127.0.0.1
+# DB_PORT=3306
+# DB_DATABASE=your_database
+# DB_USERNAME=your_username
+# DB_PASSWORD=your_password
+```
+
+7. Run database migrations:
+```bash
+php artisan migrate
+```
+
+8. (Optional) Seed the database:
+```bash
+php artisan db:seed
+```
+
+## Development
+
+Start the development server:
 ```bash
 php artisan serve
 ```
 
-Открой в браузере: **http://127.0.0.1:8000**
+The application will be available at `http://localhost:8000`
 
----
+## Building Assets
 
-## 📊 Архитектура
-
-Каждая страница — отдельный модуль в `app/Modules/`:
-
-```
-app/Modules/ModuleName/
-├── Controllers/     # Контроллеры
-├── Models/         # Модели (опционально)
-├── Services/       # Бизнес-логика
-├── Routes/         # Маршруты (web.php)
-└── Views/          # Blade шаблоны
+Compile frontend assets:
+```bash
+npm run dev
 ```
 
-Модули автоматически регистрируются через `ModuleServiceProvider`.
-
----
-
-## ✅ Текущий статус
-
-### Готово:
-- ✅ **Базовая архитектура** - микросервисная структура
-- ✅ **Header** - полностью из верстки с бургер-меню  
-- ✅ **Footer** - с динамическим годом
-- ✅ **Главная страница** - с каталогом девушек (9 карточек)
-- ✅ **Компонент карточки** - переиспользуемый компонент для девушек
-- ✅ **Пагинация** - UI готов
-- ✅ **Баннер** - TG баннер внизу страницы
-- ✅ **SEO-текст** - полный текстовый блок внизу
-
-### В процессе:
-- 🔄 **Модальные окна** - фильтры, выбор города, выбор метро (очень большие, будут добавлены)
-
-### Следующие этапы:
-- Карточка девушки (cardGirl.html)
-- Салоны (salons.html)
-- Стрип-клубы (stripClubs.html)
-- Массажистки (masseuse.html)
-- Карта (map.html)
-- Избранное (selected.html)
-
----
-
-## 🎨 Компоненты
-
-```
-resources/views/
-├── components/
-│   ├── header.blade.php       # Шапка сайта
-│   ├── footer.blade.php       # Подвал
-│   └── girl-card.blade.php    # Карточка девушки
-└── layouts/
-    └── app.blade.php          # Базовый layout
+For production:
+```bash
+npm run build
 ```
 
----
+## Testing
 
-## 🔥 Принципы
-
-- Никаких комментариев в коде
-- Верстка 1:1 без изменений
-- Каждая страница = отдельный модуль
-- Полная изоляция функционала
-- Чистый, масштабируемый код
-- Переиспользуемые компоненты
-
----
-
-## 📄 Роуты
-
-```php
-GET /           # Главная страница (каталог)
-GET /contact    # Страница контактов
+Run the test suite:
+```bash
+php artisan test
 ```
 
----
+## Code Style
 
-## 💾 Данные
+Format code with Laravel Pint:
+```bash
+./vendor/bin/pint
+```
 
-Сейчас используются моковые данные в контроллерах.  
-На следующих этапах будет подключена база данных.
-# pp_laravel
+## License
+
+This project is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+
+## Additional Information
+
+For more information about Laravel, visit the [official documentation](https://laravel.com/docs).
