@@ -4,19 +4,19 @@
             <div class="top-flexContainerFooter">
                 <img src="{{ asset('img/footerLogo.svg') }}" alt="">
                 <div class="right-top-flexContainerFooter">
-                    <a href="#!">
+                    <a href="{{ route('home') }}">
                         Индивидуалки
                     </a>
-                    <a href="#!">
+                    <a href="{{ route('home') }}">
                         Интим-салоны
                     </a>
-                    <a href="#!">
+                    <a href="{{ route('home') }}">
                         Стрип-клубы
                     </a>
-                    <a href="#!">
+                    <a href="{{ route('home') }}?service[]=Массаж_Эротический">
                         Массажистки
                     </a>
-                    <a href="#!">
+                    <a href="{{ route('home') }}">
                         Интим-карта
                     </a>
                 </div>
@@ -27,10 +27,10 @@
                     © ProstitutkiMoscow, {{ date('Y') }}
                 </p>
                 <div class="right-btoom-flexContainerFooter">
-                    <a href="#!">
+                    <a href="javascript:void(0)" onclick="openContactModal()">
                         Контакты
                     </a>
-                    <a href="#!">
+                    <a href="{{ route('home') }}">
                         Карта сайта
                     </a>
                 </div>

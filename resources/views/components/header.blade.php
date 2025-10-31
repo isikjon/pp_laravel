@@ -67,23 +67,23 @@
                                         </p>
                                     </div>
                                     <div class="flexBottomHeader">
-                                        <a href="#!">
+                                        <a href="{{ route('home') }}">
                                             <img src="{{ asset('img/flexBottomHeader-1.svg') }}" alt="">
                                             Индивидуалки
                                         </a>
-                                        <a href="#!">
+                                        <a href="{{ route('home') }}">
                                             <img src="{{ asset('img/flexBottomHeader-2.svg') }}" alt="">
                                             Интим-салоны
                                         </a>
-                                        <a href="#!">
+                                        <a href="{{ route('home') }}">
                                             <img src="{{ asset('img/flexBottomHeader-3.svg') }}" alt="">
                                             Стрип-клубы
                                         </a>
-                                        <a href="#!">
+                                        <a href="{{ route('home') }}?service[]=Массаж_Эротический">
                                             <img src="{{ asset('img/flexBottomHeader-4.svg') }}" alt="">
                                             Массажистки
                                         </a>
-                                        <a href="#!">
+                                        <a href="{{ route('home') }}">
                                             <img src="{{ asset('img/flexBottomHeader-6.svg') }}" alt="">
                                             Интим-карта
                                         </a>
@@ -113,23 +113,23 @@
         </div>
         <div class="lineHeader"></div>
         <div class="flexBottomHeader">
-            <a href="#!">
+            <a href="{{ route('home') }}">
                 <img src="{{ asset('img/flexBottomHeader-1.svg') }}" alt="">
                 Индивидуалки
             </a>
-            <a href="#!">
+            <a href="{{ route('home') }}">
                 <img src="{{ asset('img/flexBottomHeader-2.svg') }}" alt="">
                 Интим-салоны
             </a>
-            <a href="#!">
+            <a href="{{ route('home') }}">
                 <img src="{{ asset('img/flexBottomHeader-3.svg') }}" alt="">
                 Стрип-клубы
             </a>
-            <a href="#!">
+            <a href="{{ route('home') }}?service[]=Массаж_Эротический">
                 <img src="{{ asset('img/flexBottomHeader-4.svg') }}" alt="">
                 Массажистки
             </a>
-            <a href="#!">
+            <a href="{{ route('home') }}">
                 <img src="{{ asset('img/flexBottomHeader-6.svg') }}" alt="">
                 Интим-карта
             </a>

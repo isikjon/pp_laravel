@@ -39,3 +39,20 @@ jsTriggers.forEach(function(trigger) {
         content.classList.add('active');
     });
 });
+
+document.addEventListener('DOMContentLoaded', function() {
+    const menuToggle = document.getElementById('menu__toggle');
+    const menuBox = document.querySelector('.menu__box');
+    
+    if (menuBox) {
+        const menuLinks = menuBox.querySelectorAll('a:not(.modalRegistration)');
+        
+        menuLinks.forEach(function(link) {
+            link.addEventListener('click', function() {
+                if (menuToggle) {
+                    menuToggle.checked = false;
+                }
+            });
+        });
+    }
+});

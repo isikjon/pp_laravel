@@ -96,7 +96,7 @@
         display: flex;
         align-items: center;
         cursor: pointer;
-        z-index: 1000;
+        z-index: 10100;
         width: 36px;
         height: 36px;
         position: relative;
@@ -113,8 +113,9 @@
         background: rgba(255, 255, 255, 1);
         backdrop-filter: blur(10px);
         transition-duration: .25s;
-        z-index: 999;
+        z-index: 10050;
         padding: 20px 50px 30px;
+        overflow-y: auto;
     }
     .hamburger-menu{
         display: block;
@@ -165,6 +166,33 @@
         width: 100%;
     }
     .listBurgerUl li .modalLogIn{
+        width: 100%;
+    }
+    .menu__box a {
+        position: relative;
+        z-index: 1;
+        pointer-events: auto;
+        cursor: pointer;
+    }
+    .listBurgerUl .flexBottomHeader a {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 12px 20px;
+        text-decoration: none;
+        color: #2C2933;
+        transition: all 0.3s ease;
+    }
+    .listBurgerUl .flexBottomHeader a:hover {
+        background: rgba(126, 29, 50, 0.05);
+        border-radius: 8px;
+    }
+    .menu__box .modalRegistration {
+        position: relative;
+        z-index: 1;
+        pointer-events: auto;
+        cursor: pointer;
+        display: block;
         width: 100%;
     }
     .filtersBtn{
@@ -528,6 +556,12 @@
     }
     .right-btoom-flexContainerFooter{
         gap: 10px;
+    }
+    footer a {
+        position: relative;
+        z-index: 1;
+        pointer-events: auto;
+        cursor: pointer;
     }
     .flexContainerFooter{
         gap: 15px;
