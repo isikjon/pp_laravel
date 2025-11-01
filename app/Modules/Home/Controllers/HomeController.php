@@ -12,10 +12,7 @@ class HomeController extends Controller
     {
         $query = Girl::query();
         
-        $query->whereNotNull('media_images')
-              ->where('media_images', '!=', '')
-              ->where('media_images', '!=', '[]')
-              ->where('media_images', '!=', 'null');
+        // Убрали фильтр по фото - теперь показываем все анкеты с fallback noimage.png
         
         $filterServices = [];
         $filterPlaces = [];
@@ -290,7 +287,7 @@ class HomeController extends Controller
             'id' => $girl->anketa_id,
             'name' => $girl->name,
             'age' => preg_replace('/[^\d]/', '', $girl->age ?? '18'),
-            'photo' => !empty($images) ? $this->formatImageUrl($images[0]) : asset('img/photoGirl-1.png'),
+            'photo' => !empty($images) ? $this->formatImageUrl($images[0]) : asset('img/noimage.png'),
             'hasStatus' => !empty($girl->media_video),
             'hasVideo' => !empty($girl->media_video),
             'favorite' => false,
@@ -378,7 +375,7 @@ class HomeController extends Controller
     private function formatImageUrl($imageUrl)
     {
         if (empty($imageUrl)) {
-            return asset('img/photoGirl-1.png');
+            return asset('img/noimage.png');
         }
         
         if (strpos($imageUrl, 'http://') === 0 || strpos($imageUrl, 'https://') === 0) {

@@ -32,7 +32,7 @@ class SearchController extends Controller
                 }
                 
                 $images = $girl->media_images ?? [];
-                $photo = !empty($images) ? $this->formatImageUrl($images[0]) : asset('img/photoGirl-1.png');
+                $photo = !empty($images) ? $this->formatImageUrl($images[0]) : asset('img/noimage.png');
                 
                 return [
                     'id' => $girl->anketa_id,
@@ -52,7 +52,7 @@ class SearchController extends Controller
     private function formatImageUrl($imageUrl)
     {
         if (empty($imageUrl)) {
-            return asset('img/photoGirl-1.png');
+            return asset('img/noimage.png');
         }
         
         if (filter_var($imageUrl, FILTER_VALIDATE_URL)) {

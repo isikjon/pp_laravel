@@ -92,7 +92,7 @@ class MetroController extends Controller
             'id' => $girl->anketa_id,
             'name' => $girl->name,
             'age' => preg_replace('/[^\d]/', '', $girl->age ?? '18'),
-            'photo' => !empty($images) ? $this->formatImageUrl($images[0]) : asset('img/photoGirl-1.png'),
+            'photo' => !empty($images) ? $this->formatImageUrl($images[0]) : asset('img/noimage.png'),
             'hasStatus' => !empty($girl->media_video),
             'hasVideo' => !empty($girl->media_video),
             'favorite' => false,
@@ -181,7 +181,7 @@ class MetroController extends Controller
     private function formatImageUrl($imageUrl)
     {
         if (empty($imageUrl)) {
-            return asset('img/photoGirl-1.png');
+            return asset('img/noimage.png');
         }
         
         if (filter_var($imageUrl, FILTER_VALIDATE_URL)) {

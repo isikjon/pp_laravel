@@ -15,9 +15,15 @@
         width: 100%;
         max-width: none;
     }
+    .photoGirl{
+        width: 284px;
+        height: 480px;
+    }
     .photoGirl__img{
-        width: 200px;
-        height: 338px;
+        max-width: 100%;
+        max-height: 100%;
+        width: auto;
+        height: auto;
     }
     .blockPrecises-right-wrapper-girlCard__topBlock{
         background-size: cover!important;
@@ -793,6 +799,15 @@
     
     .moreFilters p {
         font-size: 14px;
+    }
+    
+    /* Адаптивные размеры картинок для мобильных */
+    .photoGirl{
+        width: 100%;
+        max-width: 284px;
+        height: auto;
+        min-height: 300px;
+        max-height: 480px;
     }
 }
 

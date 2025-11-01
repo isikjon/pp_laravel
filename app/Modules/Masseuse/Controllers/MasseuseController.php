@@ -111,7 +111,7 @@ class MasseuseController extends Controller
                 'id' => 1,
                 'name' => 'Ева',
                 'age' => 23,
-                'photo' => 'img/photoGirl-1.png',
+                'photo' => 'img/noimage.png',
                 'hasStatus' => true,
                 'hasVideo' => true,
                 'favorite' => true,

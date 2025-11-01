@@ -47,7 +47,7 @@ class GirlCardController extends Controller
             'id' => $girlData->anketa_id,
             'name' => $girlData->name,
             'age' => preg_replace('/[^\d]/', '', $girlData->age ?? '18'),
-            'mainPhoto' => !empty($images) ? $this->formatImageUrl($images[0]) : asset('img/photo-flexWrapperGirlCard.png'),
+            'mainPhoto' => !empty($images) ? $this->formatImageUrl($images[0]) : asset('img/noimage.png'),
             'hasStatus' => !empty($girlData->media_video),
             'hasVideo' => !empty($girlData->media_video),
             'favorite' => false,
@@ -346,7 +346,7 @@ class GirlCardController extends Controller
     private function formatImageUrl($imageUrl)
     {
         if (empty($imageUrl)) {
-            return asset('img/photoGirl-1.png');
+            return asset('img/noimage.png');
         }
         
         if (strpos($imageUrl, 'http://') === 0 || strpos($imageUrl, 'https://') === 0) {
@@ -459,7 +459,7 @@ class GirlCardController extends Controller
             'id' => $girl->anketa_id,
             'name' => $girl->name,
             'age' => preg_replace('/[^\d]/', '', $girl->age ?? '18'),
-            'photo' => !empty($images) ? $this->formatImageUrl($images[0]) : asset('img/photoGirl-1.png'),
+            'photo' => !empty($images) ? $this->formatImageUrl($images[0]) : asset('img/noimage.png'),
             'hasStatus' => !empty($girl->media_video),
             'hasVideo' => !empty($girl->media_video),
             'favorite' => false,
