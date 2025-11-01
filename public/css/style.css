@@ -1827,6 +1827,6 @@ footer{
 
 #additionalFilters {
     width: 100%;
-    overflow: hidden;
-    transition: max-height 0.3s ease-out;
+    overflow: visible;
+    transition: opacity 0.3s ease-out;
 }

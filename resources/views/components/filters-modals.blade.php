@@ -431,11 +431,18 @@ document.addEventListener('DOMContentLoaded', function() {
 
     if (moreFiltersToggle && additionalFilters) {
         moreFiltersToggle.addEventListener('click', function() {
-            if (additionalFilters.style.display === 'none') {
+            if (additionalFilters.style.display === 'none' || additionalFilters.style.display === '') {
                 additionalFilters.style.display = 'block';
+                additionalFilters.style.opacity = '0';
+                setTimeout(() => {
+                    additionalFilters.style.opacity = '1';
+                }, 10);
                 moreFiltersArrow.style.transform = 'rotate(180deg)';
             } else {
-                additionalFilters.style.display = 'none';
+                additionalFilters.style.opacity = '0';
+                setTimeout(() => {
+                    additionalFilters.style.display = 'none';
+                }, 300);
                 moreFiltersArrow.style.transform = 'rotate(0deg)';
             }
         });
