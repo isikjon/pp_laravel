@@ -259,8 +259,8 @@ main{
     position: absolute;
 }
 .photoGirl{
-    width: 284px;
-    height: 480px;
+    width: 200px;
+    height: 300px;
     overflow: hidden;
     display: flex;
     align-items: center;
@@ -1261,8 +1261,8 @@ footer{
     max-width: none;
 }
 .girlCardSalons .photoGirl{
-    width: 284px;
-    height: 480px;
+    width: 200px;
+    height: 300px;
 }
 .girlCardSalons .photoGirl__img{
     max-width: 100%;

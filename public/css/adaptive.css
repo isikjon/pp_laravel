@@ -16,8 +16,8 @@
         max-width: none;
     }
     .photoGirl{
-        width: 284px;
-        height: 480px;
+        width: 200px;
+        height: 300px;
     }
     .photoGirl__img{
         max-width: 100%;
@@ -804,10 +804,10 @@
     /* Адаптивные размеры картинок для мобильных */
     .photoGirl{
         width: 100%;
-        max-width: 284px;
+        max-width: 200px;
         height: auto;
-        min-height: 300px;
-        max-height: 480px;
+        min-height: 200px;
+        max-height: 300px;
     }
 }
 
