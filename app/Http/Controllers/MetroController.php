@@ -180,14 +180,24 @@ class MetroController extends Controller
     
     private function formatImageUrl($imageUrl)
     {
+        // Проверка на пустое значение
         if (empty($imageUrl)) {
             return asset('img/noimage.png');
         }
         
+        // Проверка на g_deleted.png и другие несуществующие изображения
+        if (stripos($imageUrl, 'g_deleted.png') !== false || 
+            stripos($imageUrl, 'deleted') !== false ||
+            stripos($imageUrl, 'noimage') !== false) {
+            return asset('img/noimage.png');
+        }
+        
+        // Полный URL
         if (filter_var($imageUrl, FILTER_VALIDATE_URL)) {
             return $imageUrl;
         }
         
+        // URL с upload
         if (strpos($imageUrl, '/upload') === 0 || strpos($imageUrl, 'upload') === 0) {
             return 'https://msk-z.prostitutki-today.site' . (strpos($imageUrl, '/') === 0 ? '' : '/') . $imageUrl;
         }
