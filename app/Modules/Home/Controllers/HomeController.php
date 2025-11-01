@@ -81,6 +81,23 @@ class HomeController extends Controller
             });
         }
         
+        // Фильтры по доп параметрам
+        if ($request->filled('hair_color')) {
+            $query->where('hair_color', $request->hair_color);
+        }
+        
+        if ($request->filled('nationality')) {
+            $query->where('nationality', $request->nationality);
+        }
+        
+        if ($request->filled('intimate_trim')) {
+            $query->where('intimate_trim', $request->intimate_trim);
+        }
+        
+        if ($request->filled('district')) {
+            $query->where('district', $request->district);
+        }
+        
         $filterVerified = $request->filled('verified');
         
         if ($request->has('service')) {
@@ -183,15 +200,32 @@ class HomeController extends Controller
             });
         }
         
-        if ($request->filled('price_from') || $request->filled('price_to')) {
-            $priceFrom = $request->filled('price_from') ? (int)$request->price_from : 0;
-            $priceTo = $request->filled('price_to') ? (int)$request->price_to : PHP_INT_MAX;
+        // Фильтр по цене 1 час
+        if ($request->filled('price_1h_from') || $request->filled('price_1h_to')) {
+            $priceFrom = $request->filled('price_1h_from') ? (int)$request->price_1h_from : 0;
+            $priceTo = $request->filled('price_1h_to') ? (int)$request->price_1h_to : PHP_INT_MAX;
             
             $allGirls = $allGirls->filter(function($girl) use ($priceFrom, $priceTo) {
                 $tariffs = $girl->tariffs ?? [];
                 $price1h = $this->extractPrice($tariffs, '1 час');
                 if ($price1h) {
                     $priceValue = (int)preg_replace('/[^0-9]/', '', $price1h);
+                    return $priceValue >= $priceFrom && $priceValue <= $priceTo;
+                }
+                return false;
+            });
+        }
+        
+        // Фильтр по цене 2 часа
+        if ($request->filled('price_2h_from') || $request->filled('price_2h_to')) {
+            $priceFrom = $request->filled('price_2h_from') ? (int)$request->price_2h_from : 0;
+            $priceTo = $request->filled('price_2h_to') ? (int)$request->price_2h_to : PHP_INT_MAX;
+            
+            $allGirls = $allGirls->filter(function($girl) use ($priceFrom, $priceTo) {
+                $tariffs = $girl->tariffs ?? [];
+                $price2h = $this->extractPrice($tariffs, '2 часа');
+                if ($price2h) {
+                    $priceValue = (int)preg_replace('/[^0-9]/', '', $price2h);
                     return $priceValue >= $priceFrom && $priceValue <= $priceTo;
                 }
                 return false;

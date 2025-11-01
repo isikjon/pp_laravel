@@ -770,4 +770,39 @@
         width: 20px;
         height: 20px;
     }
+    
+    /* Адаптивные стили для фильтров */
+    .flexTop-formFilterModal,
+    .flexBottom-formFilterModal {
+        flex-direction: column;
+        gap: 20px;
+    }
+    
+    .column-checkbox-formFilterModal {
+        width: 100%;
+    }
+    
+    .additionalParams > div {
+        grid-template-columns: 1fr !important;
+        gap: 10px !important;
+    }
+    
+    .additionalParams {
+        padding: 15px;
+    }
+    
+    .moreFilters p {
+        font-size: 14px;
+    }
+}
+
+@media screen and (max-width: 768px) {
+    .flexTop-formFilterModal,
+    .flexBottom-formFilterModal {
+        gap: 15px;
+    }
+    
+    .additionalParams > div {
+        grid-template-columns: repeat(2, 1fr) !important;
+    }
 }

@@ -1740,3 +1740,93 @@ footer{
 .name-girlCard a[href="#!"]:active {
     transform: scale(0.95);
 }
+
+/* Дополнительные фильтры */
+.flexBottom-formFilterModal {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 20px 30px;
+    width: 100%;
+    padding: 20px 0;
+}
+
+.flexBottom-formFilterModal .column-checkbox-formFilterModal {
+    flex: 0 0 auto;
+    min-width: 180px;
+}
+
+.additionalParams {
+    margin-top: 20px;
+    padding: 20px;
+    background: #f9f9f9;
+    border-radius: 10px;
+}
+
+.additionalParams h5 {
+    color: #292D33;
+    font-size: 18px;
+    font-weight: 700;
+    margin-bottom: 15px;
+    text-align: center;
+}
+
+.additionalParams select {
+    width: 100%;
+    padding: 8px 12px;
+    border: 1px solid #D7D7D7;
+    border-radius: 6px;
+    font-size: 14px;
+    font-family: "Noto Sans", sans-serif;
+    background: white;
+    cursor: pointer;
+    transition: border-color 0.3s;
+}
+
+.additionalParams select:hover {
+    border-color: #7E1D32;
+}
+
+.additionalParams select:focus {
+    outline: none;
+    border-color: #7E1D32;
+    box-shadow: 0 0 0 2px rgba(126, 29, 50, 0.1);
+}
+
+.additionalParams label {
+    display: block;
+    margin-bottom: 5px;
+    color: #292D33;
+    font-size: 14px;
+    font-weight: 500;
+}
+
+.moreFilters {
+    text-align: center;
+    margin: 20px 0;
+    cursor: pointer;
+    user-select: none;
+}
+
+.moreFilters p {
+    color: #7E1D32;
+    font-weight: 600;
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.moreFilters:hover p {
+    color: #5a1424;
+}
+
+.moreFilters .arrow-down {
+    transition: transform 0.3s ease;
+}
+
+#additionalFilters {
+    width: 100%;
+    overflow: hidden;
+    transition: max-height 0.3s ease-out;
+}
