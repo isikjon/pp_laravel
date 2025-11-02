@@ -12,7 +12,14 @@ class HomeController extends Controller
     {
         $query = Girl::query();
         
-        // Убрали фильтр по фото - теперь показываем все анкеты с fallback noimage.png
+        $selectedCity = $request->input('city', $request->cookie('selectedCity', 'moscow'));
+        
+        if ($request->has('city')) {
+            cookie()->queue('selectedCity', $selectedCity, 525600);
+        }
+        
+        $cityName = $selectedCity === 'spb' ? 'Санкт-Петербург' : 'Москва';
+        $query->where('city', $cityName);
         
         $filterServices = [];
         $filterPlaces = [];
@@ -255,9 +262,17 @@ class HomeController extends Controller
         
         $girls->appends($request->except('page'));
         
-        $metros = Girl::select('metro')->distinct()->whereNotNull('metro')->where('metro', '!=', '')->pluck('metro')->filter()->sort()->values();
+        $metros = Girl::select('metro')
+            ->distinct()
+            ->where('city', $cityName)
+            ->whereNotNull('metro')
+            ->where('metro', '!=', '')
+            ->pluck('metro')
+            ->filter()
+            ->sort()
+            ->values();
         
-        return view('home::index', compact('girls', 'metros'));
+        return view('home::index', compact('girls', 'metros', 'cityName'));
     }
     
     private function formatGirlForCard($girl)

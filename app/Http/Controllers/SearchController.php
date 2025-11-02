@@ -18,7 +18,11 @@ class SearchController extends Controller
             ]);
         }
         
-        $girls = Girl::where('name', 'LIKE', '%' . $query . '%')
+        $selectedCity = $request->input('city', $request->cookie('selectedCity', 'moscow'));
+        $cityName = $selectedCity === 'spb' ? 'Санкт-Петербург' : 'Москва';
+        
+        $girls = Girl::where('city', $cityName)
+            ->where('name', 'LIKE', '%' . $query . '%')
             ->whereNotNull('media_images')
             ->where('media_images', '!=', '')
             ->where('media_images', '!=', '[]')

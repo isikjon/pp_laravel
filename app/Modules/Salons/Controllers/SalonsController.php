@@ -3,160 +3,55 @@
 namespace App\Modules\Salons\Controllers;
 
 use App\Http\Controllers\Controller;
+use App\Models\Salon;
+use Illuminate\Http\Request;
 
 class SalonsController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $salons = $this->getSalons();
+        $selectedCity = $request->input('city', $request->cookie('selectedCity', 'moscow'));
         
-        return view('salons::index', compact('salons'));
+        if ($request->has('city')) {
+            cookie()->queue('selectedCity', $selectedCity, 525600);
+        }
+        
+        $cityName = $selectedCity === 'spb' ? 'Санкт-Петербург' : 'Москва';
+        
+        $salons = Salon::where('city', $cityName)
+            ->orderBy('created_at', 'desc')
+            ->paginate(12);
+        
+        return view('salons::index', compact('salons', 'cityName'));
     }
     
     public function show($id)
     {
-        $salon = [
-            'id' => $id,
-            'name' => 'Салон Близость',
-            'schedule' => 'Круглосуточно',
-            'phone' => '+7(985)029-29-45',
-            'call_time' => 'круглосуточно',
-            'city' => 'Москва',
-            'metro' => 'Автозаводская, Крымская, Нагатинская',
-            'district' => 'ЮАО, Нагорный',
-            'photo' => 'img/photo-flexWrapperGirlCard.png',
-            'prices' => [
-                'departure' => [
-                    '1_hour' => '15 000',
-                    '2_hours' => '30 000',
-                    'night' => '90 000',
-                ],
-                'apartments' => [
-                    '1_hour' => '15 000',
-                    '2_hours' => '30 000',
-                    'night' => '90 000',
-                ],
-                'anal' => '+ 5 000',
-            ],
-            'description' => 'Я не читаю мысли — я чувствую желания. В постели превращаюсь в ту самую фантазию, от которой захватывает дыхание и срывает крышу. Ты лишь скажи, чего хочешь — и я подарю тебе гораздо больше… У меня есть экспресс-программы от 3000 рублей, а если тебе удобнее — я приеду сама, прямо туда, где ты хочешь расслабиться и забыть обо всём. Звони прямо сейчас или, если так проще, пиши в Tg arinasalonnk',
-            'gallery' => [
-                'img/photoGirlCardWrap-1.png',
-                'img/photoGirlCardWrap-2.png',
-                'img/photoGirlCardWrap-3.png',
-                'img/photoGirlCardWrap-4.png',
-                'img/photoGirlCardWrap-5.png',
-                'img/photoGirlCardWrap-6.png',
-                'img/photoGirlCardWrap-7.png',
-                'img/photoGirlCardWrap-8.png',
-            ],
-            'video' => null,
-            'reviews' => [
-                [
-                    'name' => 'Ананоним',
-                    'date' => '27.03.2021',
-                    'text' => 'Тебе нихуя не 18лет',
-                    'ratings' => [],
-                ],
-                [
-                    'name' => 'Ананоним',
-                    'date' => '27.03.2021',
-                    'text' => 'Супер деткка минет отличный кончал в рот',
-                    'photo_match' => true,
-                    'individual' => true,
-                    'ratings' => [
-                        'anal' => 4,
-                        'service' => 4,
-                        'bj' => 4,
-                        'classic' => 4,
-                        'finish' => 4,
-                    ],
-                ],
-            ],
+        $salon = Salon::where('salon_id', $id)->firstOrFail();
+        
+        $images = $salon->images ?? [];
+        $phones = $salon->phones ?? [];
+        $tariffs = $salon->tariffs ?? [];
+        
+        $salonData = [
+            'id' => $salon->salon_id,
+            'name' => $salon->name,
+            'title' => $salon->title,
+            'phones' => $phones,
+            'schedule' => $salon->schedule ?? 'Круглосуточно',
+            'city' => $salon->city ?? 'Москва',
+            'metro' => $salon->metro,
+            'district' => $salon->district,
+            'coordinates' => $salon->coordinates,
+            'map_link' => $salon->map_link,
+            'description' => $salon->description,
+            'images' => array_map(function($img) {
+                return is_array($img) ? ($img['full'] ?? $img['preview'] ?? '') : $img;
+            }, $images),
+            'tariffs' => $tariffs,
+            'reviews' => $salon->reviews ?? [],
         ];
         
-        return view('salons::show', compact('salon'));
-    }
-    
-    private function getSalons()
-    {
-        return [
-            [
-                'id' => 1,
-                'name' => '«Близость»',
-                'phone' => '+7(985)029-29-45',
-                'schedule' => 'Круглосуточно',
-                'girls_count' => 21,
-                'city' => 'г. Москва',
-                'metro' => 'м. Арбатская',
-                'photo' => 'img/photoGirlSalons.png',
-                'price1h' => 15000,
-                'price2h' => 30000,
-                'priceNight' => 90000,
-                'reviews' => 0,
-                'rating' => 5,
-                'hasVideo' => true,
-                'hasStatus' => true,
-                'favorite' => true,
-                'type' => 'Интим-салон',
-            ],
-            [
-                'id' => 2,
-                'name' => '«Близость»',
-                'phone' => '+7(985)029-29-45',
-                'schedule' => 'Круглосуточно',
-                'girls_count' => 21,
-                'city' => 'г. Москва',
-                'metro' => 'м. Арбатская',
-                'photo' => 'img/photoGirlSalons.png',
-                'price1h' => 15000,
-                'price2h' => 30000,
-                'priceNight' => 90000,
-                'reviews' => 0,
-                'rating' => 5,
-                'hasVideo' => true,
-                'hasStatus' => true,
-                'favorite' => true,
-                'type' => 'Интим-салон',
-            ],
-            [
-                'id' => 3,
-                'name' => '«Близость»',
-                'phone' => '+7(985)029-29-45',
-                'schedule' => 'Круглосуточно',
-                'girls_count' => 21,
-                'city' => 'г. Москва',
-                'metro' => 'м. Арбатская',
-                'photo' => 'img/photoGirlSalons.png',
-                'price1h' => 15000,
-                'price2h' => 30000,
-                'priceNight' => 90000,
-                'reviews' => 0,
-                'rating' => 5,
-                'hasVideo' => true,
-                'hasStatus' => true,
-                'favorite' => false,
-                'type' => 'Интим-салон',
-            ],
-            [
-                'id' => 4,
-                'name' => '«Близость»',
-                'phone' => '+7(985)029-29-45',
-                'schedule' => 'Круглосуточно',
-                'girls_count' => 21,
-                'city' => 'г. Москва',
-                'metro' => 'м. Арбатская',
-                'photo' => 'img/photoGirlSalons.png',
-                'price1h' => 15000,
-                'price2h' => 30000,
-                'priceNight' => 90000,
-                'reviews' => 0,
-                'rating' => 5,
-                'hasVideo' => true,
-                'hasStatus' => true,
-                'favorite' => false,
-                'type' => 'Интим-салон',
-            ],
-        ];
+        return view('salons::show', compact('salonData'));
     }
 }
-

@@ -7,9 +7,13 @@ use Illuminate\Http\Request;
 
 class MetroController extends Controller
 {
-    public function getMetroList()
+    public function getMetroList(Request $request)
     {
+        $selectedCity = $request->input('city', $request->cookie('selectedCity', 'moscow'));
+        $cityName = $selectedCity === 'spb' ? 'Санкт-Петербург' : 'Москва';
+        
         $metroList = Girl::select('metro')
+            ->where('city', $cityName)
             ->whereNotNull('metro')
             ->where('metro', '!=', '')
             ->get()
@@ -44,7 +48,11 @@ class MetroController extends Controller
             ], 400);
         }
         
-        $girls = Girl::where(function($query) use ($metro) {
+        $selectedCity = $request->input('city', $request->cookie('selectedCity', 'moscow'));
+        $cityName = $selectedCity === 'spb' ? 'Санкт-Петербург' : 'Москва';
+        
+        $girls = Girl::where('city', $cityName)
+            ->where(function($query) use ($metro) {
                 $query->where('metro', $metro)
                       ->orWhere('metro', 'м. ' . $metro);
             })

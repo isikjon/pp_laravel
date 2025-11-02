@@ -143,6 +143,9 @@ $(document).ready(function() {
         
         const filters = append ? currentFilters : getFilters();
         filters.page = page;
+        
+        const selectedCity = localStorage.getItem('selectedCity') || 'moscow';
+        filters.city = selectedCity;
 
         $.ajax({
             url: '/',

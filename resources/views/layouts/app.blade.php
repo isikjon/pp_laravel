@@ -28,6 +28,7 @@
     @include('components.contact-form')
     @include('components.metro-modal')
     @include('components.search-dropdown')
+    @include('components.city-modal')
     
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
@@ -40,6 +41,7 @@
     <script src="https://cdn.jsdelivr.net/npm/lightgallery@2.7.2/plugins/fullscreen/lg-fullscreen.min.js"></script>
     <script src="https://unpkg.com/gridzy@1.1.0/dist/gridzy.min.js"></script>
     <script src="{{ asset('js/app.js') }}"></script>
+    <script src="{{ asset('js/city.js') }}?v={{ time() }}"></script>
     <script src="{{ asset('js/favorites.js') }}?v={{ time() }}"></script>
     @stack('scripts')
     @yield('page_scripts')

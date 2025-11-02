@@ -202,7 +202,8 @@ document.addEventListener('DOMContentLoaded', function() {
         try {
             metroList.innerHTML = '<div class="metro-modal-loader">Загрузка...</div>';
             
-            const response = await fetch('{{ route("metro.list") }}');
+            const selectedCity = localStorage.getItem('selectedCity') || 'moscow';
+            const response = await fetch(`{{ route("metro.list") }}?city=${selectedCity}`);
             const data = await response.json();
             
             if (data.success && data.metros) {
@@ -253,6 +254,13 @@ document.addEventListener('DOMContentLoaded', function() {
         const urlParams = new URLSearchParams(window.location.search);
         const metroFromUrl = urlParams.get('metro');
         const metroFromStorage = localStorage.getItem('selectedMetro');
+        const cityFromUrl = urlParams.get('city');
+        
+        if (cityFromUrl) {
+            localStorage.removeItem('selectedMetro');
+            updateHeaderMetro('Выберите метро');
+            return;
+        }
         
         const selectedMetro = metroFromUrl || metroFromStorage;
         
@@ -261,6 +269,8 @@ document.addEventListener('DOMContentLoaded', function() {
             if (metroFromUrl && metroFromUrl !== metroFromStorage) {
                 localStorage.setItem('selectedMetro', metroFromUrl);
             }
+        } else {
+            updateHeaderMetro('Выберите метро');
         }
     }
     

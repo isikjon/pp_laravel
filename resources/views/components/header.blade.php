@@ -71,11 +71,11 @@
                                             <img src="{{ asset('img/flexBottomHeader-1.svg') }}" alt="">
                                             Индивидуалки
                                         </a>
-                                        <a href="{{ route('home') }}">
+                                        <a href="{{ route('salons.index') }}">
                                             <img src="{{ asset('img/flexBottomHeader-2.svg') }}" alt="">
                                             Интим-салоны
                                         </a>
-                                        <a href="{{ route('home') }}">
+                                        <a href="{{ route('stripclubs.index') }}">
                                             <img src="{{ asset('img/flexBottomHeader-3.svg') }}" alt="">
                                             Стрип-клубы
                                         </a>
@@ -117,11 +117,11 @@
                 <img src="{{ asset('img/flexBottomHeader-1.svg') }}" alt="">
                 Индивидуалки
             </a>
-            <a href="{{ route('home') }}">
+            <a href="{{ route('salons.index') }}">
                 <img src="{{ asset('img/flexBottomHeader-2.svg') }}" alt="">
                 Интим-салоны
             </a>
-            <a href="{{ route('home') }}">
+            <a href="{{ route('stripclubs.index') }}">
                 <img src="{{ asset('img/flexBottomHeader-3.svg') }}" alt="">
                 Стрип-клубы
             </a>

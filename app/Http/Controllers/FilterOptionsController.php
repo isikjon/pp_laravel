@@ -7,11 +7,14 @@ use Illuminate\Http\Request;
 
 class FilterOptionsController extends Controller
 {
-    public function getFilterOptions()
+    public function getFilterOptions(Request $request)
     {
-        // Получаем уникальные значения из БД
+        $selectedCity = $request->input('city', $request->cookie('selectedCity', 'moscow'));
+        $cityName = $selectedCity === 'spb' ? 'Санкт-Петербург' : 'Москва';
+        
         $hairColors = Girl::select('hair_color')
             ->distinct()
+            ->where('city', $cityName)
             ->whereNotNull('hair_color')
             ->where('hair_color', '!=', '')
             ->pluck('hair_color')
@@ -21,6 +24,7 @@ class FilterOptionsController extends Controller
 
         $intimateTrims = Girl::select('intimate_trim')
             ->distinct()
+            ->where('city', $cityName)
             ->whereNotNull('intimate_trim')
             ->where('intimate_trim', '!=', '')
             ->pluck('intimate_trim')
@@ -30,6 +34,7 @@ class FilterOptionsController extends Controller
 
         $nationalities = Girl::select('nationality')
             ->distinct()
+            ->where('city', $cityName)
             ->whereNotNull('nationality')
             ->where('nationality', '!=', '')
             ->pluck('nationality')
@@ -39,6 +44,7 @@ class FilterOptionsController extends Controller
 
         $districts = Girl::select('district')
             ->distinct()
+            ->where('city', $cityName)
             ->whereNotNull('district')
             ->where('district', '!=', '')
             ->pluck('district')
