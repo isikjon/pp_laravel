@@ -3,205 +3,426 @@
 namespace App\Modules\Masseuse\Controllers;
 
 use App\Http\Controllers\Controller;
+use App\Models\Masseuse;
+use Illuminate\Http\Request;
 
 class MasseuseController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $girls = $this->getGirls();
+        $selectedCity = $request->input('city', $request->cookie('selectedCity', 'moscow'));
         
-        return view('masseuse::index', compact('girls'));
+        if ($request->has('city')) {
+            cookie()->queue('selectedCity', $selectedCity, 525600);
+        }
+        
+        $cityName = $selectedCity === 'spb' ? 'Санкт-Петербург' : 'Москва';
+        
+        $query = Masseuse::query();
+        $query->where('city', $cityName);
+        
+        $perPage = 20;
+        $page = $request->get('page', 1);
+        
+        $allGirls = $query->get();
+        $total = $allGirls->count();
+        $girls = $allGirls->forPage($page, $perPage);
+        
+        $girlsFormatted = $girls->map(function ($girl) {
+            return $this->formatGirlForCard($girl);
+        })->values();
+        
+        if ($request->ajax() || $request->wantsJson() || $request->header('X-Requested-With') === 'XMLHttpRequest') {
+            return response()->json([
+                'girls' => $girlsFormatted,
+                'hasMore' => ($page * $perPage) < $total,
+                'nextPage' => $page + 1,
+                'total' => $total,
+            ]);
+        }
+        
+        $girls = new \Illuminate\Pagination\LengthAwarePaginator(
+            $girlsFormatted,
+            $total,
+            $perPage,
+            $page,
+            ['path' => $request->url()]
+        );
+        
+        $girls->appends($request->except('page'));
+        
+        return view('masseuse::index', compact('girls', 'cityName'));
     }
     
     public function show($id)
     {
+        $girlData = Masseuse::where('anketa_id', $id)->first();
+        
+        if (!$girlData) {
+            abort(404, 'Девушка не найдена');
+        }
+        
+        $images = $girlData->media_images ?? [];
+        $tariffs = $girlData->tariffs ?? [];
+        $services = $girlData->services ?? [];
+        
+        $meetingPlaces = $girlData->meeting_places ?? [];
+        $outcallPlaces = [];
+        foreach ($meetingPlaces as $place => $available) {
+            if ($available === 'да' || $available === true) {
+                $outcallPlaces[] = $place;
+            }
+        }
+        
+        $metro = $girlData->metro;
+        if (is_string($metro) && strpos($metro, 'м. ') === 0) {
+            $metro = substr($metro, 3);
+        }
+        
+        $district = $girlData->district;
+        if (is_string($district)) {
+            $districtParts = explode(',', $district);
+            $district = trim(end($districtParts));
+        }
+        
+        $city = $girlData->city ?? 'Москва';
+        if (strpos($city, 'г. ') === 0) {
+            $city = substr($city, 3);
+        }
+        
         $girl = [
-            'id' => $id,
-            'name' => 'Массажистка Александра',
-            'age' => 31,
-            'phone' => '+7(985)029-29-45',
-            'call_time' => 'круглосуточно',
-            'city' => 'Москва',
-            'metro' => 'Автозаводская, Крымская, Нагатинская',
-            'district' => 'ЮАО, Нагорный',
-            'hair_color' => 'Брюнетка',
-            'intimate_haircut' => 'Полная депиляция',
-            'nationality' => 'Русская',
-            'height' => 178,
-            'weight' => 57,
-            'bust' => 2,
-            'photo' => 'img/photo-flexWrapperGirlCard.png',
-            'verified' => true,
-            'departure_places' => ['Квартира', 'Баня/Сауна', 'Гостиница', 'Офис'],
-            'apartment' => true,
+            'id' => $girlData->anketa_id,
+            'name' => $girlData->name,
+            'age' => preg_replace('/[^\d]/', '', $girlData->age ?? '18'),
+            'mainPhoto' => !empty($images) ? $this->formatImageUrl($images[0]) : asset('img/noimage.png'),
+            'hasStatus' => !empty($girlData->media_video),
+            'hasVideo' => !empty($girlData->media_video),
+            'favorite' => false,
+            'verified' => !empty($images) && count($images) >= 3,
+            'phone' => $girlData->phone,
+            'schedule' => str_replace('можно звонить: ', '', $girlData->call_availability ?? 'круглосуточно'),
+            'city' => $city,
+            'metro' => $metro ?? 'Центр',
+            'district' => $district ?? 'Центральный',
+            'hairColor' => $girlData->hair_color ?? 'Брюнетка',
+            'intimHaircut' => $girlData->intimate_trim ?? 'Полная депиляция',
+            'nationality' => $girlData->nationality ?? 'Русская',
+            'height' => $girlData->height ?? 165,
+            'weight' => $girlData->weight ?? 55,
+            'bust' => $girlData->bust ?? 2,
+            'outcall' => isset($meetingPlaces['Выезд']) && ($meetingPlaces['Выезд'] === 'да' || $meetingPlaces['Выезд'] === true),
+            'apartment' => isset($meetingPlaces['Апартаменты']) && ($meetingPlaces['Апартаменты'] === 'да' || $meetingPlaces['Апартаменты'] === true),
+            'outcallPlaces' => $outcallPlaces,
             'prices' => [
-                'departure' => [
-                    '1_hour' => '15 000',
-                    '2_hours' => '30 000',
-                    'night' => '90 000',
+                'outcall' => [
+                    '1h' => $this->extractPrice($tariffs, 'Выезд_1 час') ? (int)str_replace(' ', '', $this->extractPrice($tariffs, 'Выезд_1 час')) : null,
+                    '2h' => $this->extractPrice($tariffs, 'Выезд_2 часа') ? (int)str_replace(' ', '', $this->extractPrice($tariffs, 'Выезд_2 часа')) : null,
+                    'night' => $this->extractPrice($tariffs, 'Выезд_Ночь') ? (int)str_replace(' ', '', $this->extractPrice($tariffs, 'Выезд_Ночь')) : null,
                 ],
-                'apartments' => [
-                    '1_hour' => '15 000',
-                    '2_hours' => '30 000',
-                    'night' => '90 000',
+                'apartment' => [
+                    '1h' => $this->extractPrice($tariffs, '1 час') ? (int)str_replace(' ', '', $this->extractPrice($tariffs, '1 час')) : null,
+                    '2h' => $this->extractPrice($tariffs, '2 часа') ? (int)str_replace(' ', '', $this->extractPrice($tariffs, '2 часа')) : null,
+                    'night' => $this->extractPrice($tariffs, 'Ночь') ? (int)str_replace(' ', '', $this->extractPrice($tariffs, 'Ночь')) : null,
                 ],
-                'anal' => '5 000',
+                'anal' => $this->extractAnalPrice($tariffs, $services),
             ],
-            'description' => 'Я не читаю мысли — я чувствую желания. В постели превращаюсь в ту самую фантазию, от которой захватывает дыхание и срывает крышу. Ты лишь скажи, чего хочешь — и я подарю тебе гораздо больше… У меня есть экспресс-программы от 3000 рублей, а если тебе удобнее — я приеду сама, прямо туда, где ты хочешь расслабиться и забыть обо всём. Звони прямо сейчас или, если так проще, пиши в Tg arinasalonnk',
-            'gallery' => [
-                'img/photoGirlCardWrap-1.png',
-                'img/photoGirlCardWrap-2.png',
-                'img/photoGirlCardWrap-3.png',
-                'img/photoGirlCardWrap-4.png',
-                'img/photoGirlCardWrap-5.png',
-                'img/photoGirlCardWrap-6.png',
-                'img/photoGirlCardWrap-7.png',
-                'img/photoGirlCardWrap-8.png',
-            ],
-            'video' => null,
-            'services' => [
-                'sex' => [
-                    ['name' => 'Классический', 'extra' => true],
-                    ['name' => 'Анальный', 'extra' => true],
-                    ['name' => 'Групповой', 'extra' => false],
-                    ['name' => 'Лесбийский', 'extra' => false],
-                    ['name' => 'Виртуальный', 'extra' => false],
-                ],
-                'additional' => [
-                    ['name' => 'Эскорт', 'extra' => true],
-                    ['name' => 'Фото/видео', 'extra' => false],
-                    ['name' => 'Услуги семейной паре', 'extra' => false],
-                    ['name' => 'Тайский', 'extra' => false],
-                    ['name' => 'GFE', 'extra' => false],
-                    ['name' => 'Целуюсь', 'extra' => false],
-                ],
-                'massage' => [
-                    ['name' => 'Классический', 'extra' => false],
-                    ['name' => 'Профессиональный', 'extra' => false],
-                    ['name' => 'Расслабляющий', 'extra' => false],
-                    ['name' => 'Тайский', 'extra' => false],
-                    ['name' => 'Урологический', 'extra' => false],
-                    ['name' => 'Точечный', 'extra' => false],
-                    ['name' => 'Эротический', 'extra' => false],
-                    ['name' => 'Ветка сакуры', 'extra' => false],
-                ],
-            ],
-            'reviews' => [
-                [
-                    'name' => 'Аноним',
-                    'date' => '12.03.2025',
-                    'text' => 'Отличная девушка, все понравилось!',
-                    'rating' => 5,
-                ],
-                [
-                    'name' => 'Сергей',
-                    'date' => '10.03.2025',
-                    'text' => 'Очень приятная в общении, рекомендую.',
-                    'rating' => 4,
-                ],
-            ],
+            'description' => $girlData->description ?? 'Описание отсутствует',
+            'photos' => $this->formatPhotosArray($images),
+            'video' => !empty($girlData->media_video) && $girlData->media_video !== 'null' ? $this->formatImageUrl($girlData->media_video) : null,
+            'videoPoster' => asset('img/poster.png'),
+            'services' => $this->formatServices($services),
+            'reviews' => $this->parseReviews($girlData->reviews_comments),
         ];
-        return view('masseuse::show', compact('girl'));
+        
+        $similarGirls = $this->getSimilarGirls($girlData);
+        
+        return view('masseuse::show', compact('girl', 'similarGirls'));
     }
     
-    private function getGirls()
+    private function formatGirlForCard($girl)
     {
+        $images = $girl->media_images ?? [];
+        $tariffs = $girl->tariffs ?? [];
+        
+        $price1h = $this->extractPrice($tariffs, '1 час');
+        $price2h = $this->extractPrice($tariffs, '2 часа');
+        $priceNight = $this->extractPrice($tariffs, 'Ночь');
+        
+        $metro = $girl->metro ?? 'м. Центр';
+        if (is_string($metro) && strpos($metro, 'м. ') === 0) {
+            $metro = substr($metro, 3);
+        }
+        
+        $city = $girl->city ?? 'г. Москва';
+        if (strpos($city, 'г. ') === 0) {
+            $city = substr($city, 3);
+        }
+        
+        $meetingPlaces = $girl->meeting_places ?? [];
+        $hasOutcall = isset($meetingPlaces['Выезд']) && ($meetingPlaces['Выезд'] === 'да' || $meetingPlaces['Выезд'] === true);
+        $hasApartment = isset($meetingPlaces['Апартаменты']) && ($meetingPlaces['Апартаменты'] === 'да' || $meetingPlaces['Апартаменты'] === true);
+        
         return [
-            [
-                'id' => 1,
-                'name' => 'Ева',
-                'age' => 23,
-                'photo' => 'img/noimage.png',
-                'hasStatus' => true,
-                'hasVideo' => true,
-                'favorite' => true,
-                'phone' => '+7(985)029-29-45',
-                'city' => 'г. Москва',
-                'metro' => 'м. Арбатская',
-                'height' => 178,
-                'weight' => 52,
-                'bust' => 3,
-                'price1h' => 15000,
-                'price2h' => 30000,
-                'priceAnal' => null,
-                'priceNight' => 90000,
-                'verified' => 'Фото проверены',
-                'outcall' => true,
-                'apartment' => true,
-            ],
-            [
-                'id' => 2,
-                'name' => 'Ева',
-                'age' => 23,
-                'photo' => 'img/photoGirl-2.png',
-                'hasStatus' => false,
-                'hasVideo' => false,
-                'favorite' => false,
-                'phone' => '+7(985)029-29-45',
-                'city' => 'г. Москва',
-                'metro' => 'м. Арбатская',
-                'height' => 178,
-                'weight' => 52,
-                'bust' => 3,
-                'prices' => [
-                    '1_hour' => '15 000',
-                    '2_hours' => '30 000',
-                    'anal' => '-',
-                    'night' => '90 000',
-                ],
-                'verified' => false,
-                'departure' => true,
-                'apartment' => true,
-            ],
-            [
-                'id' => 3,
-                'name' => 'Ева',
-                'age' => 23,
-                'photo' => 'img/photoGirl-3.png',
-                'hasStatus' => false,
-                'hasVideo' => false,
-                'favorite' => false,
-                'phone' => '+7(985)029-29-45',
-                'city' => 'г. Москва',
-                'metro' => 'м. Арбатская',
-                'height' => 178,
-                'weight' => 52,
-                'bust' => 3,
-                'prices' => [
-                    '1_hour' => '15 000',
-                    '2_hours' => '30 000',
-                    'anal' => '-',
-                    'night' => '90 000',
-                ],
-                'verified' => false,
-                'departure' => true,
-                'apartment' => true,
-            ],
-            [
-                'id' => 4,
-                'name' => 'Ева',
-                'age' => 23,
-                'photo' => 'img/photoGirl-4.png',
-                'hasStatus' => false,
-                'hasVideo' => false,
-                'favorite' => false,
-                'phone' => '+7(985)029-29-45',
-                'city' => 'г. Москва',
-                'metro' => 'м. Арбатская',
-                'height' => 178,
-                'weight' => 52,
-                'bust' => 3,
-                'prices' => [
-                    '1_hour' => '15 000',
-                    '2_hours' => '30 000',
-                    'anal' => '-',
-                    'night' => '90 000',
-                ],
-                'verified' => false,
-                'departure' => true,
-                'apartment' => true,
-            ],
+            'id' => $girl->anketa_id,
+            'name' => $girl->name,
+            'age' => preg_replace('/[^\d]/', '', $girl->age ?? '18'),
+            'photo' => !empty($images) ? $this->formatImageUrl($images[0]) : asset('img/noimage.png'),
+            'hasStatus' => !empty($girl->media_video),
+            'hasVideo' => !empty($girl->media_video),
+            'favorite' => false,
+            'phone' => $girl->phone,
+            'city' => $city,
+            'metro' => 'м. ' . $metro,
+            'height' => $girl->height ?? 165,
+            'weight' => $girl->weight ?? 55,
+            'bust' => $girl->bust ?? 2,
+            'price1h' => $price1h ? (int)str_replace(' ', '', $price1h) : 5000,
+            'price2h' => $price2h ? (int)str_replace(' ', '', $price2h) : 10000,
+            'priceAnal' => null,
+            'priceNight' => $priceNight ? (int)str_replace(' ', '', $priceNight) : 20000,
+            'verified' => (!empty($images) && count($images) >= 3) ? 'Фото проверены' : null,
+            'outcall' => $hasOutcall,
+            'apartment' => $hasApartment,
+            'detailRoute' => route('masseuse.show', ['id' => $girl->anketa_id]),
         ];
     }
+    
+    private function extractPrice($tariffs, $key)
+    {
+        if (!is_array($tariffs)) {
+            return null;
+        }
+        
+        $searchKeys = [];
+        
+        if ($key === '1 час') {
+            $searchKeys = ['Апартаменты_1 час', 'Аппартаменты_1 час', 'Выезд_1 час', '1 час'];
+        } elseif ($key === '2 часа') {
+            $searchKeys = ['Апартаменты_2 часа', 'Аппартаменты_2 часа', 'Выезд_2 часа', '2 часа'];
+        } elseif ($key === 'Ночь') {
+            $searchKeys = ['Апартаменты_Ночь', 'Аппартаменты_Ночь', 'Выезд_Ночь', 'Ночь', 'ночь'];
+        }
+        
+        foreach ($searchKeys as $searchKey) {
+            if (isset($tariffs[$searchKey])) {
+                $price = trim($tariffs[$searchKey]);
+                if ($price !== '—' && $price !== '-' && !empty($price) && $price !== 'null') {
+                    return $price;
+                }
+            }
+        }
+        
+        foreach ($tariffs as $tariffKey => $price) {
+            if (stripos($tariffKey, $key) !== false) {
+                $priceClean = trim($price);
+                if ($priceClean !== '—' && $priceClean !== '-' && !empty($priceClean) && $priceClean !== 'null') {
+                    return $priceClean;
+                }
+            }
+        }
+        
+        return null;
+    }
+    
+    private function extractAnalPrice($tariffs, $services)
+    {
+        $hasAnalService = false;
+        
+        if (is_array($services)) {
+            foreach ($services as $key => $value) {
+                if (strpos($key, '_') !== false) {
+                    list($category, $serviceName) = explode('_', $key, 2);
+                    if (stripos($category, 'секс') !== false && stripos($serviceName, 'анальный') !== false) {
+                        if ($value === true || $value === 'да') {
+                            $hasAnalService = true;
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+        
+        if (!$hasAnalService) {
+            return null;
+        }
+        
+        if (is_array($tariffs)) {
+            foreach ($tariffs as $tariffKey => $price) {
+                if (stripos($tariffKey, 'анал') !== false || stripos($tariffKey, 'Анал') !== false) {
+                    $priceClean = trim($price);
+                    if ($priceClean !== '—' && $priceClean !== '-' && !empty($priceClean)) {
+                        return (int)str_replace(' ', '', $priceClean);
+                    }
+                }
+            }
+        }
+        
+        return 'by_phone';
+    }
+    
+    private function formatServices($services)
+    {
+        $formatted = [];
+        
+        if (!is_array($services)) {
+            return $formatted;
+        }
+        
+        foreach ($services as $key => $value) {
+            if (strpos($key, '_') !== false) {
+                list($category, $serviceName) = explode('_', $key, 2);
+                
+                if (!isset($formatted[$category])) {
+                    $formatted[$category] = [];
+                }
+                
+                $formatted[$category][] = [
+                    'name' => $serviceName,
+                    'available' => $value === true || $value === 'да',
+                    'extra' => false,
+                ];
+            }
+        }
+        
+        return array_filter($formatted, function($items) {
+            return !empty($items);
+        });
+    }
+    
+    private function parseReviews($reviewsText)
+    {
+        if (empty($reviewsText)) {
+            return [];
+        }
+        
+        $data = $reviewsText;
+        if (is_string($reviewsText)) {
+            if ($reviewsText === 'Пока еще никто не оставлял отзыв' || 
+                stripos($reviewsText, 'не оставляли комментарии') !== false ||
+                $reviewsText === '[]') {
+                return [];
+            }
+            
+            $decoded = json_decode($reviewsText, true);
+            if (is_array($decoded)) {
+                $data = $decoded;
+            }
+        }
+        
+        if (!is_array($data)) {
+            return [];
+        }
+        
+        $reviews = [];
+        foreach ($data as $review) {
+            if (is_string($review)) {
+                if (stripos($review, 'никто не оставлял') !== false || 
+                    stripos($review, 'не оставляли комментарии') !== false) {
+                    continue;
+                }
+                
+                $reviews[] = [
+                    'author' => 'Аноним',
+                    'date' => date('d.m.Y'),
+                    'text' => $review,
+                    'rating' => 5,
+                ];
+            }
+        }
+        
+        return $reviews;
+    }
+    
+    private function formatImageUrl($imageUrl)
+    {
+        if (empty($imageUrl) || $imageUrl === 'null' || $imageUrl === null) {
+            return asset('img/noimage.png');
+        }
+        
+        if (stripos($imageUrl, 'g_deleted.png') !== false || 
+            stripos($imageUrl, 'deleted') !== false ||
+            stripos($imageUrl, 'noimage') !== false) {
+            return asset('img/noimage.png');
+        }
+        
+        if (strpos($imageUrl, 'http://') === 0 || strpos($imageUrl, 'https://') === 0) {
+            if ($this->isValidImageUrl($imageUrl)) {
+                return $imageUrl;
+            }
+            return asset('img/noimage.png');
+        }
+        
+        if (strpos($imageUrl, '/upload') === 0 || strpos($imageUrl, 'upload') === 0) {
+            $fullUrl = 'https://msk-z.prostitutki-today.site' . (strpos($imageUrl, '/') === 0 ? '' : '/') . $imageUrl;
+            if ($this->isValidImageUrl($fullUrl)) {
+                return $fullUrl;
+            }
+            return asset('img/noimage.png');
+        }
+        
+        return asset($imageUrl);
+    }
+    
+    private function isValidImageUrl($url)
+    {
+        if (empty($url) || $url === 'null') {
+            return false;
+        }
+        
+        if (stripos($url, 'deleted') !== false || stripos($url, 'noimage') !== false) {
+            return false;
+        }
+        
+        $parsedUrl = parse_url($url);
+        if (!isset($parsedUrl['host']) || empty($parsedUrl['host'])) {
+            return false;
+        }
+        
+        return true;
+    }
+    
+    private function formatPhotosArray($images)
+    {
+        if (empty($images) || !is_array($images)) {
+            return [asset('img/noimage.png')];
+        }
+        
+        $formattedPhotos = [];
+        $validPhotos = array_slice($images, 0, 8);
+        
+        foreach ($validPhotos as $image) {
+            if (empty($image) || $image === 'null') {
+                continue;
+            }
+            
+            $formattedUrl = $this->formatImageUrl($image);
+            
+            if ($formattedUrl !== asset('img/noimage.png')) {
+                $formattedPhotos[] = $formattedUrl;
+            }
+        }
+        
+        if (empty($formattedPhotos)) {
+            return [asset('img/noimage.png')];
+        }
+        
+        return $formattedPhotos;
+    }
+    
+    private function getSimilarGirls($currentGirl)
+    {
+        $similarGirls = Masseuse::where('anketa_id', '!=', $currentGirl->anketa_id)
+            ->where('city', $currentGirl->city)
+            ->whereNotNull('media_images')
+            ->where('media_images', '!=', '')
+            ->where('media_images', '!=', '[]')
+            ->where('media_images', '!=', 'null')
+            ->inRandomOrder()
+            ->limit(6)
+            ->get();
+        
+        return $similarGirls->map(function($girl) {
+            return $this->formatGirlForCard($girl);
+        })->values();
+    }
 }
-

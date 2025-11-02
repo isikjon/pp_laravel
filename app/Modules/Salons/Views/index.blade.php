@@ -30,10 +30,15 @@
             <div class="salonsSection" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(350px, 1fr)); gap: 30px; margin-top: 40px;">
                 @foreach($salons as $salon)
                     <div class="salonCard" style="background: #fff; border-radius: 15px; overflow: hidden; box-shadow: 0 4px 20px rgba(0,0,0,0.1); transition: transform 0.3s;">
-                        @if(!empty($salon->images))
+                        @if(!empty($salon->images) && is_array($salon->images))
                             @php
                                 $firstImage = is_array($salon->images[0]) ? ($salon->images[0]['preview'] ?? $salon->images[0]['full'] ?? '') : $salon->images[0];
                                 $fullImage = is_array($salon->images[0]) ? ($salon->images[0]['full'] ?? $firstImage) : $salon->images[0];
+                                
+                                if (empty($firstImage) || $firstImage === 'null' || stripos($firstImage, 'deleted') !== false) {
+                                    $firstImage = asset('img/noimage.png');
+                                    $fullImage = asset('img/noimage.png');
+                                }
                             @endphp
                             <div style="height: 250px; overflow: hidden; position: relative;">
                                 <a href="{{ $fullImage }}" class="salon-lightbox-trigger" data-salon-id="{{ $salon->salon_id }}" onclick="event.stopPropagation();">
@@ -41,8 +46,8 @@
                                 </a>
                             </div>
                         @else
-                            <div style="height: 250px; background: linear-gradient(135deg, #7E1D32 0%, #5a1424 100%); display: flex; align-items: center; justify-content: center;">
-                                <span style="color: #fff; font-size: 24px;">{{ $salon->name }}</span>
+                            <div style="height: 250px; overflow: hidden; position: relative;">
+                                <img src="{{ asset('img/noimage.png') }}" alt="{{ $salon->name }}" style="width: 100%; height: 100%; object-fit: cover;">
                             </div>
                         @endif
                         

@@ -45,13 +45,88 @@ class SalonsController extends Controller
             'coordinates' => $salon->coordinates,
             'map_link' => $salon->map_link,
             'description' => $salon->description,
-            'images' => array_map(function($img) {
-                return is_array($img) ? ($img['full'] ?? $img['preview'] ?? '') : $img;
-            }, $images),
+            'images' => $this->formatImagesArray($images),
             'tariffs' => $tariffs,
             'reviews' => $salon->reviews ?? [],
         ];
         
         return view('salons::show', compact('salonData'));
+    }
+    
+    private function formatImagesArray($images)
+    {
+        if (empty($images) || !is_array($images)) {
+            return [asset('img/noimage.png')];
+        }
+        
+        $formattedImages = [];
+        
+        foreach ($images as $img) {
+            $imageUrl = is_array($img) ? ($img['full'] ?? $img['preview'] ?? '') : $img;
+            
+            if (empty($imageUrl) || $imageUrl === 'null') {
+                continue;
+            }
+            
+            $formattedUrl = $this->formatImageUrl($imageUrl);
+            
+            if ($formattedUrl !== asset('img/noimage.png')) {
+                $formattedImages[] = $formattedUrl;
+            }
+        }
+        
+        if (empty($formattedImages)) {
+            return [asset('img/noimage.png')];
+        }
+        
+        return $formattedImages;
+    }
+    
+    private function formatImageUrl($imageUrl)
+    {
+        if (empty($imageUrl) || $imageUrl === 'null' || $imageUrl === null) {
+            return asset('img/noimage.png');
+        }
+        
+        if (stripos($imageUrl, 'g_deleted.png') !== false || 
+            stripos($imageUrl, 'deleted') !== false ||
+            stripos($imageUrl, 'noimage') !== false) {
+            return asset('img/noimage.png');
+        }
+        
+        if (strpos($imageUrl, 'http://') === 0 || strpos($imageUrl, 'https://') === 0) {
+            if ($this->isValidImageUrl($imageUrl)) {
+                return $imageUrl;
+            }
+            return asset('img/noimage.png');
+        }
+        
+        if (strpos($imageUrl, '/upload') === 0 || strpos($imageUrl, 'upload') === 0) {
+            $fullUrl = 'https://msk-z.prostitutki-today.site' . (strpos($imageUrl, '/') === 0 ? '' : '/') . $imageUrl;
+            if ($this->isValidImageUrl($fullUrl)) {
+                return $fullUrl;
+            }
+            return asset('img/noimage.png');
+        }
+        
+        return asset($imageUrl);
+    }
+    
+    private function isValidImageUrl($url)
+    {
+        if (empty($url) || $url === 'null') {
+            return false;
+        }
+        
+        if (stripos($url, 'deleted') !== false || stripos($url, 'noimage') !== false) {
+            return false;
+        }
+        
+        $parsedUrl = parse_url($url);
+        if (!isset($parsedUrl['host']) || empty($parsedUrl['host'])) {
+            return false;
+        }
+        
+        return true;
     }
 }

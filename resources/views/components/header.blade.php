@@ -79,11 +79,11 @@
                                             <img src="{{ asset('img/flexBottomHeader-3.svg') }}" alt="">
                                             Стрип-клубы
                                         </a>
-                                        <a href="{{ route('home') }}?service[]=Массаж_Эротический">
+                                        <a href="{{ route('masseuse') }}">
                                             <img src="{{ asset('img/flexBottomHeader-4.svg') }}" alt="">
                                             Массажистки
                                         </a>
-                                        <a href="{{ route('home') }}">
+                                        <a href="{{ route('intimmap.index') }}">
                                             <img src="{{ asset('img/flexBottomHeader-6.svg') }}" alt="">
                                             Интим-карта
                                         </a>
@@ -125,11 +125,11 @@
                 <img src="{{ asset('img/flexBottomHeader-3.svg') }}" alt="">
                 Стрип-клубы
             </a>
-            <a href="{{ route('home') }}?service[]=Массаж_Эротический">
+            <a href="{{ route('masseuse') }}">
                 <img src="{{ asset('img/flexBottomHeader-4.svg') }}" alt="">
                 Массажистки
             </a>
-            <a href="{{ route('home') }}">
+            <a href="{{ route('intimmap.index') }}">
                 <img src="{{ asset('img/flexBottomHeader-6.svg') }}" alt="">
                 Интим-карта
             </a>

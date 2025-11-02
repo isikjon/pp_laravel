@@ -80,7 +80,7 @@ class GirlCardController extends Controller
                 'anal' => $this->extractAnalPrice($tariffs, $services),
             ],
             'description' => $girlData->description ?? 'Описание отсутствует',
-            'photos' => array_map([$this, 'formatImageUrl'], array_slice($images, 0, 8)),
+            'photos' => $this->formatPhotosArray($images),
             'video' => !empty($girlData->media_video) && $girlData->media_video !== 'null' ? $this->formatImageUrl($girlData->media_video) : null,
             'videoPoster' => asset('img/poster.png'),
             'services' => $this->formatServices($services),
@@ -345,29 +345,78 @@ class GirlCardController extends Controller
     
     private function formatImageUrl($imageUrl)
     {
-        // Проверка на пустое значение
-        if (empty($imageUrl)) {
+        if (empty($imageUrl) || $imageUrl === 'null' || $imageUrl === null) {
             return asset('img/noimage.png');
         }
         
-        // Проверка на g_deleted.png и другие несуществующие изображения
         if (stripos($imageUrl, 'g_deleted.png') !== false || 
             stripos($imageUrl, 'deleted') !== false ||
             stripos($imageUrl, 'noimage') !== false) {
             return asset('img/noimage.png');
         }
         
-        // Полный URL
         if (strpos($imageUrl, 'http://') === 0 || strpos($imageUrl, 'https://') === 0) {
-            return $imageUrl;
+            if ($this->isValidImageUrl($imageUrl)) {
+                return $imageUrl;
+            }
+            return asset('img/noimage.png');
         }
         
-        // URL с upload
         if (strpos($imageUrl, '/upload') === 0 || strpos($imageUrl, 'upload') === 0) {
-            return 'https://msk-z.prostitutki-today.site' . (strpos($imageUrl, '/') === 0 ? '' : '/') . $imageUrl;
+            $fullUrl = 'https://msk-z.prostitutki-today.site' . (strpos($imageUrl, '/') === 0 ? '' : '/') . $imageUrl;
+            if ($this->isValidImageUrl($fullUrl)) {
+                return $fullUrl;
+            }
+            return asset('img/noimage.png');
         }
         
         return asset($imageUrl);
+    }
+    
+    private function isValidImageUrl($url)
+    {
+        if (empty($url) || $url === 'null') {
+            return false;
+        }
+        
+        if (stripos($url, 'deleted') !== false || stripos($url, 'noimage') !== false) {
+            return false;
+        }
+        
+        $parsedUrl = parse_url($url);
+        if (!isset($parsedUrl['host']) || empty($parsedUrl['host'])) {
+            return false;
+        }
+        
+        return true;
+    }
+    
+    private function formatPhotosArray($images)
+    {
+        if (empty($images) || !is_array($images)) {
+            return [asset('img/noimage.png')];
+        }
+        
+        $formattedPhotos = [];
+        $validPhotos = array_slice($images, 0, 8);
+        
+        foreach ($validPhotos as $image) {
+            if (empty($image) || $image === 'null') {
+                continue;
+            }
+            
+            $formattedUrl = $this->formatImageUrl($image);
+            
+            if ($formattedUrl !== asset('img/noimage.png')) {
+                $formattedPhotos[] = $formattedUrl;
+            }
+        }
+        
+        if (empty($formattedPhotos)) {
+            return [asset('img/noimage.png')];
+        }
+        
+        return $formattedPhotos;
     }
     
     private function getSimilarGirls($currentGirl)

@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Проститутки индивидуалки массажистки Москвы')
+@section('title', 'Проститутки индивидуалки массажистки ' . (($cityName ?? 'Москва') === 'Санкт-Петербург' ? 'Санкт-Петербурга' : 'Москвы'))
 
 @section('content')
     <section class="mainContent">
@@ -11,56 +11,91 @@
             </div>
             <div class="textSection">
                 <h1>
-                    Проститутки индивидуалки массажистки Москвы
+                    Проститутки индивидуалки массажистки {{ $cityName === 'Санкт-Петербург' ? 'Санкт-Петербурга' : 'Москвы' }}
                 </h1>
                 <p>
                     Тяжелый трудовой день за плечами, усталость и стрессы надоели? Во всем обилии возможностей для развлечений и досуга многие обращают заслуженное внимание на услуги путан. Что может быть прекраснее, чем понимание, ласка и страстное наслаждение в комфортной обстановке?
                     <br><br>
-                    Только, если совместить страстную и чувственную близость с профессиональным массажем. Проститутки индивидуалки массажистки Москвы объединяют в себе удивительные таланты понимающей собеседницы, чувственной массажистки для релакса и страстной любовницы для ярких эмоций и восторга. Наш проект создан специально для желающих подарить себе идеальный досуг, с нотками страсти, наслаждения и релакса. Такую возможность подарит опытная массажистка, готовая продолжить вечер в более непринужденной атмосфере – мы подготовили широкий выбор таких девушек, с возможностью индивидуального выбора для каждого посетителя.
+                    Только, если совместить страстную и чувственную близость с профессиональным массажем. Проститутки индивидуалки массажистки {{ $cityName === 'Санкт-Петербург' ? 'Санкт-Петербурга' : 'Москвы' }} объединяют в себе удивительные таланты понимающей собеседницы, чувственной массажистки для релакса и страстной любовницы для ярких эмоций и восторга. Наш проект создан специально для желающих подарить себе идеальный досуг, с нотками страсти, наслаждения и релакса. Такую возможность подарит опытная массажистка, готовая продолжить вечер в более непринужденной атмосфере – мы подготовили широкий выбор таких девушек, с возможностью индивидуального выбора для каждого посетителя.
                 </p>
             </div>
+            
             <div class="girlsSection">
                 @foreach($girls as $girl)
                     @include('components.girl-card', $girl)
                 @endforeach
             </div>
+            
             <a href="#!" class="more-info">
                 Показать ещё
             </a>
+            
+            @if($girls->hasPages())
             <div class="paginationGirls">
-                <a href="#!" class="arrowPagination">
-                    <img src="{{ asset('img/arrowLeft.svg') }}" alt="">
-                </a>
-                <div class="wrapper-paginationGirls">
-                    <div class="pagination__paginationGirls">
-                        <a href="#!" class="block-paginationGirls block-paginationGirls__active">
-                            1
+                @if($girls->onFirstPage())
+                    <span class="arrowPagination arrowPagination-prev" style="opacity: 0.5; cursor: not-allowed;">
+                        <img src="{{ asset('img/arrowLeft.svg') }}" alt="">
+                    </span>
+                @else
+                    <a href="{{ $girls->previousPageUrl() }}" class="arrowPagination arrowPagination-prev">
+                        <img src="{{ asset('img/arrowLeft.svg') }}" alt="">
+                    </a>
+                @endif
+                
+                <div class="pagination__paginationGirls">
+                    @php
+                        $currentPage = $girls->currentPage();
+                        $lastPage = $girls->lastPage();
+                        $start = max(1, $currentPage - 1);
+                        $end = min($lastPage, $currentPage + 1);
+                        
+                        if ($currentPage <= 2) {
+                            $end = min(3, $lastPage);
+                        }
+                        if ($currentPage >= $lastPage - 1) {
+                            $start = max(1, $lastPage - 2);
+                        }
+                    @endphp
+                    
+                    @if($start > 1)
+                        <a href="{{ $girls->url(1) }}" class="block-paginationGirls">1</a>
+                        @if($start > 2)
+                            <span class="block-paginationGirls" style="cursor: default;">...</span>
+                        @endif
+                    @endif
+                    
+                    @for($i = $start; $i <= $end; $i++)
+                        <a href="{{ $girls->url($i) }}" class="block-paginationGirls {{ $i == $currentPage ? 'block-paginationGirls__active' : '' }}">
+                            {{ $i }}
                         </a>
-                        <a href="#!" class="block-paginationGirls">
-                            2
-                        </a>
-                        <a href="#!" class="block-paginationGirls">
-                            3
-                        </a>
-                        <a href="#!" class="block-paginationGirls">
-                            ...
-                        </a>
-                        <a href="#!" class="block-paginationGirls">
-                            99
-                        </a>
-                    </div>
+                    @endfor
+                    
+                    @if($end < $lastPage)
+                        @if($end < $lastPage - 1)
+                            <span class="block-paginationGirls" style="cursor: default;">...</span>
+                        @endif
+                        <a href="{{ $girls->url($lastPage) }}" class="block-paginationGirls">{{ $lastPage }}</a>
+                    @endif
                 </div>
-                <a href="#!" class="arrowPagination">
-                    <img src="{{ asset('img/arrowNext.svg') }}" alt="">
-                </a>
+                
+                @if($girls->hasMorePages())
+                    <a href="{{ $girls->nextPageUrl() }}" class="arrowPagination arrowPagination-next">
+                        <img src="{{ asset('img/arrowNext.svg') }}" alt="">
+                    </a>
+                @else
+                    <span class="arrowPagination arrowPagination-next" style="opacity: 0.5; cursor: not-allowed;">
+                        <img src="{{ asset('img/arrowNext.svg') }}" alt="">
+                    </span>
+                @endif
             </div>
+            @endif
             <a href="#!" target="_blank" class="bannerBottomTG">
                 <img src="{{ asset('img/bannerTG.png') }}" alt="">
             </a>
             
             <div class="textBottomPage">
                 <h4>
-                    Массажистки Москвы — релакс и наслаждение
+                    Массажистки {{ $cityName === 'Санкт-Петербург' ? 'Санкт-Петербурга' : 'Москвы' }} — релакс и наслаждение
                 </h4>
                 <p>
                     Массаж от опытной девушки — это не только расслабление мышц, но и чувственное удовольствие. Выбирай массажистку с интим-услугами и погрузись в мир наслаждения.
@@ -98,5 +133,11 @@
             </div>
         </div>
     </section>
+    
+    @include('components.filters-modals')
+@endsection
+
+@section('page_scripts')
+    <script src="{{ asset('js/filters.js') }}?v={{ time() }}"></script>
 @endsection
 

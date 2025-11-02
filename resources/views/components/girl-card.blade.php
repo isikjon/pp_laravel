@@ -1,6 +1,6 @@
 <div class="girlCard" data-girl-id="{{ $id }}">
     <div class="wrapper-girlCard">
-        <a href="{{ route('girl.show', ['id' => $id]) }}" class="photoGirl" style="display: block; position: relative;">
+        <a href="{{ $detailRoute ?? route('girl.show', ['id' => $id]) }}" class="photoGirl" style="display: block; position: relative;">
             @if($hasStatus ?? false)
             <div class="status-photoGirl">
                 <img src="{{ asset('img/status-photoGirl.png') }}" alt="">
@@ -15,7 +15,7 @@
         </a>
         <div class="right-wrapper-girlCard">
             <div class="name-girlCard">
-                <a href="{{ route('girl.show', ['id' => $id]) }}" style="color: inherit; text-decoration: none;">
+                <a href="{{ $detailRoute ?? route('girl.show', ['id' => $id]) }}" style="color: inherit; text-decoration: none;">
                     <p>{{ $name }}</p>
                 </a>
                 <a href="#!" data-girl-id="{{ $id }}">

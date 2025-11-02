@@ -30,10 +30,15 @@
             <div class="clubsSection" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(350px, 1fr)); gap: 30px; margin-top: 40px;">
                 @foreach($clubs as $club)
                     <div class="clubCard" style="background: #fff; border-radius: 15px; overflow: hidden; box-shadow: 0 4px 20px rgba(0,0,0,0.1); transition: transform 0.3s;">
-                        @if(!empty($club->images))
+                        @if(!empty($club->images) && is_array($club->images))
                             @php
                                 $firstImage = is_array($club->images[0]) ? ($club->images[0]['preview'] ?? $club->images[0]['full'] ?? '') : $club->images[0];
                                 $fullImage = is_array($club->images[0]) ? ($club->images[0]['full'] ?? $firstImage) : $club->images[0];
+                                
+                                if (empty($firstImage) || $firstImage === 'null' || stripos($firstImage, 'deleted') !== false) {
+                                    $firstImage = asset('img/noimage.png');
+                                    $fullImage = asset('img/noimage.png');
+                                }
                             @endphp
                             <div style="height: 250px; overflow: hidden; position: relative;">
                                 <a href="{{ $fullImage }}" class="club-lightbox-trigger" data-club-id="{{ $club->club_id }}" onclick="event.stopPropagation();">
@@ -41,8 +46,8 @@
                                 </a>
                             </div>
                         @else
-                            <div style="height: 250px; background: linear-gradient(135deg, #7E1D32 0%, #5a1424 100%); display: flex; align-items: center; justify-content: center;">
-                                <span style="color: #fff; font-size: 24px;">{{ $club->name }}</span>
+                            <div style="height: 250px; overflow: hidden; position: relative;">
+                                <img src="{{ asset('img/noimage.png') }}" alt="{{ $club->name }}" style="width: 100%; height: 100%; object-fit: cover;">
                             </div>
                         @endif
                         

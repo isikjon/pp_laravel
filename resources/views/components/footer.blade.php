@@ -7,16 +7,16 @@
                     <a href="{{ route('home') }}">
                         Индивидуалки
                     </a>
-                    <a href="{{ route('home') }}">
+                    <a href="{{ route('salons.index') }}">
                         Интим-салоны
                     </a>
-                    <a href="{{ route('home') }}">
+                    <a href="{{ route('stripclubs.index') }}">
                         Стрип-клубы
                     </a>
-                    <a href="{{ route('home') }}?service[]=Массаж_Эротический">
+                    <a href="{{ route('masseuse') }}">
                         Массажистки
                     </a>
-                    <a href="{{ route('home') }}">
+                    <a href="{{ route('intimmap.index') }}">
                         Интим-карта
                     </a>
                 </div>
