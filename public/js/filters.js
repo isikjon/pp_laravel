@@ -227,9 +227,9 @@ $(document).ready(function() {
             <div class="girlCard" data-girl-id="${girl.id}">
                 <div class="wrapper-girlCard">
                     <a href="/girl/${girl.id}" class="photoGirl" style="display: block; position: relative;">
-                        ${girl.hasStatus ? '<div class="status-photoGirl"><img src="/img/status-photoGirl.png" alt=""></div>' : ''}
-                        ${girl.hasVideo ? '<div class="video-photoGirl"><img src="/img/video-photoGirl.png" alt=""></div>' : ''}
-                        <img src="${girl.photo}" alt="" class="photoGirl__img">
+                        ${girl.hasStatus ? '<div class="status-photoGirl"><img src="/img/status-photoGirl.png" alt="" loading="lazy" decoding="async"></div>' : ''}
+                        ${girl.hasVideo ? '<div class="video-photoGirl"><img src="/img/video-photoGirl.png" alt="" loading="lazy" decoding="async"></div>' : ''}
+                        <img src="${girl.photo}" alt="" class="photoGirl__img" loading="lazy" decoding="async">
                     </a>
                     <div class="right-wrapper-girlCard">
                         <div class="name-girlCard">
@@ -237,7 +237,7 @@ $(document).ready(function() {
                                 <p>${girl.name}</p>
                             </a>
                             <a href="#!" data-girl-id="${girl.id}">
-                                <img src="/img/${girl.favorite ? 'flexBottomHeader-8-2.svg' : 'flexBottomHeader-8.svg'}" alt="">
+                                <img src="/img/${girl.favorite ? 'flexBottomHeader-8-2.svg' : 'flexBottomHeader-8.svg'}" alt="" loading="lazy" decoding="async">
                             </a>
                         </div>
                         <p class="ageGirlCard">${girl.age} года</p>
@@ -312,12 +312,12 @@ $(document).ready(function() {
                 </div>
                 <div class="bottom-girlCard">
                     <div class="flex-bottom-girlCard">
-                        <img src="/img/flex-bottom-girlCard-1.svg" alt="">
+                        <img src="/img/flex-bottom-girlCard-1.svg" alt="" loading="lazy" decoding="async">
                         <p style="color: #00A81E">${girl.verified || 'Фото проверены'}</p>
                     </div>
                     <div class="right-bottom-girlCard">
-                        ${girl.outcall ? '<div class="flex-bottom-girlCard"><img src="/img/flex-bottom-girlCard-2.svg" alt=""><p>Выезд</p></div>' : ''}
-                        ${girl.apartment ? '<div class="flex-bottom-girlCard"><img src="/img/flex-bottom-girlCard-3.svg" alt=""><p>Апартаменты</p></div>' : ''}
+                        ${girl.outcall ? '<div class="flex-bottom-girlCard"><img src="/img/flex-bottom-girlCard-2.svg" alt="" loading="lazy" decoding="async"><p>Выезд</p></div>' : ''}
+                        ${girl.apartment ? '<div class="flex-bottom-girlCard"><img src="/img/flex-bottom-girlCard-3.svg" alt="" loading="lazy" decoding="async"><p>Апартаменты</p></div>' : ''}
                     </div>
                 </div>
             </div>

@@ -91,7 +91,7 @@
             @endif
             
             <a href="#!" target="_blank" class="bannerBottomTG">
-                <img src="{{ asset('img/bannerTG.png') }}" alt="">
+                <img src="{{ asset('img/bannerTG.png') }}" alt="" loading="lazy" decoding="async">
             </a>
             
             <div class="textBottomPage">

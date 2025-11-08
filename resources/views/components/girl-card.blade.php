@@ -3,15 +3,15 @@
         <a href="{{ $detailRoute ?? route('girl.show', ['id' => $id]) }}" class="photoGirl" style="display: block; position: relative;">
             @if($hasStatus ?? false)
             <div class="status-photoGirl">
-                <img src="{{ asset('img/status-photoGirl.png') }}" alt="">
+                <img src="{{ asset('img/status-photoGirl.png') }}" alt="" loading="lazy" decoding="async">
             </div>
             @endif
             @if($hasVideo ?? false)
             <div class="video-photoGirl">
-                <img src="{{ asset('img/video-photoGirl.png') }}" alt="">
+                <img src="{{ asset('img/video-photoGirl.png') }}" alt="" loading="lazy" decoding="async">
             </div>
             @endif
-            <img src="{{ $photo }}" alt="" class="photoGirl__img">
+            <img src="{{ $photo }}" alt="" class="photoGirl__img" loading="lazy" decoding="async">
         </a>
         <div class="right-wrapper-girlCard">
             <div class="name-girlCard">
@@ -19,7 +19,7 @@
                     <p>{{ $name }}</p>
                 </a>
                 <a href="#!" data-girl-id="{{ $id }}">
-                    <img src="{{ asset($favorite ? 'img/flexBottomHeader-8-2.svg' : 'img/flexBottomHeader-8.svg') }}" alt="">
+                <img src="{{ asset($favorite ? 'img/flexBottomHeader-8-2.svg' : 'img/flexBottomHeader-8.svg') }}" alt="" loading="lazy" decoding="async">
                 </a>
             </div>
             <p class="ageGirlCard">{{ $age }} года</p>
@@ -94,19 +94,19 @@
     </div>
     <div class="bottom-girlCard">
         <div class="flex-bottom-girlCard">
-            <img src="{{ asset('img/flex-bottom-girlCard-1.svg') }}" alt="">
+            <img src="{{ asset('img/flex-bottom-girlCard-1.svg') }}" alt="" loading="lazy" decoding="async">
             <p style="color: #00A81E">{{ $verified ?? 'Фото проверены' }}</p>
         </div>
         <div class="right-bottom-girlCard">
             @if($outcall ?? false)
             <div class="flex-bottom-girlCard">
-                <img src="{{ asset('img/flex-bottom-girlCard-2.svg') }}" alt="">
+                <img src="{{ asset('img/flex-bottom-girlCard-2.svg') }}" alt="" loading="lazy" decoding="async">
                 <p>Выезд</p>
             </div>
             @endif
             @if($apartment ?? false)
             <div class="flex-bottom-girlCard">
-                <img src="{{ asset('img/flex-bottom-girlCard-3.svg') }}" alt="">
+                <img src="{{ asset('img/flex-bottom-girlCard-3.svg') }}" alt="" loading="lazy" decoding="async">
                 <p>Апартаменты</p>
             </div>
             @endif
