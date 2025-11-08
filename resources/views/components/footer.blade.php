@@ -2,7 +2,7 @@
     <div class="container">
         <div class="flexContainerFooter">
             <div class="top-flexContainerFooter">
-                <img src="{{ asset('img/footerLogo.svg') }}" alt="">
+                <img src="{{ asset('img/footerLogo.svg') }}" alt="" width="233" height="41" loading="lazy" decoding="async">
                 <div class="right-top-flexContainerFooter">
                     <a href="{{ route('home') }}">
                         Индивидуалки

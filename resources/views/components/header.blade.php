@@ -2,7 +2,7 @@
     <div class="container">
         <div class="flexTopHeader">
             <a href="{{ route('home') }}">
-                <img src="{{ asset('img/logo.svg') }}" alt="ProstitutkiMoscow" class="logo">
+                <img src="{{ asset('img/logo.svg') }}" alt="ProstitutkiMoscow" class="logo" width="233" height="41" decoding="async">
             </a>
             <div class="center-flexTopHeader">
                 <div class="cityChoose">
@@ -39,15 +39,15 @@
                 <div class="hamburger-menu">
                     <input id="menu__toggle" type="checkbox">
                     <label class="menu__btn" for="menu__toggle">
-                        <img src="{{ asset('img/burger.svg') }}" alt="" class="burgerSvg">
-                        <img class="closeBurger" src="{{ asset('img/closeBurger.svg') }}" alt="">
+                        <img src="{{ asset('img/burger.svg') }}" alt="" class="burgerSvg" loading="lazy" decoding="async">
+                        <img class="closeBurger" src="{{ asset('img/closeBurger.svg') }}" alt="" loading="lazy" decoding="async">
                     </label>
                     <ul class="menu__box">
                         <li class="content-burger">
                             <ul class="listBurgerUl">
                                 <li>
                                     <a href="{{ route('home') }}">
-                                        <img src="{{ asset('img/logo.svg') }}" alt="ProstitutkiMoscow" class="logo">
+                                        <img src="{{ asset('img/logo.svg') }}" alt="ProstitutkiMoscow" class="logo" width="233" height="41" loading="lazy" decoding="async">
                                     </a>
                                     <div class="cityChoose">
                                         <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" viewBox="0 0 25 25" fill="none">
@@ -68,27 +68,27 @@
                                     </div>
                                     <div class="flexBottomHeader">
                                         <a href="{{ route('home') }}">
-                                            <img src="{{ asset('img/flexBottomHeader-1.svg') }}" alt="">
+                                        <img src="{{ asset('img/flexBottomHeader-1.svg') }}" alt="" width="11" height="24" loading="lazy" decoding="async">
                                             Индивидуалки
                                         </a>
                                         <a href="{{ route('salons.index') }}">
-                                            <img src="{{ asset('img/flexBottomHeader-2.svg') }}" alt="">
+                                            <img src="{{ asset('img/flexBottomHeader-2.svg') }}" alt="" width="13" height="24" loading="lazy" decoding="async">
                                             Интим-салоны
                                         </a>
                                         <a href="{{ route('stripclubs.index') }}">
-                                            <img src="{{ asset('img/flexBottomHeader-3.svg') }}" alt="">
+                                            <img src="{{ asset('img/flexBottomHeader-3.svg') }}" alt="" width="9" height="24" loading="lazy" decoding="async">
                                             Стрип-клубы
                                         </a>
                                         <a href="{{ route('masseuse') }}">
-                                            <img src="{{ asset('img/flexBottomHeader-4.svg') }}" alt="">
+                                            <img src="{{ asset('img/flexBottomHeader-4.svg') }}" alt="" width="31" height="24" loading="lazy" decoding="async">
                                             Массажистки
                                         </a>
                                         <a href="{{ route('intimmap.index') }}">
-                                            <img src="{{ asset('img/flexBottomHeader-6.svg') }}" alt="">
+                                            <img src="{{ asset('img/flexBottomHeader-6.svg') }}" alt="" width="25" height="24" loading="lazy" decoding="async">
                                             Интим-карта
                                         </a>
                                         <a href="{{ route('favorites') }}" class="favorites-counter-link">
-                                            <img src="{{ asset('img/flexBottomHeader-8.svg') }}" alt="">
+                                            <img src="{{ asset('img/flexBottomHeader-8.svg') }}" alt="" width="24" height="24" loading="lazy" decoding="async">
                                             <span class="favorites-counter">0</span>
                                         </a>
                                     </div>
@@ -114,27 +114,27 @@
         <div class="lineHeader"></div>
         <div class="flexBottomHeader">
             <a href="{{ route('home') }}">
-                <img src="{{ asset('img/flexBottomHeader-1.svg') }}" alt="">
+                <img src="{{ asset('img/flexBottomHeader-1.svg') }}" alt="" width="11" height="24" loading="lazy" decoding="async">
                 Индивидуалки
             </a>
             <a href="{{ route('salons.index') }}">
-                <img src="{{ asset('img/flexBottomHeader-2.svg') }}" alt="">
+                <img src="{{ asset('img/flexBottomHeader-2.svg') }}" alt="" width="13" height="24" loading="lazy" decoding="async">
                 Интим-салоны
             </a>
             <a href="{{ route('stripclubs.index') }}">
-                <img src="{{ asset('img/flexBottomHeader-3.svg') }}" alt="">
+                <img src="{{ asset('img/flexBottomHeader-3.svg') }}" alt="" width="9" height="24" loading="lazy" decoding="async">
                 Стрип-клубы
             </a>
             <a href="{{ route('masseuse') }}">
-                <img src="{{ asset('img/flexBottomHeader-4.svg') }}" alt="">
+                <img src="{{ asset('img/flexBottomHeader-4.svg') }}" alt="" width="31" height="24" loading="lazy" decoding="async">
                 Массажистки
             </a>
             <a href="{{ route('intimmap.index') }}">
-                <img src="{{ asset('img/flexBottomHeader-6.svg') }}" alt="">
+                <img src="{{ asset('img/flexBottomHeader-6.svg') }}" alt="" width="25" height="24" loading="lazy" decoding="async">
                 Интим-карта
             </a>
             <a href="{{ route('favorites') }}" class="favorites-counter-link">
-                <img src="{{ asset('img/flexBottomHeader-8.svg') }}" alt="">
+                <img src="{{ asset('img/flexBottomHeader-8.svg') }}" alt="" width="24" height="24" loading="lazy" decoding="async">
                 <span class="favorites-counter">0</span>
             </a>
         </div>
