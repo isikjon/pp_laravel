@@ -6,7 +6,7 @@
     <section class="mainContent">
         <div class="container">
             <div class="filtersBtn">
-                <img src="{{ asset('img/filter.svg') }}" alt="">
+                <img src="{{ asset('img/filter.svg') }}" alt="" width="24" height="24" decoding="async">
                 Фильтры
             </div>
             <div class="textSection">
@@ -34,11 +34,11 @@
             <div class="paginationGirls">
                 @if($girls->onFirstPage())
                     <span class="arrowPagination arrowPagination-prev" style="opacity: 0.5; cursor: not-allowed;">
-                        <img src="{{ asset('img/arrowLeft.svg') }}" alt="">
+                        <img src="{{ asset('img/arrowLeft.svg') }}" alt="" width="36" height="36" decoding="async">
                     </span>
                 @else
                     <a href="{{ $girls->previousPageUrl() }}" class="arrowPagination arrowPagination-prev">
-                        <img src="{{ asset('img/arrowLeft.svg') }}" alt="">
+                        <img src="{{ asset('img/arrowLeft.svg') }}" alt="" width="36" height="36" decoding="async">
                     </a>
                 @endif
                 
@@ -80,11 +80,11 @@
                 
                 @if($girls->hasMorePages())
                     <a href="{{ $girls->nextPageUrl() }}" class="arrowPagination arrowPagination-next">
-                        <img src="{{ asset('img/arrowNext.svg') }}" alt="">
+                        <img src="{{ asset('img/arrowNext.svg') }}" alt="" width="36" height="36" decoding="async">
                     </a>
                 @else
                     <span class="arrowPagination arrowPagination-next" style="opacity: 0.5; cursor: not-allowed;">
-                        <img src="{{ asset('img/arrowNext.svg') }}" alt="">
+                        <img src="{{ asset('img/arrowNext.svg') }}" alt="" width="36" height="36" decoding="async">
                     </span>
                 @endif
             </div>
@@ -169,5 +169,17 @@
 @endsection
 
 @section('page_scripts')
-    <script src="{{ asset('js/filters.js') }}?v={{ time() }}"></script>
+    @php
+        $filtersJsVersion = file_exists(public_path('js/filters.js')) ? filemtime(public_path('js/filters.js')) : time();
+        $filtersJsSrc = asset('js/filters.js') . '?v=' . $filtersJsVersion;
+    @endphp
+    <script>
+        const filtersScriptSrc = @json($filtersJsSrc);
+        window.addEventListener('load', function () {
+            var script = document.createElement('script');
+            script.src = filtersScriptSrc;
+            script.defer = true;
+            document.head.appendChild(script);
+        });
+    </script>
 @endsection
