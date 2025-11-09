@@ -52,3 +52,4 @@
 .blockPrecises-right-wrapper-girlCard{min-height:180px;display:flex;flex-direction:column;gap:10px;}
 .blockPrecises-right-wrapper-girlCard__top,.blockPrecises-right-wrapper-girlCard__top-1{min-height:90px;}
 .blockPrecises-right-wrapper-girlCard__topBlock{min-height:80px;display:flex;flex-direction:column;justify-content:space-between;}
+@media screen and (max-width:768px){.girlCard.is-mobile-hidden{display:none!important;}}

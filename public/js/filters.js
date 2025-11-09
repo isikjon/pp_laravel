@@ -8,12 +8,75 @@ $(document).ready(function() {
     let hasMore = hasMorePages;
     let currentFilters = {};
     const APPEND_SKELETON_COUNT = 4;
+    const MOBILE_BREAKPOINT = 768;
+    const MOBILE_INITIAL_VISIBLE = 1;
+    const MOBILE_VISIBLE_STEP = 2;
+    const mobileMediaQuery = typeof window.matchMedia === 'function'
+        ? window.matchMedia('(max-width: ' + MOBILE_BREAKPOINT + 'px)')
+        : null;
+    let mobileVisibleCount = mobileMediaQuery && mobileMediaQuery.matches ? MOBILE_INITIAL_VISIBLE : Infinity;
 
     function smoothScrollToGirlsSection() {
         const section = document.querySelector('.girlsSection');
         if (section && typeof section.scrollIntoView === 'function') {
             section.scrollIntoView({ behavior: 'smooth', block: 'start' });
         }
+    }
+
+    function applyMobileVisibility(containerElement) {
+        if (!containerElement) {
+            return;
+        }
+        const cards = containerElement.querySelectorAll('.girlCard');
+        if (!mobileMediaQuery || !mobileMediaQuery.matches) {
+            mobileVisibleCount = Infinity;
+            cards.forEach(function(card) {
+                card.classList.remove('is-mobile-hidden');
+            });
+            return;
+        }
+
+        if (!Number.isFinite(mobileVisibleCount) || mobileVisibleCount < 1) {
+            mobileVisibleCount = MOBILE_INITIAL_VISIBLE;
+        }
+
+        cards.forEach(function(card, index) {
+            if (index < mobileVisibleCount) {
+                card.classList.remove('is-mobile-hidden');
+            } else {
+                card.classList.add('is-mobile-hidden');
+            }
+        });
+    }
+
+    function handleMobileMediaChange(event) {
+        mobileVisibleCount = event.matches ? MOBILE_INITIAL_VISIBLE : Infinity;
+        applyMobileVisibility(document.querySelector('.girlsSection'));
+    }
+
+    if (mobileMediaQuery) {
+        if (typeof mobileMediaQuery.addEventListener === 'function') {
+            mobileMediaQuery.addEventListener('change', handleMobileMediaChange);
+        } else if (typeof mobileMediaQuery.addListener === 'function') {
+            mobileMediaQuery.addListener(handleMobileMediaChange);
+        }
+    }
+
+    function revealMoreMobileCards() {
+        if (!mobileMediaQuery || !mobileMediaQuery.matches) {
+            return false;
+        }
+        const containerElement = document.querySelector('.girlsSection');
+        if (!containerElement) {
+            return false;
+        }
+        const cards = containerElement.querySelectorAll('.girlCard');
+        if (mobileVisibleCount >= cards.length) {
+            return false;
+        }
+        mobileVisibleCount = Math.min(cards.length, mobileVisibleCount + MOBILE_VISIBLE_STEP);
+        applyMobileVisibility(containerElement);
+        return true;
     }
 
     function createSkeletonCard() {
@@ -136,6 +199,10 @@ $(document).ready(function() {
     
     $('.more-info').on('click', function(e) {
         e.preventDefault();
+        
+        if (revealMoreMobileCards()) {
+            return;
+        }
         
         if (hasLocalPreloaded && preloadedGirls.length) {
             appendGirls(preloadedGirls);
@@ -335,6 +402,11 @@ $(document).ready(function() {
             container.html(html);
         }
 
+        if (mobileMediaQuery && mobileMediaQuery.matches) {
+            mobileVisibleCount = MOBILE_INITIAL_VISIBLE;
+        }
+        applyMobileVisibility(container[0]);
+
         if (typeof window.observeDeferredImages === 'function') {
             window.observeDeferredImages(container[0]);
         }
@@ -357,6 +429,8 @@ $(document).ready(function() {
                 window.observeDeferredImages(card[0]);
             }
         });
+
+        applyMobileVisibility(container[0]);
 
         if (container.length) {
             document.dispatchEvent(new CustomEvent('girlCards:mutated', { detail: { scope: container[0] } }));
@@ -483,29 +557,4 @@ $(document).ready(function() {
                      paginationHTML += `<a href="#!" class="block-paginationGirls${activeClass}">${i}</a>`;
                  }
                  paginationHTML += `<a href="#!" class="block-paginationGirls">...</a>`;
-                 paginationHTML += `<a href="#!" class="block-paginationGirls">${totalPages}</a>`;
-             } else if (currentPageNum >= totalPages - 3) {
-                 paginationHTML += `<a href="#!" class="block-paginationGirls">1</a>`;
-                 paginationHTML += `<a href="#!" class="block-paginationGirls">...</a>`;
-                 for (let i = totalPages - 4; i <= totalPages; i++) {
-                     const activeClass = i === currentPageNum ? ' block-paginationGirls__active' : '';
-                     paginationHTML += `<a href="#!" class="block-paginationGirls${activeClass}">${i}</a>`;
-                 }
-             } else {
-                 paginationHTML += `<a href="#!" class="block-paginationGirls">1</a>`;
-                 paginationHTML += `<a href="#!" class="block-paginationGirls">...</a>`;
-                 for (let i = currentPageNum - 1; i <= currentPageNum + 1; i++) {
-                     const activeClass = i === currentPageNum ? ' block-paginationGirls__active' : '';
-                     paginationHTML += `<a href="#!" class="block-paginationGirls${activeClass}">${i}</a>`;
-                 }
-                 paginationHTML += `<a href="#!" class="block-paginationGirls">...</a>`;
-                 paginationHTML += `<a href="#!" class="block-paginationGirls">${totalPages}</a>`;
-             }
-         }
-         
-         $('.pagination__paginationGirls').html(paginationHTML);
-         
-         $('.arrowPagination-prev').css('opacity', currentPageNum === 1 ? '0.5' : '1');
-         $('.arrowPagination-next').css('opacity', currentPageNum === totalPages ? '0.5' : '1');
-     }
-});
+                 paginationHTML += `<a href="#!" class="block-paginationGirls">${totalPages}</a>`
