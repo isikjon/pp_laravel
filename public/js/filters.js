@@ -555,20 +555,72 @@ $(document).ready(function() {
      
      function updatePagination(currentPageNum, totalItems) {
          const perPage = 20;
-         const totalPages = Math.ceil(totalItems / perPage);
+         const totalPages = Math.max(1, Math.ceil(totalItems / perPage));
          
-         let paginationHTML = '';
-         
+         const paginationWrapper = $('.paginationGirls');
+         if (!paginationWrapper.length) {
+             return;
+         }
+
+         if (totalPages <= 1) {
+             paginationWrapper.hide();
+             return;
+         }
+
+         paginationWrapper.show();
+
+         const ellipsisHtml = '<span class="block-paginationGirls" data-ellipsis="true">...</span>';
+         const buildPageLink = function (page) {
+             const isActive = page === currentPageNum;
+             const activeClass = isActive ? ' block-paginationGirls__active' : '';
+             return `<a href="#!" class="block-paginationGirls${activeClass}" data-page="${page}">${page}</a>`;
+         };
+
+         const pageParts = [];
+
          if (totalPages <= 7) {
             for (let i = 1; i <= totalPages; i++) {
-                const activeClass = i === currentPageNum ? ' block-paginationGirls__active' : '';
-                paginationHTML += `<a href="#!" class="block-paginationGirls${activeClass}">${i}</a>`;
+                pageParts.push(buildPageLink(i));
+            }
+         } else if (currentPageNum <= 4) {
+            for (let i = 1; i <= 5; i++) {
+                pageParts.push(buildPageLink(i));
+            }
+            pageParts.push(ellipsisHtml);
+            pageParts.push(buildPageLink(totalPages));
+         } else if (currentPageNum >= totalPages - 3) {
+            pageParts.push(buildPageLink(1));
+            if (totalPages > 5) {
+                pageParts.push(ellipsisHtml);
+            }
+            for (let i = Math.max(2, totalPages - 4); i <= totalPages; i++) {
+                pageParts.push(buildPageLink(i));
             }
          } else {
-             if (currentPageNum <= 4) {
-                 for (let i = 1; i <= 5; i++) {
-                     const activeClass = i === currentPageNum ? ' block-paginationGirls__active' : '';
-                     paginationHTML += `<a href="#!" class="block-paginationGirls${activeClass}">${i}</a>`;
-                 }
-                 paginationHTML += `<a href="#!" class="block-paginationGirls">...</a>`;
-                 paginationHTML += `<a href="#!" class="block-paginationGirls">${totalPages}</a>`
+            pageParts.push(buildPageLink(1));
+            pageParts.push(ellipsisHtml);
+            for (let i = currentPageNum - 1; i <= currentPageNum + 1; i++) {
+                pageParts.push(buildPageLink(i));
+            }
+            pageParts.push(ellipsisHtml);
+            pageParts.push(buildPageLink(totalPages));
+         }
+
+         const prevIconElement = paginationWrapper.find('.arrowPagination-prev img').first();
+         const nextIconElement = paginationWrapper.find('.arrowPagination-next img').first();
+         const prevIconHtml = prevIconElement.length ? prevIconElement.prop('outerHTML') : '<img src="/img/arrowLeft.svg" alt="" width="36" height="36" decoding="async">';
+         const nextIconHtml = nextIconElement.length ? nextIconElement.prop('outerHTML') : '<img src="/img/arrowNext.svg" alt="" width="36" height="36" decoding="async">';
+
+         const prevHtml = currentPageNum <= 1
+             ? `<span class="arrowPagination arrowPagination-prev" aria-disabled="true" style="opacity: 0.5; cursor: not-allowed;">${prevIconHtml}</span>`
+             : `<a href="#!" class="arrowPagination arrowPagination-prev" aria-label="Предыдущая страница" data-page="${currentPageNum - 1}">${prevIconHtml}</a>`;
+
+         const nextHtml = currentPageNum >= totalPages
+             ? `<span class="arrowPagination arrowPagination-next" aria-disabled="true" style="opacity: 0.5; cursor: not-allowed;">${nextIconHtml}</span>`
+             : `<a href="#!" class="arrowPagination arrowPagination-next" aria-label="Следующая страница" data-page="${currentPageNum + 1}">${nextIconHtml}</a>`;
+
+         const content = prevHtml + '<div class="pagination__paginationGirls">' + pageParts.join('') + '</div>' + nextHtml;
+         paginationWrapper.html(content);
+     }
+
+});
