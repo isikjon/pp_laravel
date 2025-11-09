@@ -8,7 +8,7 @@
             {{-- Верхняя основная секция фильтров --}}
             <div class="flexTop-formFilterModal">
                 <div class="column-checkbox-formFilterModal">
-                    <h5>Секс</h5>
+                    <h3 class="filter-section-title">Секс</h3>
                     <label class="flex-column-checkbox-formFilterModal">
                         <input type="checkbox" name="service[]" value="Секс_Классический">
                         Классический
@@ -31,7 +31,7 @@
                     </label>
                 </div>
                 <div class="column-checkbox-formFilterModal">
-                    <h5>Место</h5>
+                    <h3 class="filter-section-title">Место</h3>
                     <label class="flex-column-checkbox-formFilterModal">
                         <input type="checkbox" name="place[]" value="Квартира">
                         Квартира
@@ -54,7 +54,7 @@
                     </label>
                 </div>
                 <div class="column-checkbox-formFilterModal">
-                    <h5>Окончание</h5>
+                    <h3 class="filter-section-title">Окончание</h3>
                     <label class="flex-column-checkbox-formFilterModal">
                         <input type="checkbox" name="finish[]" value="В рот">
                         В рот
@@ -69,7 +69,7 @@
                     </label>
                 </div>
                 <div class="column-checkbox-formFilterModal column-checkbox-formFilterModal__number">
-                    <h5>Параметры</h5>
+                    <h3 class="filter-section-title">Параметры</h3>
                     <div class="block-column-checkbox-formFilterModal__number">
                         <span>Возраст</span>
                         <div class="flex-block-column-checkbox-formFilterModal__number">
@@ -108,7 +108,7 @@
                     </div>
                 </div>
                 <div class="column-checkbox-formFilterModal column-checkbox-formFilterModal__number">
-                    <h5>Выезд</h5>
+                    <h3 class="filter-section-title">Выезд</h3>
                     <div class="block-column-checkbox-formFilterModal__number">
                         <span>1 час</span>
                         <div class="flex-block-column-checkbox-formFilterModal__number">
@@ -143,7 +143,7 @@
                 <div class="flexBottom-formFilterModal">
                     {{-- Массаж --}}
                     <div class="column-checkbox-formFilterModal">
-                        <h5>Массаж</h5>
+                        <h3 class="filter-section-title">Массаж</h3>
                         <label class="flex-column-checkbox-formFilterModal">
                             <input type="checkbox" name="service[]" value="Массаж_Классический">
                             Классический
@@ -180,7 +180,7 @@
 
                     {{-- Садо-мазо --}}
                     <div class="column-checkbox-formFilterModal">
-                        <h5>Садо-мазо</h5>
+                        <h3 class="filter-section-title">Садо-мазо</h3>
                         <label class="flex-column-checkbox-formFilterModal">
                             <input type="checkbox" name="service[]" value="Садо-мазо_Бандаж">
                             Бандаж
@@ -217,7 +217,7 @@
 
                     {{-- Лесби-шоу --}}
                     <div class="column-checkbox-formFilterModal">
-                        <h5>Лесби-шоу</h5>
+                        <h3 class="filter-section-title">Лесби-шоу</h3>
                         <label class="flex-column-checkbox-formFilterModal">
                             <input type="checkbox" name="service[]" value="Лесби-шоу_Откровенное">
                             Откровенное
@@ -230,7 +230,7 @@
 
                     {{-- Золотой дождь --}}
                     <div class="column-checkbox-formFilterModal">
-                        <h5>Золотой дождь</h5>
+                        <h3 class="filter-section-title">Золотой дождь</h3>
                         <label class="flex-column-checkbox-formFilterModal">
                             <input type="checkbox" name="service[]" value="Золотой дождь_Выдача">
                             Выдача
@@ -243,7 +243,7 @@
 
                     {{-- Дополнительно --}}
                     <div class="column-checkbox-formFilterModal">
-                        <h5>Дополнительно</h5>
+                        <h3 class="filter-section-title">Дополнительно</h3>
                         <label class="flex-column-checkbox-formFilterModal">
                             <input type="checkbox" name="service[]" value="Дополнительно_Экскорт">
                             Экскорт
@@ -268,7 +268,7 @@
 
                     {{-- Стриптиз --}}
                     <div class="column-checkbox-formFilterModal">
-                        <h5>Стриптиз</h5>
+                        <h3 class="filter-section-title">Стриптиз</h3>
                         <label class="flex-column-checkbox-formFilterModal">
                             <input type="checkbox" name="service[]" value="Стриптиз_Профи">
                             Профи
@@ -281,7 +281,7 @@
 
                     {{-- Экстрим --}}
                     <div class="column-checkbox-formFilterModal">
-                        <h5>Экстрим</h5>
+                        <h3 class="filter-section-title">Экстрим</h3>
                         <label class="flex-column-checkbox-formFilterModal">
                             <input type="checkbox" name="service[]" value="Экстрим_Страпон">
                             Страпон
@@ -294,7 +294,7 @@
 
                     {{-- Фистинг --}}
                     <div class="column-checkbox-formFilterModal">
-                        <h5>Фистинг</h5>
+                        <h3 class="filter-section-title">Фистинг</h3>
                         <label class="flex-column-checkbox-formFilterModal">
                             <input type="checkbox" name="service[]" value="Фистинг_Анальный">
                             Анальный
@@ -307,7 +307,7 @@
 
                     {{-- Копро --}}
                     <div class="column-checkbox-formFilterModal">
-                        <h5>Копро</h5>
+                        <h3 class="filter-section-title">Копро</h3>
                         <label class="flex-column-checkbox-formFilterModal">
                             <input type="checkbox" name="service[]" value="Копро_Выдача">
                             Выдача

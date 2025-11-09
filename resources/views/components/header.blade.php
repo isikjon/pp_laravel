@@ -1,4 +1,7 @@
 <header>
+    @php
+        $currentRoute = Route::currentRouteName();
+    @endphp
     <div class="container">
         <div class="flexTopHeader">
             <a href="{{ route('home') }}">
@@ -67,27 +70,27 @@
                                         </p>
                                     </div>
                                     <div class="flexBottomHeader">
-                                        <a href="{{ route('home') }}">
+                                        <a href="{{ route('home') }}" @if($currentRoute === 'home') aria-current="page" @endif>
                                         <img src="{{ cached_asset('img/flexBottomHeader-1.svg') }}" alt="" width="11" height="24" loading="lazy" decoding="async">
                                             Индивидуалки
                                         </a>
-                                        <a href="{{ route('salons.index') }}">
+                                        <a href="{{ route('salons.index') }}" @if($currentRoute === 'salons.index') aria-current="page" @endif>
                                             <img src="{{ cached_asset('img/flexBottomHeader-2.svg') }}" alt="" width="13" height="24" loading="lazy" decoding="async">
                                             Интим-салоны
                                         </a>
-                                        <a href="{{ route('stripclubs.index') }}">
+                                        <a href="{{ route('stripclubs.index') }}" @if($currentRoute === 'stripclubs.index') aria-current="page" @endif>
                                             <img src="{{ cached_asset('img/flexBottomHeader-3.svg') }}" alt="" width="9" height="24" loading="lazy" decoding="async">
                                             Стрип-клубы
                                         </a>
-                                        <a href="{{ route('masseuse') }}">
+                                        <a href="{{ route('masseuse') }}" @if($currentRoute === 'masseuse') aria-current="page" @endif>
                                             <img src="{{ cached_asset('img/flexBottomHeader-4.svg') }}" alt="" width="31" height="24" loading="lazy" decoding="async">
                                             Массажистки
                                         </a>
-                                        <a href="{{ route('intimmap.index') }}">
+                                        <a href="{{ route('intimmap.index') }}" @if($currentRoute === 'intimmap.index') aria-current="page" @endif>
                                             <img src="{{ cached_asset('img/flexBottomHeader-6.svg') }}" alt="" width="25" height="24" loading="lazy" decoding="async">
                                             Интим-карта
                                         </a>
-                                        <a href="{{ route('favorites') }}" class="favorites-counter-link">
+                                        <a href="{{ route('favorites') }}" class="favorites-counter-link" @if($currentRoute === 'favorites') aria-current="page" @endif>
                                             <img src="{{ cached_asset('img/flexBottomHeader-8.svg') }}" alt="" width="24" height="24" loading="lazy" decoding="async">
                                             <span class="favorites-counter">0</span>
                                         </a>
@@ -113,27 +116,27 @@
         </div>
         <div class="lineHeader"></div>
         <div class="flexBottomHeader">
-            <a href="{{ route('home') }}">
+            <a href="{{ route('home') }}" @if($currentRoute === 'home') aria-current="page" @endif>
                 <img src="{{ cached_asset('img/flexBottomHeader-1.svg') }}" alt="" width="11" height="24" loading="lazy" decoding="async">
                 Индивидуалки
             </a>
-            <a href="{{ route('salons.index') }}">
+            <a href="{{ route('salons.index') }}" @if($currentRoute === 'salons.index') aria-current="page" @endif>
                 <img src="{{ cached_asset('img/flexBottomHeader-2.svg') }}" alt="" width="13" height="24" loading="lazy" decoding="async">
                 Интим-салоны
             </a>
-            <a href="{{ route('stripclubs.index') }}">
+            <a href="{{ route('stripclubs.index') }}" @if($currentRoute === 'stripclubs.index') aria-current="page" @endif>
                 <img src="{{ cached_asset('img/flexBottomHeader-3.svg') }}" alt="" width="9" height="24" loading="lazy" decoding="async">
                 Стрип-клубы
             </a>
-            <a href="{{ route('masseuse') }}">
+            <a href="{{ route('masseuse') }}" @if($currentRoute === 'masseuse') aria-current="page" @endif>
                 <img src="{{ cached_asset('img/flexBottomHeader-4.svg') }}" alt="" width="31" height="24" loading="lazy" decoding="async">
                 Массажистки
             </a>
-            <a href="{{ route('intimmap.index') }}">
+            <a href="{{ route('intimmap.index') }}" @if($currentRoute === 'intimmap.index') aria-current="page" @endif>
                 <img src="{{ cached_asset('img/flexBottomHeader-6.svg') }}" alt="" width="25" height="24" loading="lazy" decoding="async">
                 Интим-карта
             </a>
-            <a href="{{ route('favorites') }}" class="favorites-counter-link">
+            <a href="{{ route('favorites') }}" class="favorites-counter-link" @if($currentRoute === 'favorites') aria-current="page" @endif>
                 <img src="{{ cached_asset('img/flexBottomHeader-8.svg') }}" alt="" width="24" height="24" loading="lazy" decoding="async">
                 <span class="favorites-counter">0</span>
             </a>
