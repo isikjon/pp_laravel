@@ -59,10 +59,11 @@
         .infoTownWhatsapp{display:flex;align-items:center;justify-content:space-between;gap:12px;font-size:14px;}
         .infoTownWhatsapp p{margin:0;}
         .metro-right-wrapper-girlCard{color:#03AFFF;font-size:14px;}
-        .blockPrecises-right-wrapper-girlCard{min-height:180px;display:flex;flex-direction:column;gap:10px;}
-        .blockPrecises-right-wrapper-girlCard__top,.blockPrecises-right-wrapper-girlCard__top-1{display:flex;align-items:stretch;width:100%;min-height:90px;}
-        .blockPrecises-right-wrapper-girlCard__topBlock{flex:1 1 0;min-height:80px;border-radius:8px;padding:8px;display:flex;flex-direction:column;justify-content:space-between;background:#FEEA7F center/cover no-repeat;position:relative;overflow:hidden;}
-        .blockPrecises-right-wrapper-girlCard__topBlock span{font-weight:600;}
+        .blockPrecises-right-wrapper-girlCard{min-height:184px;display:flex;flex-direction:column;gap:12px;}
+        .blockPrecises-right-wrapper-girlCard__top,.blockPrecises-right-wrapper-girlCard__top-1{display:flex;align-items:stretch;width:100%;min-height:88px;gap:10px;}
+        .blockPrecises-right-wrapper-girlCard__topBlock{flex:1 1 0;min-height:88px;border-radius:12px;padding:10px;display:flex;flex-direction:column;justify-content:space-between;background:linear-gradient(135deg,#fee97f 0%,#ffdf65 100%);position:relative;overflow:hidden;}
+        .blockPrecises-right-wrapper-girlCard__topBlock[data-theme="night"]{background:linear-gradient(135deg,#1d1a4a 0%,#312d73 100%);color:#FFFFFF;}
+        .blockPrecises-right-wrapper-girlCard__topBlock[data-theme="anal"]{background:linear-gradient(135deg,#7e1d32 0%,#b52b4c 100%);color:#FFFFFF;}
         .bottom-girlCard{display:flex;align-items:center;justify-content:space-between;gap:12px;font-size:12px;color:#6E6E6E;}
         .flex-bottom-girlCard{display:inline-flex;align-items:center;gap:8px;}
         .verified-status-text{color:#006400;font-weight:600;}
@@ -72,13 +73,48 @@
         @media (max-width:768px){.girlsSection{grid-template-columns:minmax(0,1fr);}.girlCard{min-height:420px;}.photoGirl{flex:0 0 auto;width:100%;}.girlCard.is-mobile-hidden,.girlCard.mobile-hidden-default{display:none!important;}}
         @media (max-width:600px){.center-flexTopHeader{flex-direction:column;align-items:flex-start;gap:8px;}.cityChoose,.headerMetro{width:100%;}}
     </style>
-    <link rel="preload" href="{{ cached_asset('css/style.css') }}" as="style" onload="this.onload=null;this.rel='stylesheet'">
-    <link rel="preload" href="{{ cached_asset('css/adaptive.css') }}" as="style" onload="this.onload=null;this.rel='stylesheet'">
-    <link rel="preload" href="{{ cached_asset('img/logo.svg') }}" as="image" fetchpriority="high" type="image/svg+xml">
+    <link rel="preload" href="{{ cached_asset('css/style.css') }}" as="style">
+    <link rel="preload" href="{{ cached_asset('css/adaptive.css') }}" as="style">
     <noscript>
         <link rel="stylesheet" href="{{ cached_asset('css/style.css') }}">
         <link rel="stylesheet" href="{{ cached_asset('css/adaptive.css') }}">
     </noscript>
+    <script>
+        (function(){
+            var cssFiles = @json([
+                cached_asset('css/style.css'),
+                cached_asset('css/adaptive.css')
+            ]);
+
+            if (!('requestAnimationFrame' in window)) {
+                cssFiles.forEach(function(href){
+                    var link=document.createElement('link');
+                    link.rel='stylesheet';
+                    link.href=href;
+                    document.head.appendChild(link);
+                });
+                return;
+            }
+
+            function loadCSS(href){
+                var link=document.createElement('link');
+                link.rel='stylesheet';
+                link.href=href;
+                link.media='print';
+                link.onload=function(){ link.media='all'; };
+                document.head.appendChild(link);
+            }
+
+            requestAnimationFrame(function(){
+                if ('requestIdleCallback' in window) {
+                    requestIdleCallback(function(){ cssFiles.forEach(loadCSS); });
+                } else {
+                    cssFiles.forEach(loadCSS);
+                }
+            });
+        })();
+    </script>
+    <link rel="preload" href="{{ cached_asset('img/logo.svg') }}" as="image" fetchpriority="high" type="image/svg+xml">
     <link rel="icon" href="{{ cached_asset('img/icon.png') }}" type="image/x-icon">
     <link rel="preconnect" href="https://msk-z.prostitutki-today.site" crossorigin>
     @stack('styles')

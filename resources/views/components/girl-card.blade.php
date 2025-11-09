@@ -7,15 +7,15 @@
 @endphp
 <div class="{{ $cardClasses }}" data-girl-id="{{ $id }}" data-mobile-initial-hidden="{{ $isMobileHidden ? 'true' : 'false' }}">
     <div class="wrapper-girlCard">
-        <a href="{{ $detailRoute ?? route('girl.show', ['id' => $id]) }}" class="photoGirl" style="display: block; position: relative;" aria-label="Открыть анкету {{ $name }}">
+        <a href="{{ $detailRoute ?? route('girl.show', ['id' => $id]) }}" class="photoGirl" aria-label="Открыть анкету {{ $name }}">
             @if($hasStatus ?? false)
-            <div class="status-photoGirl">
-                <img src="{{ cached_asset('img/status-photoGirl.png') }}" alt="Фото проверено" loading="lazy" decoding="async" width="56" height="56">
+            <div class="status-photoGirl" aria-hidden="true">
+                <span class="status-placeholder"></span>
             </div>
             @endif
             @if($hasVideo ?? false)
-            <div class="video-photoGirl">
-                <img src="{{ cached_asset('img/video-photoGirl.png') }}" alt="Есть видео" loading="lazy" decoding="async" width="56" height="56">
+            <div class="video-photoGirl" aria-hidden="true">
+                <span class="video-placeholder"></span>
             </div>
             @endif
             @php
@@ -71,7 +71,7 @@
             <p class="metro-right-wrapper-girlCard">{{ $metro }}</p>
             <div class="blockPrecises-right-wrapper-girlCard">
                 <div class="blockPrecises-right-wrapper-girlCard__top blockPrecises-right-wrapper-girlCard__top-1">
-                    <div class="blockPrecises-right-wrapper-girlCard__topBlock">
+                    <div class="blockPrecises-right-wrapper-girlCard__topBlock" data-theme="hour-1">
                         <div class="hourFlex-blockPrecises-right-wrapper-girlCard__top">
                             <p>1 час</p>
                             <svg xmlns="http://www.w3.org/2000/svg" width="11" height="11" viewBox="0 0 11 11" fill="none">
@@ -82,7 +82,7 @@
                         <span>{{ number_format($price1h, 0, '', ' ') }}</span>
                     </div>
                     <div class="line-blockPrecises-right-wrapper-girlCard__top"></div>
-                    <div class="blockPrecises-right-wrapper-girlCard__topBlock">
+                    <div class="blockPrecises-right-wrapper-girlCard__topBlock" data-theme="hour-2">
                         <div class="hourFlex-blockPrecises-right-wrapper-girlCard__top">
                             <p>2 часа</p>
                             <svg xmlns="http://www.w3.org/2000/svg" width="11" height="11" viewBox="0 0 11 11" fill="none">
@@ -94,14 +94,14 @@
                     </div>
                 </div>
                 <div class="blockPrecises-right-wrapper-girlCard__top">
-                    <div style="background: url({{ cached_asset('img/bgAnal.png') }}) center center no-repeat;" class="blockPrecises-right-wrapper-girlCard__topBlock blockPrecises-right-wrapper-girlCard__topBlock-2">
+                    <div class="blockPrecises-right-wrapper-girlCard__topBlock" data-theme="anal">
                         <div class="hourFlex-blockPrecises-right-wrapper-girlCard__top">
                             <p>Анал</p>
                         </div>
                         <span>{{ $priceAnal ? number_format($priceAnal, 0, '', ' ') : '-' }}</span>
                     </div>
                     <div class="line-blockPrecises-right-wrapper-girlCard__top"></div>
-                    <div style="background: url({{ cached_asset('img/bgNight.png') }}) center center no-repeat;" class="blockPrecises-right-wrapper-girlCard__topBlock blockPrecises-right-wrapper-girlCard__topBlock-2">
+                    <div class="blockPrecises-right-wrapper-girlCard__topBlock" data-theme="night">
                         <div class="hourFlex-blockPrecises-right-wrapper-girlCard__top">
                             <p>Ночь</p>
                         </div>
