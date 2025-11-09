@@ -23,9 +23,7 @@
 
 .bannerBottomTG{aspect-ratio:5280/612;max-height:260px;}
 .bannerBottomTG img{height:100%;object-fit:cover;}
-@media screen and (max-width:1200px){.center-flexTopHeader{flex-wrap:wrap;gap:12px;}.cityChoose,.headerMetro{min-width:calc(50% - 12px);width:calc(50% - 12px);}.rightHeaderTop .search-rightHeaderTop{flex:1 1 200px;}}
-@media screen and (max-width:930px){.flexTopHeader{gap:16px;}.center-flexTopHeader{width:100%;justify-content:space-between;}.cityChoose,.headerMetro{width:48%;}.rightHeaderTop{width:100%;justify-content:space-between;}.rightHeaderTop .search-rightHeaderTop{flex:1 1 100%;max-width:none;}}
-@media screen and (max-width:600px){.center-flexTopHeader{flex-direction:column;align-items:flex-start;gap:8px;}.cityChoose,.headerMetro{width:100%;}}
+@media screen and (max-width:930px){.bannerBottomTG{max-height:180px;}}
 
 /* girl card layout overrides */
 .girlCard{display:flex;flex-direction:column;width:100%;max-width:420px;height:auto;}
