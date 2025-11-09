@@ -4,33 +4,42 @@
     if ($isMobileHidden) {
         $cardClasses .= ' is-mobile-hidden mobile-hidden-default';
     }
+    $isHeroCard = !empty($fetch_high);
 @endphp
 <div class="{{ $cardClasses }}" data-girl-id="{{ $id }}" data-mobile-initial-hidden="{{ $isMobileHidden ? 'true' : 'false' }}">
     <div class="wrapper-girlCard">
         <a href="{{ $detailRoute ?? route('girl.show', ['id' => $id]) }}" class="photoGirl" aria-label="Открыть анкету {{ $name }}">
             @if($hasStatus ?? false)
             <div class="status-photoGirl" aria-hidden="true">
-                <span class="status-placeholder"></span>
+                <img src="{{ cached_asset('img/status-photoGirl.png') }}" alt="Фото проверено" width="56" height="56" loading="lazy" decoding="async">
             </div>
             @endif
             @if($hasVideo ?? false)
             <div class="video-photoGirl" aria-hidden="true">
-                <span class="video-placeholder"></span>
+                <img src="{{ cached_asset('img/video-photoGirl.png') }}" alt="Есть видео" width="56" height="56" loading="lazy" decoding="async">
             </div>
             @endif
             @php
                 $placeholderPixel = 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///ywAAAAAAQABAAACAUwAOw==';
             @endphp
-            <img src="{{ $placeholderPixel }}"
-                 data-src="{{ $photo }}"
+            <img
+                @if($isHeroCard)
+                    src="{{ $photo }}"
+                @else
+                    src="{{ $placeholderPixel }}"
+                    data-src="{{ $photo }}"
+                @endif
                  alt="Фото {{ $name }}"
                  class="photoGirl__img deferred-image"
-                 loading="{{ !empty($fetch_high) ? 'eager' : 'lazy' }}"
-                 fetchpriority="{{ !empty($fetch_high) ? 'high' : 'auto' }}"
+                 loading="{{ $isHeroCard ? 'eager' : 'lazy' }}"
+                 fetchpriority="{{ $isHeroCard ? 'high' : 'auto' }}"
                  decoding="async"
                  width="210"
                  height="315"
-                 @if(!empty($fetch_high)) data-immediate="true" @endif>
+                 @if($isHeroCard)
+                    data-immediate="true"
+                 @endif
+            >
         </a>
         <div class="right-wrapper-girlCard">
             <div class="name-girlCard">
