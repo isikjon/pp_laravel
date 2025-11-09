@@ -13,7 +13,7 @@
         $favoritesJsVersion = file_exists(public_path('js/favorites.js')) ? filemtime(public_path('js/favorites.js')) : time();
     @endphp
     <title>@yield('title', 'ProstitutkiMoscow')</title>
-    <style id="critical-css">
+    {{-- <style id="critical-css">
         :root{color-scheme:light;}
         *{box-sizing:border-box;}
         html,body{margin:0;height:100%;background:#FFFFFF;color:#292D33;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;}
@@ -82,8 +82,8 @@
         @media (max-width:930px){.flexTopHeader{flex-wrap:wrap;gap:16px;}.center-flexTopHeader{order:3;width:100%;justify-content:space-between;}.cityChoose,.headerMetro{width:48%;}.rightHeaderTop{order:2;width:100%;justify-content:space-between;}.rightHeaderTop .search-rightHeaderTop{flex:1 1 100%;}}
         @media (max-width:768px){.girlsSection{grid-template-columns:minmax(0,1fr);}.girlCard{min-height:420px;}.photoGirl{flex:0 0 auto;width:100%;}.girlCard.is-mobile-hidden,.girlCard.mobile-hidden-default{display:none!important;}}
         @media (max-width:600px){.center-flexTopHeader{flex-direction:column;align-items:flex-start;gap:8px;}.cityChoose,.headerMetro{width:100%;}}
-    </style>
-    <link rel="preload" href="{{ cached_asset('css/style.css') }}" as="style">
+    </style> --}}
+    {{-- <link rel="preload" href="{{ cached_asset('css/style.css') }}" as="style">
     <link rel="preload" href="{{ cached_asset('css/adaptive.css') }}" as="style">
     <noscript>
         <link rel="stylesheet" href="{{ cached_asset('css/style.css') }}">
@@ -123,7 +123,7 @@
                 }
             });
         })();
-    </script>
+    </script> --}}
     <link rel="preload" href="{{ cached_asset('img/logo.svg') }}" as="image" fetchpriority="high" type="image/svg+xml">
     <link rel="icon" href="{{ cached_asset('img/icon.png') }}" type="image/x-icon">
     <link rel="preconnect" href="https://msk-z.prostitutki-today.site" crossorigin>
