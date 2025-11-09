@@ -113,18 +113,18 @@ $(document).ready(function() {
         return `
             <div class="girlCard" data-girl-id="${girl.id}">
                 <div class="wrapper-girlCard">
-                    <a href="/girl/${girl.id}" class="photoGirl" style="display: block; position: relative;">
-                        ${girl.hasStatus ? '<div class="status-photoGirl"><img src="/img/status-photoGirl.png" alt=""></div>' : ''}
-                        ${girl.hasVideo ? '<div class="video-photoGirl"><img src="/img/video-photoGirl.png" alt=""></div>' : ''}
-                        <img src="${girl.photo || '/img/photoGirl-1.png'}" alt="" class="photoGirl__img">
+                    <a href="/girl/${girl.id}" class="photoGirl" style="display: block; position: relative;" aria-label="Открыть анкету ${girl.name || 'без имени'}">
+                        ${girl.hasStatus ? '<div class="status-photoGirl"><img src="/img/status-photoGirl.png" alt="Фото проверено"></div>' : ''}
+                        ${girl.hasVideo ? '<div class="video-photoGirl"><img src="/img/video-photoGirl.png" alt="Есть видео"></div>' : ''}
+                        <img src="${girl.photo || '/img/noimage.png'}" alt="Фото ${girl.name || 'без имени'}" class="photoGirl__img">
                     </a>
                     <div class="right-wrapper-girlCard">
                         <div class="name-girlCard">
-                            <a href="/girl/${girl.id}" style="color: inherit; text-decoration: none;">
+                            <a href="/girl/${girl.id}" style="color: inherit; text-decoration: none;" aria-label="Перейти в анкету ${girl.name || 'без имени'}">
                                 <p>${girl.name || 'Без имени'}</p>
                             </a>
-                            <a href="#!" class="is-favorite" data-girl-id="${girl.id}">
-                                <img src="/img/flexBottomHeader-8-2.svg" alt="">
+                            <a href="#" class="favorite-toggle is-favorite" data-girl-id="${girl.id}" aria-label="Удалить из избранного ${girl.name || 'без имени'}">
+                                <img src="/img/flexBottomHeader-8-2.svg" alt="В избранном">
                             </a>
                         </div>
                         <p class="ageGirlCard">${girl.age || '18'} года</p>
@@ -147,8 +147,8 @@ $(document).ready(function() {
                         <a href="tel:${girl.phone || ''}" class="tel-right-wrapper-girlCard">${girl.phone || 'Не указан'}</a>
                         <div class="infoTownWhatsapp">
                             <p>${girl.city || 'Москва'},</p>
-                            <a href="#!">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" viewBox="0 0 25 25" fill="none">
+                            <a href="#" aria-label="Написать в WhatsApp ${girl.name || 'без имени'}">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" viewBox="0 0 25 25" fill="none" role="img" aria-label="WhatsApp">
                                     <rect width="25" height="25" rx="12.5" fill="#48C95F"/>
                                     <path d="M17.4543 7.53906C16.2195 6.30859 14.5732 5.625 12.8354 5.625C9.22256 5.625 6.29573 8.54167 6.29573 12.1419C6.29573 13.2812 6.61585 14.4206 7.16463 15.3776L6.25 18.75L9.72561 17.8385C10.686 18.3398 11.7378 18.6133 12.8354 18.6133C16.4482 18.6133 19.375 15.6966 19.375 12.0964C19.3293 10.4102 18.689 8.76953 17.4543 7.53906ZM15.9909 14.4661C15.8537 14.8307 15.2134 15.1953 14.8933 15.2409C14.6189 15.2865 14.253 15.2865 13.8872 15.1953C13.6585 15.1042 13.3384 15.013 12.9726 14.8307C11.3262 14.1471 10.2744 12.5065 10.1829 12.3698C10.0915 12.2786 9.49695 11.5039 9.49695 10.6836C9.49695 9.86328 9.90854 9.4987 10.0457 9.31641C10.1829 9.13411 10.3659 9.13411 10.503 9.13411C10.5945 9.13411 10.7317 9.13411 10.8232 9.13411C10.9146 9.13411 11.0518 9.08854 11.189 9.40755C11.3262 9.72656 11.6463 10.5469 11.6921 10.5924C11.7378 10.6836 11.7378 10.7747 11.6921 10.8659C11.6463 10.957 11.6006 11.0482 11.5091 11.1393C11.4177 11.2305 11.3262 11.3672 11.2805 11.4128C11.189 11.5039 11.0976 11.5951 11.189 11.7318C11.2805 11.9141 11.6006 12.4154 12.1037 12.8711C12.7439 13.418 13.247 13.6003 13.4299 13.6914C13.6128 13.7826 13.7043 13.737 13.7957 13.6458C13.8872 13.5547 14.2073 13.1901 14.2988 13.0078C14.3902 12.8255 14.5274 12.8711 14.6646 12.9167C14.8018 12.9622 15.625 13.3724 15.7622 13.4635C15.9451 13.5547 16.0366 13.6003 16.0823 13.6458C16.128 13.7826 16.128 14.1016 15.9909 14.4661Z" fill="white"/>
                                 </svg>
@@ -199,12 +199,12 @@ $(document).ready(function() {
                 </div>
                 <div class="bottom-girlCard">
                     <div class="flex-bottom-girlCard">
-                        <img src="/img/flex-bottom-girlCard-1.svg" alt="">
+                        <img src="/img/flex-bottom-girlCard-1.svg" alt="" aria-hidden="true">
                         <p style="color: #00A81E">${girl.verified || 'Фото проверены'}</p>
                     </div>
                     <div class="right-bottom-girlCard">
-                        ${girl.outcall ? '<div class="flex-bottom-girlCard"><img src="/img/flex-bottom-girlCard-2.svg" alt=""><p>Выезд</p></div>' : ''}
-                        ${girl.apartment ? '<div class="flex-bottom-girlCard"><img src="/img/flex-bottom-girlCard-3.svg" alt=""><p>Апартаменты</p></div>' : ''}
+                        ${girl.outcall ? '<div class="flex-bottom-girlCard"><img src="/img/flex-bottom-girlCard-2.svg" alt="" aria-hidden="true"><p>Выезд</p></div>' : ''}
+                        ${girl.apartment ? '<div class="flex-bottom-girlCard"><img src="/img/flex-bottom-girlCard-3.svg" alt="" aria-hidden="true"><p>Апартаменты</p></div>' : ''}
                     </div>
                 </div>
             </div>

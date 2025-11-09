@@ -79,13 +79,18 @@ $(document).ready(function() {
         const cards = $(`.girlCard[data-girl-id="${girlId}"]`);
         
         cards.each(function() {
-            const icon = $(this).find('.name-girlCard a[href="#!"] img');
+            const cardEl = $(this);
+            const girlName = cardEl.find('.name-girlCard p').first().text().trim();
+            const iconLink = cardEl.find('.name-girlCard .favorite-toggle');
+            const icon = iconLink.find('img');
             if (isFavorite) {
                 icon.attr('src', '/img/flexBottomHeader-8-2.svg');
-                icon.closest('a').addClass('is-favorite');
+                icon.attr('alt', 'В избранном');
+                iconLink.addClass('is-favorite').attr('aria-label', `Удалить из избранного ${girlName}`);
             } else {
                 icon.attr('src', '/img/flexBottomHeader-8.svg');
-                icon.closest('a').removeClass('is-favorite');
+                icon.attr('alt', 'Добавить в избранное');
+                iconLink.removeClass('is-favorite').attr('aria-label', `Добавить в избранное ${girlName}`);
             }
         });
     }
@@ -99,7 +104,7 @@ $(document).ready(function() {
         });
     }
     
-    $(document).on('click', '.name-girlCard a[href="#!"]', function(e) {
+    $(document).on('click', '.name-girlCard .favorite-toggle', function(e) {
         e.preventDefault();
         
         console.log('=== КЛИК ПО СЕРДЕЧКУ ===');

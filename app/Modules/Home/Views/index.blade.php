@@ -33,12 +33,12 @@
             @if($girls->hasPages())
             <div class="paginationGirls">
                 @if($girls->onFirstPage())
-                    <span class="arrowPagination arrowPagination-prev" style="opacity: 0.5; cursor: not-allowed;">
+                    <span class="arrowPagination arrowPagination-prev" style="opacity: 0.5; cursor: not-allowed;" aria-hidden="true">
                         <img src="{{ cached_asset('img/arrowLeft.svg') }}" alt="" width="36" height="36" decoding="async">
                     </span>
                 @else
-                    <a href="{{ $girls->previousPageUrl() }}" class="arrowPagination arrowPagination-prev">
-                        <img src="{{ cached_asset('img/arrowLeft.svg') }}" alt="" width="36" height="36" decoding="async">
+                    <a href="{{ $girls->previousPageUrl() }}" class="arrowPagination arrowPagination-prev" aria-label="Предыдущая страница">
+                        <img src="{{ cached_asset('img/arrowLeft.svg') }}" alt="" width="36" height="36" decoding="async" aria-hidden="true">
                     </a>
                 @endif
                 
@@ -79,19 +79,19 @@
                 </div>
                 
                 @if($girls->hasMorePages())
-                    <a href="{{ $girls->nextPageUrl() }}" class="arrowPagination arrowPagination-next">
-                        <img src="{{ cached_asset('img/arrowNext.svg') }}" alt="" width="36" height="36" decoding="async">
+                    <a href="{{ $girls->nextPageUrl() }}" class="arrowPagination arrowPagination-next" aria-label="Следующая страница">
+                        <img src="{{ cached_asset('img/arrowNext.svg') }}" alt="" width="36" height="36" decoding="async" aria-hidden="true">
                     </a>
                 @else
-                    <span class="arrowPagination arrowPagination-next" style="opacity: 0.5; cursor: not-allowed;">
+                    <span class="arrowPagination arrowPagination-next" style="opacity: 0.5; cursor: not-allowed;" aria-hidden="true">
                         <img src="{{ cached_asset('img/arrowNext.svg') }}" alt="" width="36" height="36" decoding="async">
                     </span>
                 @endif
             </div>
             @endif
             
-            <a href="#!" target="_blank" class="bannerBottomTG">
-                <img src="{{ asset('img/bannerTG.png') }}" alt="" loading="lazy" decoding="async">
+            <a href="#" target="_blank" class="bannerBottomTG" aria-label="Открыть рекламный баннер Telegram">
+                <img src="{{ asset('img/bannerTG.png') }}" alt="Рекламный баннер Telegram" loading="lazy" decoding="async">
             </a>
             
             <div class="textBottomPage">

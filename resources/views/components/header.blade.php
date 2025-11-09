@@ -26,7 +26,7 @@
             <div class="rightHeaderTop">
                 <form class="search-rightHeaderTop" action="" method="get">
                     <input type="text" name="query" placeholder="Поиск...">
-                    <button type="submit">
+                    <button type="submit" aria-label="Поиск">
                         <svg xmlns="http://www.w3.org/2000/svg" width="20" height="21" viewBox="0 0 20 21" fill="none">
                             <path d="M9.16666 17.1463C13.3088 17.1463 16.6667 13.7885 16.6667 9.64635C16.6667 5.50421 13.3088 2.14635 9.16666 2.14635C5.02452 2.14635 1.66666 5.50421 1.66666 9.64635C1.66666 13.7885 5.02452 17.1463 9.16666 17.1463Z" stroke="#7E1D32" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
                             <path d="M15.7749 17.7212C16.2166 19.0545 17.2249 19.1879 17.9999 18.0212C18.7083 16.9545 18.2416 16.0795 16.9583 16.0795C16.0083 16.0712 15.4749 16.8129 15.7749 17.7212Z" stroke="#7E1D32" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
@@ -37,12 +37,12 @@
                     Обратная связь
                 </a>
                 <div class="hamburger-menu">
-                    <input id="menu__toggle" type="checkbox">
+                    <input id="menu__toggle" type="checkbox" aria-label="Открыть главное меню" aria-controls="mainMobileMenu">
                     <label class="menu__btn" for="menu__toggle">
                         <img src="{{ cached_asset('img/burger.svg') }}" alt="" class="burgerSvg" loading="lazy" decoding="async">
                         <img class="closeBurger" src="{{ cached_asset('img/closeBurger.svg') }}" alt="" loading="lazy" decoding="async">
                     </label>
-                    <ul class="menu__box">
+                    <ul class="menu__box" id="mainMobileMenu">
                         <li class="content-burger">
                             <ul class="listBurgerUl">
                                 <li>
@@ -94,7 +94,7 @@
                                     </div>
                                     <form class="search-rightHeaderTop" action="" method="get">
                                         <input type="text" name="query" placeholder="Поиск...">
-                                        <button type="submit">
+                                        <button type="submit" aria-label="Поиск">
                                             <svg xmlns="http://www.w3.org/2000/svg" width="20" height="21" viewBox="0 0 20 21" fill="none">
                                                 <path d="M9.16666 17.1463C13.3088 17.1463 16.6667 13.7885 16.6667 9.64635C16.6667 5.50421 13.3088 2.14635 9.16666 2.14635C5.02452 2.14635 1.66666 5.50421 1.66666 9.64635C1.66666 13.7885 5.02452 17.1463 9.16666 17.1463Z" stroke="#7E1D32" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
                                                 <path d="M15.7749 17.7212C16.2166 19.0545 17.2249 19.1879 17.9999 18.0212C18.7083 16.9545 18.2416 16.0795 16.9583 16.0795C16.0083 16.0712 15.4749 16.8129 15.7749 17.7212Z" stroke="#7E1D32" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
