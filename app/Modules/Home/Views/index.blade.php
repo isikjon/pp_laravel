@@ -184,45 +184,9 @@
     @endphp
     <script>
         const filtersScriptSrc = @json($filtersJsSrc);
-        const jquerySrc = 'https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js';
         let filtersScriptLoaded = false;
         let filtersScriptLoading = false;
         const filtersScriptCallbacks = [];
-        let jqueryLoading = false;
-        const jqueryCallbacks = [];
-
-        function ensureJquery(callback) {
-            if (window.jQuery) {
-                callback();
-                return;
-            }
-
-            jqueryCallbacks.push(callback);
-            if (jqueryLoading) {
-                return;
-            }
-
-            jqueryLoading = true;
-            const script = document.createElement('script');
-            script.src = jquerySrc;
-            script.async = true;
-            script.onload = function () {
-                jqueryLoading = false;
-                while (jqueryCallbacks.length) {
-                    const fn = jqueryCallbacks.shift();
-                    try { fn(); } catch (error) { console.error(error); }
-                }
-            };
-            script.onerror = function () {
-                jqueryLoading = false;
-                console.warn('Failed to load jQuery.');
-                while (jqueryCallbacks.length) {
-                    const fn = jqueryCallbacks.shift();
-                    try { fn(); } catch (error) { console.error(error); }
-                }
-            };
-            document.head.appendChild(script);
-        }
 
         function loadFiltersScript(callback) {
             if (filtersScriptLoaded) {
@@ -242,24 +206,22 @@
 
             filtersScriptLoading = true;
 
-            ensureJquery(function () {
-                const script = document.createElement('script');
-                script.src = filtersScriptSrc;
-                script.defer = true;
-                script.addEventListener('load', function () {
-                    filtersScriptLoaded = true;
-                    filtersScriptLoading = false;
-                    while (filtersScriptCallbacks.length) {
-                        const fn = filtersScriptCallbacks.shift();
-                        try { fn(); } catch (error) { console.error(error); }
-                    }
-                }, { once: true });
-                script.addEventListener('error', function () {
-                    filtersScriptLoading = false;
-                    console.warn('Failed to load filters.js');
-                }, { once: true });
-                document.head.appendChild(script);
-            });
+            const script = document.createElement('script');
+            script.src = filtersScriptSrc;
+            script.defer = true;
+            script.addEventListener('load', function () {
+                filtersScriptLoaded = true;
+                filtersScriptLoading = false;
+                while (filtersScriptCallbacks.length) {
+                    const fn = filtersScriptCallbacks.shift();
+                    try { fn(); } catch (error) { console.error(error); }
+                }
+            }, { once: true });
+            script.addEventListener('error', function () {
+                filtersScriptLoading = false;
+                console.warn('Failed to load filters.js');
+            }, { once: true });
+            document.head.appendChild(script);
         }
 
         if ('requestIdleCallback' in window) {
