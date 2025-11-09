@@ -61,13 +61,24 @@
                             height: Math.round(rect.height)
                         };
                         var prev = sizeCache.get(el);
-                        if (!prev || prev.width !== current.width || prev.height !== current.height) {
+                        if (!prev) {
+                            console.debug('[girlCard:init]', {
+                                id: el.dataset ? el.dataset.girlId || null : null,
+                                width: current.width,
+                                height: current.height,
+                                timestamp: performance.now ? performance.now().toFixed(1) : null
+                            });
+                            sizeCache.set(el, current);
+                            return;
+                        }
+
+                        if (prev.width !== current.width || prev.height !== current.height) {
                             console.debug('[girlCard:resize]', {
                                 id: el.dataset ? el.dataset.girlId || null : null,
                                 width: current.width,
                                 height: current.height,
-                                deltaWidth: prev ? current.width - prev.width : null,
-                                deltaHeight: prev ? current.height - prev.height : null,
+                                deltaWidth: current.width - prev.width,
+                                deltaHeight: current.height - prev.height,
                                 timestamp: performance.now ? performance.now().toFixed(1) : null
                             });
                             sizeCache.set(el, current);
@@ -79,18 +90,10 @@
                     var context = scope && scope.querySelectorAll ? scope : document;
                     var cards = context.querySelectorAll('.girlCard:not(.girlCard--skeleton)');
                     cards.forEach(function (card) {
-                        if (!sizeCache.has(card)) {
-                            sizeCache.set(card, {
-                                width: card.offsetWidth,
-                                height: card.offsetHeight
-                            });
-                            console.debug('[girlCard:init]', {
-                                id: card.dataset ? card.dataset.girlId || null : null,
-                                width: card.offsetWidth,
-                                height: card.offsetHeight,
-                                timestamp: performance.now ? performance.now().toFixed(1) : null
-                            });
+                        if (sizeCache.has(card)) {
+                            return;
                         }
+                        sizeCache.set(card, null);
                         resizeObserver.observe(card);
                     });
                 };
