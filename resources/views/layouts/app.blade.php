@@ -61,14 +61,15 @@
         .metro-right-wrapper-girlCard{color:#03AFFF;font-size:14px;}
         .blockPrecises-right-wrapper-girlCard{min-height:180px;display:flex;flex-direction:column;gap:10px;}
         .blockPrecises-right-wrapper-girlCard__top,.blockPrecises-right-wrapper-girlCard__top-1{display:flex;align-items:stretch;width:100%;min-height:90px;}
-        .blockPrecises-right-wrapper-girlCard__topBlock{flex:1 1 0;min-height:80px;border-radius:8px;padding:8px;display:flex;flex-direction:column;justify-content:space-between;background:#FEEA7F center/cover no-repeat;}
+        .blockPrecises-right-wrapper-girlCard__topBlock{flex:1 1 0;min-height:80px;border-radius:8px;padding:8px;display:flex;flex-direction:column;justify-content:space-between;background:#FEEA7F center/cover no-repeat;position:relative;overflow:hidden;}
+        .blockPrecises-right-wrapper-girlCard__topBlock span{font-weight:600;}
         .bottom-girlCard{display:flex;align-items:center;justify-content:space-between;gap:12px;font-size:12px;color:#6E6E6E;}
         .flex-bottom-girlCard{display:inline-flex;align-items:center;gap:8px;}
         .verified-status-text{color:#006400;font-weight:600;}
         .more-info{display:flex;align-items:center;justify-content:center;min-height:48px;padding:12px 24px;border-radius:12px;background:#7E1D32;color:#FFFFFF;margin:35px auto 0;width:max-content;}
         @media (max-width:1200px){.center-flexTopHeader{flex-wrap:wrap;gap:12px;}.cityChoose,.headerMetro{min-width:calc(50% - 12px);width:calc(50% - 12px);}.rightHeaderTop .search-rightHeaderTop{max-width:none;}}
         @media (max-width:930px){.flexTopHeader{flex-wrap:wrap;gap:16px;}.center-flexTopHeader{order:3;width:100%;justify-content:space-between;}.cityChoose,.headerMetro{width:48%;}.rightHeaderTop{order:2;width:100%;justify-content:space-between;}.rightHeaderTop .search-rightHeaderTop{flex:1 1 100%;}}
-        @media (max-width:768px){.girlsSection{grid-template-columns:minmax(0,1fr);}.girlCard{min-height:420px;}.photoGirl{flex:0 0 auto;width:100%;}.girlCard.is-mobile-hidden{display:none!important;}}
+        @media (max-width:768px){.girlsSection{grid-template-columns:minmax(0,1fr);}.girlCard{min-height:420px;}.photoGirl{flex:0 0 auto;width:100%;}.girlCard.is-mobile-hidden,.girlCard.mobile-hidden-default{display:none!important;}}
         @media (max-width:600px){.center-flexTopHeader{flex-direction:column;align-items:flex-start;gap:8px;}.cityChoose,.headerMetro{width:100%;}}
     </style>
     <link rel="preload" href="{{ cached_asset('css/style.css') }}" as="style" onload="this.onload=null;this.rel='stylesheet'">

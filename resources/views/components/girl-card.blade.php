@@ -1,4 +1,11 @@
-<div class="girlCard" data-girl-id="{{ $id }}">
+@php
+    $cardClasses = 'girlCard';
+    $isMobileHidden = !empty($mobile_hidden);
+    if ($isMobileHidden) {
+        $cardClasses .= ' is-mobile-hidden mobile-hidden-default';
+    }
+@endphp
+<div class="{{ $cardClasses }}" data-girl-id="{{ $id }}" data-mobile-initial-hidden="{{ $isMobileHidden ? 'true' : 'false' }}">
     <div class="wrapper-girlCard">
         <a href="{{ $detailRoute ?? route('girl.show', ['id' => $id]) }}" class="photoGirl" style="display: block; position: relative;" aria-label="Открыть анкету {{ $name }}">
             @if($hasStatus ?? false)

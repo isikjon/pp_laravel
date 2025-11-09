@@ -11,7 +11,7 @@
 
 /* girl card layout overrides */
 .girlCard{display:flex;flex-direction:column;width:100%;max-width:420px;height:auto;}
-@media screen and (max-width:768px){.girlCard{max-width:100%;}.photoGirl{max-width:100%;}}
+@media screen and (max-width:768px){.girlCard{max-width:100%;}.photoGirl{max-width:100%;}.girlCard.is-mobile-hidden,.girlCard.mobile-hidden-default{display:none!important;}}
 .photoGirl{flex:0 0 auto;width:100%;max-width:210px;aspect-ratio:2/3;height:auto;}
 .photoGirl__img{width:100%;height:100%;object-fit:cover;}
 .wrapper-girlCard{align-items:stretch;}
@@ -50,6 +50,5 @@
 .rightHeaderTop{flex:1 1 auto;display:flex;align-items:center;justify-content:flex-end;gap:20px;min-width:260px;}
 .rightHeaderTop .search-rightHeaderTop{flex:0 0 240px;}
 .blockPrecises-right-wrapper-girlCard{min-height:180px;display:flex;flex-direction:column;gap:10px;}
-.blockPrecises-right-wrapper-girlCard__top,.blockPrecises-right-wrapper-girlCard__top-1{min-height:90px;}
-.blockPrecises-right-wrapper-girlCard__topBlock{min-height:80px;display:flex;flex-direction:column;justify-content:space-between;}
-@media screen and (max-width:768px){.girlCard.is-mobile-hidden{display:none!important;}}
+.blockPrecises-right-wrapper-girlCard__top,.blockPrecises-right-wrapper-girlCard__top-1{min-height:90px;display:flex;align-items:stretch;}
+.blockPrecises-right-wrapper-girlCard__topBlock{min-height:80px;display:flex;flex-direction:column;justify-content:space-between;position:relative;overflow:hidden;}

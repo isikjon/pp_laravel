@@ -31,20 +31,26 @@ $(document).ready(function() {
         if (!mobileMediaQuery || !mobileMediaQuery.matches) {
             mobileVisibleCount = Infinity;
             cards.forEach(function(card) {
-                card.classList.remove('is-mobile-hidden');
+                card.classList.remove('is-mobile-hidden', 'mobile-hidden-default');
             });
             return;
         }
 
-        if (!Number.isFinite(mobileVisibleCount) || mobileVisibleCount < 1) {
+        const currentlyVisible = Array.from(cards).filter(function(card) {
+            return !card.classList.contains('is-mobile-hidden') && !card.classList.contains('mobile-hidden-default');
+        }).length;
+
+        if (currentlyVisible === 0 && (!Number.isFinite(mobileVisibleCount) || mobileVisibleCount < 1)) {
             mobileVisibleCount = MOBILE_INITIAL_VISIBLE;
+        } else if (currentlyVisible > mobileVisibleCount) {
+            mobileVisibleCount = currentlyVisible;
         }
 
         cards.forEach(function(card, index) {
             if (index < mobileVisibleCount) {
-                card.classList.remove('is-mobile-hidden');
+                card.classList.remove('is-mobile-hidden', 'mobile-hidden-default');
             } else {
-                card.classList.add('is-mobile-hidden');
+                card.classList.add('is-mobile-hidden', 'mobile-hidden-default');
             }
         });
     }
@@ -64,19 +70,21 @@ $(document).ready(function() {
 
     function revealMoreMobileCards() {
         if (!mobileMediaQuery || !mobileMediaQuery.matches) {
-            return false;
+            return 0;
         }
         const containerElement = document.querySelector('.girlsSection');
         if (!containerElement) {
-            return false;
+            return 0;
         }
         const cards = containerElement.querySelectorAll('.girlCard');
         if (mobileVisibleCount >= cards.length) {
-            return false;
+            return 0;
         }
+        const previousVisible = mobileVisibleCount;
         mobileVisibleCount = Math.min(cards.length, mobileVisibleCount + MOBILE_VISIBLE_STEP);
         applyMobileVisibility(containerElement);
-        return true;
+
+        return mobileVisibleCount - previousVisible;
     }
 
     function createSkeletonCard() {
@@ -200,8 +208,12 @@ $(document).ready(function() {
     $('.more-info').on('click', function(e) {
         e.preventDefault();
         
-        if (revealMoreMobileCards()) {
-            return;
+        const revealedCount = revealMoreMobileCards();
+        if (revealedCount > 0) {
+            const stillHidden = document.querySelectorAll('.girlsSection .girlCard.is-mobile-hidden, .girlsSection .girlCard.mobile-hidden-default').length;
+            if (stillHidden > 0) {
+                return;
+            }
         }
         
         if (hasLocalPreloaded && preloadedGirls.length) {
@@ -396,10 +408,14 @@ $(document).ready(function() {
             container.html('<div class="no-results"><p>По вашему запросу ничего не найдено. Попробуйте изменить фильтры.</p></div>');
         } else {
             let html = '';
-            girls.forEach(function(girl) {
+            girls.forEach(function(girl, index) {
                 html += createGirlCard(girl);
             });
             container.html(html);
+            const firstCard = container.find('.girlCard').first();
+            if (firstCard.length) {
+                firstCard.removeClass('is-mobile-hidden mobile-hidden-default').attr('data-mobile-initial-hidden', 'false');
+            }
         }
 
         if (mobileMediaQuery && mobileMediaQuery.matches) {
@@ -421,9 +437,7 @@ $(document).ready(function() {
         
         girls.forEach(function(girl) {
             const card = $(createGirlCard(girl));
-            card.hide();
             container.append(card);
-            card.fadeIn(400);
 
             if (typeof window.observeDeferredImages === 'function') {
                 window.observeDeferredImages(card[0]);
@@ -439,7 +453,7 @@ $(document).ready(function() {
     
     function createGirlCard(girl) {
         return `
-            <div class="girlCard" data-girl-id="${girl.id}">
+            <div class="girlCard is-mobile-hidden mobile-hidden-default" data-girl-id="${girl.id}" data-mobile-initial-hidden="true">
                 <div class="wrapper-girlCard">
                     <a href="/girl/${girl.id}" class="photoGirl" style="display: block; position: relative;" aria-label="Открыть анкету ${girl.name}">
                         ${girl.hasStatus ? '<div class="status-photoGirl"><img src="/img/status-photoGirl.png" alt="Фото проверено" loading="lazy" decoding="async" width="20" height="20"></div>' : ''}
