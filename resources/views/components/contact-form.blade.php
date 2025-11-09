@@ -354,6 +354,13 @@ document.addEventListener('DOMContentLoaded', function() {
             document.body.style.overflow = 'hidden';
         }
     };
+
+    document.querySelectorAll('[data-open-contact]').forEach(function(trigger) {
+        trigger.addEventListener('click', function(event) {
+            event.preventDefault();
+            window.openContactModal();
+        });
+    });
     
     function closeContactModal() {
         if (contactFormModal) {

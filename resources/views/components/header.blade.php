@@ -33,7 +33,7 @@
                         </svg>
                     </button>
                 </form>
-                <a href="javascript:void(0)" onclick="openContactModal()" class="modalRegistration">
+                <a href="#contactFormModal" class="modalRegistration" data-open-contact>
                     Обратная связь
                 </a>
                 <div class="hamburger-menu">
@@ -101,7 +101,7 @@
                                             </svg>
                                         </button>
                                     </form>
-                                    <a href="javascript:void(0)" onclick="openContactModal()" class="modalRegistration">
+                                    <a href="#contactFormModal" class="modalRegistration" data-open-contact>
                                         Обратная связь
                                     </a>
                                 </li>

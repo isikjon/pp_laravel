@@ -27,7 +27,7 @@
                     © ProstitutkiMoscow, {{ date('Y') }}
                 </p>
                 <div class="right-btoom-flexContainerFooter">
-                    <a href="javascript:void(0)" onclick="openContactModal()">
+                    <a href="#contactFormModal" data-open-contact>
                         Контакты
                     </a>
                     <a href="{{ route('home') }}">
