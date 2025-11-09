@@ -16,6 +16,59 @@ $(document).ready(function() {
         : null;
     let mobileVisibleCount = mobileMediaQuery && mobileMediaQuery.matches ? MOBILE_INITIAL_VISIBLE : Infinity;
 
+    let deferredImageObserver = null;
+
+    function loadDeferredImage(img) {
+        if (!img || img.dataset.deferredLoaded === 'true') {
+            return;
+        }
+        const source = img.getAttribute('data-src');
+        if (!source) {
+            return;
+        }
+        img.src = source;
+        img.dataset.deferredLoaded = 'true';
+        img.removeAttribute('data-src');
+    }
+
+    function ensureDeferredImages(scope) {
+        const context = scope && scope.querySelectorAll ? scope : document;
+        const images = context.querySelectorAll('.deferred-image');
+        if (!images.length) {
+            return;
+        }
+        if ('IntersectionObserver' in window) {
+            if (!deferredImageObserver) {
+                deferredImageObserver = new IntersectionObserver(function(entries) {
+                    entries.forEach(function(entry) {
+                        if (!entry.isIntersecting) {
+                            return;
+                        }
+                        const target = entry.target;
+                        deferredImageObserver.unobserve(target);
+                        delete target.dataset.deferredObserving;
+                        loadDeferredImage(target);
+                    });
+                }, { rootMargin: '200px 0px', threshold: 0.01 });
+            }
+            images.forEach(function(img) {
+                if (img.dataset.deferredLoaded === 'true' || img.dataset.deferredObserving === 'true') {
+                    return;
+                }
+                img.dataset.deferredObserving = 'true';
+                deferredImageObserver.observe(img);
+            });
+        } else {
+            images.forEach(loadDeferredImage);
+        }
+    }
+
+    window.observeDeferredImages = function(scope) {
+        ensureDeferredImages(scope);
+    };
+
+    ensureDeferredImages(document);
+
     function smoothScrollToGirlsSection() {
         const section = document.querySelector('.girlsSection');
         if (section && typeof section.scrollIntoView === 'function') {
