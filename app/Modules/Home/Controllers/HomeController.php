@@ -4,291 +4,75 @@ namespace App\Modules\Home\Controllers;
 
 use App\Http\Controllers\Controller;
 use App\Models\Girl;
+use App\Services\GirlQueryService;
 use Illuminate\Http\Request;
+use Illuminate\Pagination\LengthAwarePaginator;
 
 class HomeController extends Controller
 {
+    public function __construct(protected GirlQueryService $girlsQuery)
+    {
+    }
+
     public function index(Request $request)
     {
-        $query = Girl::query();
-        
         $selectedCity = $request->input('city', $request->cookie('selectedCity', 'moscow'));
-        
+
         if ($request->has('city')) {
             cookie()->queue('selectedCity', $selectedCity, 525600);
         }
-        
+
         $cityName = $selectedCity === 'spb' ? 'Санкт-Петербург' : 'Москва';
-        $query->where('city', $cityName);
-        
-        $filterServices = [];
-        $filterPlaces = [];
-        $filterFinish = [];
-        
-        if ($request->filled('age_from')) {
-            $ageFrom = (int)$request->age_from;
-            $query->whereRaw('CAST(REPLACE(REPLACE(REPLACE(age, " ", ""), "лет", ""), "года", "") AS INTEGER) >= ?', [$ageFrom]);
-        }
-        
-        if ($request->filled('age_to')) {
-            $ageTo = (int)$request->age_to;
-            $query->whereRaw('CAST(REPLACE(REPLACE(REPLACE(age, " ", ""), "лет", ""), "года", "") AS INTEGER) <= ?', [$ageTo]);
-        }
-        
-        if ($request->filled('height_from')) {
-            $heightFrom = (int)$request->height_from;
-            $query->where('height', '>=', $heightFrom);
-        }
-        
-        if ($request->filled('height_to')) {
-            $heightTo = (int)$request->height_to;
-            $query->where('height', '<=', $heightTo);
-        }
-        
-        if ($request->filled('weight_from')) {
-            $weightFrom = (int)$request->weight_from;
-            $query->where('weight', '>=', $weightFrom);
-        }
-        
-        if ($request->filled('weight_to')) {
-            $weightTo = (int)$request->weight_to;
-            $query->where('weight', '<=', $weightTo);
-        }
-        
-        if ($request->filled('bust_from')) {
-            $bustFrom = (int)$request->bust_from;
-            $query->where('bust', '>=', $bustFrom);
-        }
-        
-        if ($request->filled('bust_to')) {
-            $bustTo = (int)$request->bust_to;
-            $query->where('bust', '<=', $bustTo);
-        }
-        
-        if ($request->filled('has_video')) {
-            $query->whereNotNull('media_video')->where('media_video', '!=', '')->where('media_video', '!=', 'null');
-        }
-        
-        if ($request->filled('has_reviews')) {
-            $query->whereNotNull('reviews_comments')
-                  ->where('reviews_comments', '!=', '')
-                  ->where('reviews_comments', '!=', '[]')
-                  ->where('reviews_comments', 'NOT LIKE', '%никто не оставлял%')
-                  ->where('reviews_comments', 'NOT LIKE', '%не оставляли комментарии%');
-        }
-        
-        if ($request->filled('metro')) {
-            $metro = $request->metro;
-            $query->where(function($q) use ($metro) {
-                $q->where('metro', $metro)
-                  ->orWhere('metro', 'м. ' . $metro);
-            });
-        }
-        
-        // Фильтры по доп параметрам
-        if ($request->filled('hair_color')) {
-            $query->where('hair_color', $request->hair_color);
-        }
-        
-        if ($request->filled('nationality')) {
-            $query->where('nationality', $request->nationality);
-        }
-        
-        if ($request->filled('intimate_trim')) {
-            $query->where('intimate_trim', $request->intimate_trim);
-        }
-        
-        if ($request->filled('district')) {
-            $query->where('district', $request->district);
-        }
-        
-        $filterVerified = $request->filled('verified');
-        
-        if ($request->has('service')) {
-            $services = $request->input('service');
-            if (is_array($services)) {
-                $filterServices = $services;
-            }
-        }
-        
-        if ($request->has('place')) {
-            $places = $request->input('place');
-            if (is_array($places)) {
-                $filterPlaces = $places;
-            }
-        }
-        
-        if ($request->has('finish')) {
-            $finish = $request->input('finish');
-            if (is_array($finish)) {
-                $filterFinish = $finish;
-            }
-        }
-        
+
+        $filters = $this->buildFilters($request, $cityName);
+
         $perPage = 20;
-        $page = $request->get('page', 1);
-        
-        $allGirls = $query->get();
-        
-        if (!empty($filterServices)) {
-            $allGirls = $allGirls->filter(function($girl) use ($filterServices) {
-                $services = $girl->services ?? [];
-                foreach ($filterServices as $service) {
-                    $parts = explode('_', $service, 2);
-                    if (count($parts) === 2) {
-                        $category = $parts[0];
-                        $serviceType = $parts[1];
-                        
-                        $found = false;
-                        
-                        if (isset($services[$service]) && ($services[$service] === 'да' || $services[$service] === true)) {
-                            $found = true;
-                        }
-                        
-                        if (!$found && isset($services[$category]) && is_array($services[$category])) {
-                            if (isset($services[$category][$serviceType]) && ($services[$category][$serviceType] === 'да' || $services[$category][$serviceType] === true)) {
-                                $found = true;
-                            }
-                        }
-                        
-                        if (!$found) {
-                            return false;
-                        }
-                    }
-                }
-                return true;
-            });
-        }
-        
-        if (!empty($filterPlaces)) {
-            $allGirls = $allGirls->filter(function($girl) use ($filterPlaces) {
-                $places = $girl->meeting_places ?? [];
-                foreach ($filterPlaces as $place) {
-                    if (!isset($places[$place]) || ($places[$place] !== 'да' && $places[$place] !== true)) {
-                        return false;
-                    }
-                }
-                return true;
-            });
-        }
-        
-        if (!empty($filterFinish)) {
-            $allGirls = $allGirls->filter(function($girl) use ($filterFinish) {
-                $services = $girl->services ?? [];
-                foreach ($filterFinish as $finish) {
-                    $found = false;
-                    
-                    $flatKey = 'Окончание_' . $finish;
-                    if (isset($services[$flatKey]) && ($services[$flatKey] === 'да' || $services[$flatKey] === true)) {
-                        $found = true;
-                    }
-                    
-                    if (!$found && isset($services['Окончание']) && is_array($services['Окончание'])) {
-                        if (isset($services['Окончание'][$finish]) && ($services['Окончание'][$finish] === 'да' || $services['Окончание'][$finish] === true)) {
-                            $found = true;
-                        }
-                    }
-                    
-                    if (!$found) {
-                        return false;
-                    }
-                }
-                return true;
-            });
-        }
-        
-        if ($filterVerified) {
-            $allGirls = $allGirls->filter(function($girl) {
-                $images = $girl->media_images ?? [];
-                return is_array($images) && count($images) >= 3;
-            });
-        }
-        
-        // Фильтр по цене 1 час
-        if ($request->filled('price_1h_from') || $request->filled('price_1h_to')) {
-            $priceFrom = $request->filled('price_1h_from') ? (int)$request->price_1h_from : 0;
-            $priceTo = $request->filled('price_1h_to') ? (int)$request->price_1h_to : PHP_INT_MAX;
-            
-            $allGirls = $allGirls->filter(function($girl) use ($priceFrom, $priceTo) {
-                $tariffs = $girl->tariffs ?? [];
-                $price1h = $this->extractPrice($tariffs, '1 час');
-                if ($price1h) {
-                    $priceValue = (int)preg_replace('/[^0-9]/', '', $price1h);
-                    return $priceValue >= $priceFrom && $priceValue <= $priceTo;
-                }
-                return false;
-            });
-        }
-        
-        // Фильтр по цене 2 часа
-        if ($request->filled('price_2h_from') || $request->filled('price_2h_to')) {
-            $priceFrom = $request->filled('price_2h_from') ? (int)$request->price_2h_from : 0;
-            $priceTo = $request->filled('price_2h_to') ? (int)$request->price_2h_to : PHP_INT_MAX;
-            
-            $allGirls = $allGirls->filter(function($girl) use ($priceFrom, $priceTo) {
-                $tariffs = $girl->tariffs ?? [];
-                $price2h = $this->extractPrice($tariffs, '2 часа');
-                if ($price2h) {
-                    $priceValue = (int)preg_replace('/[^0-9]/', '', $price2h);
-                    return $priceValue >= $priceFrom && $priceValue <= $priceTo;
-                }
-                return false;
-            });
-        }
-        
-        $total = $allGirls->count();
-        $girls = $allGirls->forPage($page, $perPage);
-        
-        $girlsFormatted = $girls->map(function ($girl) {
-            return $this->formatGirlForCard($girl);
-        })->values();
+        $page = (int) $request->input('page', 1);
+
+        $data = $this->girlsQuery->paginate($filters, $perPage, $page);
+
+        $hydrated = Girl::hydrate($data['items']);
+        $formatted = $hydrated->map(fn (Girl $girl) => $this->formatGirlForCard($girl));
+
+        $paginatorGirls = new LengthAwarePaginator(
+            $formatted,
+            $data['meta']['total'],
+            $perPage,
+            $page,
+            ['path' => $request->url(), 'query' => $request->query()]
+        );
+
+        $paginatorGirls->appends($request->except('page'));
 
         $initialRenderCount = 6;
-        $initialGirls = $girlsFormatted;
+        $initialGirls = $formatted;
         $preloadedGirls = collect();
 
-        if ($page == 1 && $girlsFormatted->count() > $initialRenderCount) {
-            $initialGirls = $girlsFormatted->slice(0, $initialRenderCount)->values();
-            $preloadedGirls = $girlsFormatted->slice($initialRenderCount)->values();
+        if ($page === 1 && $formatted->count() > $initialRenderCount) {
+            $initialGirls = $formatted->slice(0, $initialRenderCount)->values();
+            $preloadedGirls = $formatted->slice($initialRenderCount)->values();
         }
 
         if ($page > 1) {
-            $initialGirls = $girlsFormatted;
+            $initialGirls = $formatted;
         }
-        
-        if ($request->ajax() || $request->wantsJson() || $request->header('X-Requested-With') === 'XMLHttpRequest') {
-            return response()->json([
-                'girls' => $girlsFormatted,
-                'hasMore' => ($page * $perPage) < $total,
-                'nextPage' => $page + 1,
-                'total' => $total,
-            ]);
-        }
-        
-        $paginatorGirls = new \Illuminate\Pagination\LengthAwarePaginator(
-            $girlsFormatted,
-            $total,
-            $perPage,
-            $page,
-            ['path' => $request->url()]
-        );
-        
-        $paginatorGirls->appends($request->except('page'));
-        
-        $metros = Girl::select('metro')
-            ->distinct()
-            ->where('city', $cityName)
-            ->whereNotNull('metro')
-            ->where('metro', '!=', '')
-            ->pluck('metro')
-            ->filter()
-            ->sort()
-            ->values();
-        
-        $hasMoreInitial = ($page * $perPage) < $total;
-        if ($page == 1) {
+
+        $hasMoreInitial = $data['meta']['has_more'] ?? false;
+
+        if ($page === 1) {
             $hasMoreInitial = $preloadedGirls->isNotEmpty() || $hasMoreInitial;
         }
+
+        if ($request->ajax() || $request->wantsJson() || $request->header('X-Requested-With') === 'XMLHttpRequest') {
+            return response()->json([
+                'girls' => $formatted->values(),
+                'hasMore' => $data['meta']['has_more'],
+                'nextPage' => $data['meta']['next_page'],
+                'total' => $data['meta']['total'],
+            ]);
+        }
+
+        $metros = $this->girlsQuery->metroList($cityName);
 
         return view('home::index', [
             'girls' => $paginatorGirls,
@@ -298,6 +82,48 @@ class HomeController extends Controller
             'metros' => $metros,
             'cityName' => $cityName,
         ]);
+    }
+
+    protected function buildFilters(Request $request, string $cityName): array
+    {
+        return [
+            'city' => $cityName,
+            'age_from' => $request->filled('age_from') ? (int) $request->input('age_from') : null,
+            'age_to' => $request->filled('age_to') ? (int) $request->input('age_to') : null,
+            'height_from' => $request->filled('height_from') ? (int) $request->input('height_from') : null,
+            'height_to' => $request->filled('height_to') ? (int) $request->input('height_to') : null,
+            'weight_from' => $request->filled('weight_from') ? (int) $request->input('weight_from') : null,
+            'weight_to' => $request->filled('weight_to') ? (int) $request->input('weight_to') : null,
+            'bust_from' => $request->filled('bust_from') ? (int) $request->input('bust_from') : null,
+            'bust_to' => $request->filled('bust_to') ? (int) $request->input('bust_to') : null,
+            'has_video' => $request->boolean('has_video'),
+            'has_reviews' => $request->boolean('has_reviews'),
+            'metro' => $request->input('metro'),
+            'hair_color' => $request->input('hair_color'),
+            'nationality' => $request->input('nationality'),
+            'intimate_trim' => $request->input('intimate_trim'),
+            'district' => $request->input('district'),
+            'verified' => $request->boolean('verified'),
+            'services' => $this->extractArray($request->input('service')),
+            'places' => $this->extractArray($request->input('place')),
+            'finish' => $this->extractArray($request->input('finish')),
+            'price_1h_from' => $request->filled('price_1h_from') ? (int) $request->input('price_1h_from') : null,
+            'price_1h_to' => $request->filled('price_1h_to') ? (int) $request->input('price_1h_to') : null,
+            'price_2h_from' => $request->filled('price_2h_from') ? (int) $request->input('price_2h_from') : null,
+            'price_2h_to' => $request->filled('price_2h_to') ? (int) $request->input('price_2h_to') : null,
+        ];
+    }
+
+    protected function extractArray(mixed $value): array
+    {
+        if (!is_array($value)) {
+            return [];
+        }
+
+        return collect($value)
+            ->filter(fn ($item) => is_string($item) && $item !== '')
+            ->values()
+            ->all();
     }
     
     private function formatGirlForCard($girl)

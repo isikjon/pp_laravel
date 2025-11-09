@@ -18,7 +18,7 @@ return [
     |
     */
 
-    'driver' => env('SESSION_DRIVER', 'database'),
+    'driver' => env('SESSION_DRIVER', extension_loaded('redis') ? 'redis' : 'database'),
 
     /*
     |--------------------------------------------------------------------------
