@@ -32,9 +32,6 @@
                     <button class="btn-formFilterModal__btn" type="submit">Отрпавить</button>
                 </div>
             </form>
-            <a href="#!" target="_blank" class="bannerBottomTG">
-                <img src="{{ asset('img/bannerTG.png') }}" alt="">
-            </a>
         </div>
     </section>
 @endsection

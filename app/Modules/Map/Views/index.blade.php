@@ -47,10 +47,6 @@
             <div class="mapContact">
                 <img src="{{ asset('img/map.png') }}" alt="">
             </div>
-            
-            <a href="#!" target="_blank" class="bannerBottomTG">
-                <img src="{{ asset('img/bannerTG.png') }}" alt="">
-            </a>
         </div>
     </section>
 @endsection

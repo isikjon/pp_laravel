@@ -116,10 +116,6 @@
         <div class="mapContact">
             <div id="map" class="map-inner" data-city="{{ $cityName }}"></div>
         </div>
-        
-        <a href="#!" target="_blank" class="bannerBottomTG">
-            <img src="{{ asset('img/bannerTG.png') }}" alt="">
-        </a>
     </div>
 </section>
 @endsection

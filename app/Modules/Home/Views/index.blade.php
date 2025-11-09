@@ -99,10 +99,6 @@
             </div>
             @endif
             
-            <a href="#" target="_blank" class="bannerBottomTG" aria-label="Открыть рекламный баннер Telegram">
-                <img src="{{ cached_asset('img/bannerTG.webp') }}" alt="Рекламный баннер Telegram" loading="lazy" decoding="async">
-            </a>
-            
             <div class="textBottomPage">
                 <h2>
                     Проститутки {{ $cityName === 'Санкт-Петербург' ? 'Санкт-Петербурга' : 'Москвы' }} – каждый день новые эксперименты страсти

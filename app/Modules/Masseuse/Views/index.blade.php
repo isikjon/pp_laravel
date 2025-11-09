@@ -89,9 +89,6 @@
                 @endif
             </div>
             @endif
-            <a href="#!" target="_blank" class="bannerBottomTG">
-                <img src="{{ asset('img/bannerTG.png') }}" alt="">
-            </a>
             
             <div class="textBottomPage">
                 <h4>
