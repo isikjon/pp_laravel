@@ -14,15 +14,13 @@
                     Проститутки в {{ ($cityName ?? 'Москва') === 'Санкт-Петербург' ? 'Санкт-Петербурге' : 'Москве' }}
                 </h1>
                 <p>
-                    Лучшие проститутки {{ $cityName === 'Санкт-Петербург' ? 'Санкт-Петербурга' : 'Москвы' }} – прекрасная возможность оставить позади стрессы и заботы напряженного дня. Отдайте себя в руки и ласки настоящей мастерицы или сразу нескольких девушек, чтобы ощутить возбуждение, расслабление и желанную близость с роскошными путанами {{ $cityName === 'Санкт-Петербург' ? 'Санкт-Петербурга' : 'Москвы' }}. Сайт предлагает снять проверенные шлюхи {{ $cityName === 'Санкт-Петербург' ? 'Санкт-Петербурга' : 'Москвы' }}, в анкете которых подробно указана необходимая информация для выбора.
-                    <br><br>
-                    Расценивайте формы девушек на фото, выбирайте лучший набор услуг в зависимости от желаний и настроения, ставьте критерии по размеру бюста, росту, цене за час и местонахождению путан. Выбор проституток {{ $cityName === 'Санкт-Петербург' ? 'Санкт-Петербурга' : 'Москвы' }} дешево продолжает постоянно расширяться, чтобы каждый день была возможность оценивать красоту или умения совершенно новой девушки. Либо можете найти элитную проститутку {{ $cityName === 'Санкт-Петербург' ? 'Санкт-Петербурга' : 'Москвы' }} для постоянных встреч, если её старательность и подход полностью Вам подходят.
+                    Лучшие проститутки {{ $cityName === 'Санкт-Петербург' ? 'Санкт-Петербурга' : 'Москвы' }} собраны на одном сайте с актуальными ценами и проверенными анкетами. Используйте фильтры, чтобы быстро отфильтровать девушек по услугам, району и бюджету.
                 </p>
             </div>
             
             <div class="girlsSection">
                 @foreach($girls as $girl)
-                    @include('components.girl-card', $girl)
+                    @include('components.girl-card', array_merge($girl, ['fetch_high' => $loop->first]))
                 @endforeach
             </div>
             
@@ -175,11 +173,41 @@
     @endphp
     <script>
         const filtersScriptSrc = @json($filtersJsSrc);
-        window.addEventListener('load', function () {
-            var script = document.createElement('script');
+        let filtersScriptLoaded = false;
+
+        function loadFiltersScript(callback) {
+            if (filtersScriptLoaded) {
+                if (typeof callback === 'function') {
+                    callback();
+                }
+                return;
+            }
+
+            filtersScriptLoaded = true;
+            const script = document.createElement('script');
             script.src = filtersScriptSrc;
             script.defer = true;
+            if (typeof callback === 'function') {
+                script.addEventListener('load', callback, { once: true });
+            }
             document.head.appendChild(script);
+        }
+
+        if ('requestIdleCallback' in window) {
+            requestIdleCallback(function () {
+                loadFiltersScript();
+            });
+        } else {
+            window.addEventListener('load', function () {
+                loadFiltersScript();
+            });
+        }
+
+        document.addEventListener('click', function onFirstInteractive(event) {
+            if (event.target.closest('.filtersBtn') || event.target.closest('.more-info') || event.target.closest('.btn-formFilterModal__btn')) {
+                loadFiltersScript();
+                document.removeEventListener('click', onFirstInteractive);
+            }
         });
     </script>
 @endsection

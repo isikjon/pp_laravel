@@ -11,7 +11,7 @@
                 <img src="{{ asset('img/video-photoGirl.png') }}" alt="" loading="lazy" decoding="async" width="56" height="56">
             </div>
             @endif
-            <img src="{{ $photo }}" alt="" class="photoGirl__img" loading="lazy" decoding="async" width="210" height="315">
+            <img src="{{ $photo }}" alt="" class="photoGirl__img" loading="{{ !empty($fetch_high) ? 'eager' : 'lazy' }}" decoding="async" width="210" height="315" @if(!empty($fetch_high)) fetchpriority="high" @endif>
         </a>
         <div class="right-wrapper-girlCard">
             <div class="name-girlCard">

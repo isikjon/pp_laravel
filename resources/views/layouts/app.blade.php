@@ -19,13 +19,7 @@
         <link rel="stylesheet" href="{{ asset('css/adaptive.css') }}?v={{ $adaptiveCssVersion }}">
     </noscript>
     <link rel="icon" href="{{ asset('img/icon.png') }}" type="image/x-icon">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="preconnect" href="https://msk-z.prostitutki-today.site" crossorigin>
-    <link rel="preload" href="https://fonts.googleapis.com/css2?family=Noto+Sans:ital,wght@0,100..900;1,100..900&display=swap" as="style" onload="this.onload=null;this.rel='stylesheet'">
-    <noscript>
-        <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans:ital,wght@0,100..900;1,100..900&display=swap">
-    </noscript>
     @stack('styles')
 </head>
 <body>
