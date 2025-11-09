@@ -106,7 +106,7 @@ $(document).ready(function() {
             return;
         }
 
-        loadGirls(currentPage + 1, true);
+            loadGirls(currentPage + 1, true);
     });
     
     $(document).on('click', '.block-paginationGirls', function(e) {
