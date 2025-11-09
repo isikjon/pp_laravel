@@ -3,12 +3,12 @@
         <a href="{{ $detailRoute ?? route('girl.show', ['id' => $id]) }}" class="photoGirl" style="display: block; position: relative;">
             @if($hasStatus ?? false)
             <div class="status-photoGirl">
-            <img src="{{ asset('img/status-photoGirl.png') }}" alt="" loading="lazy" decoding="async" width="56" height="56">
+            <img src="{{ cached_asset('img/status-photoGirl.png') }}" alt="" loading="lazy" decoding="async" width="56" height="56">
             </div>
             @endif
             @if($hasVideo ?? false)
             <div class="video-photoGirl">
-                <img src="{{ asset('img/video-photoGirl.png') }}" alt="" loading="lazy" decoding="async" width="56" height="56">
+                <img src="{{ cached_asset('img/video-photoGirl.png') }}" alt="" loading="lazy" decoding="async" width="56" height="56">
             </div>
             @endif
             <img src="{{ $photo }}" alt="" class="photoGirl__img" loading="{{ !empty($fetch_high) ? 'eager' : 'lazy' }}" decoding="async" width="210" height="315" @if(!empty($fetch_high)) fetchpriority="high" @endif>
@@ -19,7 +19,7 @@
                     <p>{{ $name }}</p>
                 </a>
                 <a href="#!" data-girl-id="{{ $id }}">
-                <img src="{{ asset($favorite ? 'img/flexBottomHeader-8-2.svg' : 'img/flexBottomHeader-8.svg') }}" alt="" loading="lazy" decoding="async" width="24" height="24">
+                <img src="{{ cached_asset($favorite ? 'img/flexBottomHeader-8-2.svg' : 'img/flexBottomHeader-8.svg') }}" alt="" loading="lazy" decoding="async" width="24" height="24">
                 </a>
             </div>
             <p class="ageGirlCard">{{ $age }} года</p>
@@ -75,14 +75,14 @@
                     </div>
                 </div>
                 <div class="blockPrecises-right-wrapper-girlCard__top">
-                    <div style="background: url({{ asset('img/bgAnal.png') }}) center center no-repeat;" class="blockPrecises-right-wrapper-girlCard__topBlock blockPrecises-right-wrapper-girlCard__topBlock-2">
+                    <div style="background: url({{ cached_asset('img/bgAnal.png') }}) center center no-repeat;" class="blockPrecises-right-wrapper-girlCard__topBlock blockPrecises-right-wrapper-girlCard__topBlock-2">
                         <div class="hourFlex-blockPrecises-right-wrapper-girlCard__top">
                             <p>Анал</p>
                         </div>
                         <span>{{ $priceAnal ? number_format($priceAnal, 0, '', ' ') : '-' }}</span>
                     </div>
                     <div class="line-blockPrecises-right-wrapper-girlCard__top"></div>
-                    <div style="background: url({{ asset('img/bgNight.png') }}) center center no-repeat;" class="blockPrecises-right-wrapper-girlCard__topBlock blockPrecises-right-wrapper-girlCard__topBlock-2">
+                    <div style="background: url({{ cached_asset('img/bgNight.png') }}) center center no-repeat;" class="blockPrecises-right-wrapper-girlCard__topBlock blockPrecises-right-wrapper-girlCard__topBlock-2">
                         <div class="hourFlex-blockPrecises-right-wrapper-girlCard__top">
                             <p>Ночь</p>
                         </div>
@@ -94,19 +94,19 @@
     </div>
     <div class="bottom-girlCard">
         <div class="flex-bottom-girlCard">
-            <img src="{{ asset('img/flex-bottom-girlCard-1.svg') }}" alt="" loading="lazy" decoding="async" width="18" height="18">
+            <img src="{{ cached_asset('img/flex-bottom-girlCard-1.svg') }}" alt="" loading="lazy" decoding="async" width="18" height="18">
             <p style="color: #00A81E">{{ $verified ?? 'Фото проверены' }}</p>
         </div>
         <div class="right-bottom-girlCard">
             @if($outcall ?? false)
             <div class="flex-bottom-girlCard">
-                <img src="{{ asset('img/flex-bottom-girlCard-2.svg') }}" alt="" loading="lazy" decoding="async" width="18" height="18">
+                <img src="{{ cached_asset('img/flex-bottom-girlCard-2.svg') }}" alt="" loading="lazy" decoding="async" width="18" height="18">
                 <p>Выезд</p>
             </div>
             @endif
             @if($apartment ?? false)
             <div class="flex-bottom-girlCard">
-                <img src="{{ asset('img/flex-bottom-girlCard-3.svg') }}" alt="" loading="lazy" decoding="async" width="18" height="18">
+                <img src="{{ cached_asset('img/flex-bottom-girlCard-3.svg') }}" alt="" loading="lazy" decoding="async" width="18" height="18">
                 <p>Апартаменты</p>
             </div>
             @endif

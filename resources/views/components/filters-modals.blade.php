@@ -2,7 +2,7 @@
 <div id="modal__project1" class="modal">
     <div class="modal-content modal-content-1">
         <span class="close close1">
-            <img src="{{ asset('img/close.svg') }}" alt="">
+            <img src="{{ cached_asset('img/close.svg') }}" alt="">
         </span>
         <form class="formFilterModal" id="filtersForm">
             {{-- Верхняя основная секция фильтров --}}
@@ -134,7 +134,7 @@
             <div class="moreFilters" id="moreFiltersToggle" style="text-align: center; margin: 20px 0; cursor: pointer;">
                 <p style="color: #7E1D32; font-weight: 600; display: inline-flex; align-items: center; gap: 10px;">
                     Дополнительные фильтры
-                    <img src="{{ asset('img/arrow-down.svg') }}" alt="" class="arrow-down" id="moreFiltersArrow" style="transition: transform 0.3s;">
+                    <img src="{{ cached_asset('img/arrow-down.svg') }}" alt="" class="arrow-down" id="moreFiltersArrow" style="transition: transform 0.3s;">
                 </p>
             </div>
 

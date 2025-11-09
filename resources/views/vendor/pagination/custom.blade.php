@@ -1,6 +1,6 @@
 @if ($paginator->hasPages())
     <a href="{{ $paginator->previousPageUrl() }}" class="arrowPagination {{ $paginator->onFirstPage() ? 'disabled' : '' }}">
-        <img src="{{ asset('img/arrowLeft.svg') }}" alt="">
+        <img src="{{ cached_asset('img/arrowLeft.svg') }}" alt="">
     </a>
     <div class="pagination__paginationGirls">
         <div class="pagination__paginationGirls">
@@ -30,7 +30,7 @@
         </div>
     </div>
     <a href="{{ $paginator->nextPageUrl() }}" class="arrowPagination {{ !$paginator->hasMorePages() ? 'disabled' : '' }}">
-        <img src="{{ asset('img/arrowNext.svg') }}" alt="">
+        <img src="{{ cached_asset('img/arrowNext.svg') }}" alt="">
     </a>
 @endif
 

@@ -12,13 +12,13 @@
         $favoritesJsVersion = file_exists(public_path('js/favorites.js')) ? filemtime(public_path('js/favorites.js')) : time();
     @endphp
     <title>@yield('title', 'ProstitutkiMoscow')</title>
-    <link rel="preload" href="{{ asset('css/style.css') }}?v={{ $styleCssVersion }}" as="style" onload="this.onload=null;this.rel='stylesheet'">
-    <link rel="preload" href="{{ asset('css/adaptive.css') }}?v={{ $adaptiveCssVersion }}" as="style" onload="this.onload=null;this.rel='stylesheet'">
+    <link rel="preload" href="{{ cached_asset('css/style.css') }}" as="style" onload="this.onload=null;this.rel='stylesheet'">
+    <link rel="preload" href="{{ cached_asset('css/adaptive.css') }}" as="style" onload="this.onload=null;this.rel='stylesheet'">
     <noscript>
-        <link rel="stylesheet" href="{{ asset('css/style.css') }}?v={{ $styleCssVersion }}">
-        <link rel="stylesheet" href="{{ asset('css/adaptive.css') }}?v={{ $adaptiveCssVersion }}">
+        <link rel="stylesheet" href="{{ cached_asset('css/style.css') }}">
+        <link rel="stylesheet" href="{{ cached_asset('css/adaptive.css') }}">
     </noscript>
-    <link rel="icon" href="{{ asset('img/icon.png') }}" type="image/x-icon">
+    <link rel="icon" href="{{ cached_asset('img/icon.png') }}" type="image/x-icon">
     <link rel="preconnect" href="https://msk-z.prostitutki-today.site" crossorigin>
     @stack('styles')
 </head>
@@ -37,10 +37,9 @@
     @include('components.city-modal')
     
     <script defer src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
-    <script defer src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
-    <script defer src="{{ asset('js/app.js') }}?v={{ $appJsVersion }}"></script>
-    <script defer src="{{ asset('js/city.js') }}?v={{ $cityJsVersion }}"></script>
-    <script defer src="{{ asset('js/favorites.js') }}?v={{ $favoritesJsVersion }}"></script>
+    <script defer src="{{ cached_asset('js/app.js') }}"></script>
+    <script defer src="{{ cached_asset('js/city.js') }}"></script>
+    <script defer src="{{ cached_asset('js/favorites.js') }}"></script>
     @stack('scripts')
     @yield('page_scripts')
 </body>

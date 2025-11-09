@@ -3,12 +3,12 @@
         <div class="photoGirl">
             @if($hasStatus ?? false)
             <div class="status-photoGirl">
-                <img src="{{ asset('img/status-photoGirl.png') }}" alt="">
+                <img src="{{ cached_asset('img/status-photoGirl.png') }}" alt="">
             </div>
             @endif
             @if($hasVideo ?? false)
             <div class="video-photoGirl">
-                <img src="{{ asset('img/video-photoGirl.png') }}" alt="">
+                <img src="{{ cached_asset('img/video-photoGirl.png') }}" alt="">
             </div>
             @endif
             <img src="{{ asset($photo) }}" alt="" class="photoGirl__img">
@@ -19,7 +19,7 @@
                     {{ $type ?? 'Стриптиз-клуб' }} <span>{{ $name }}</span>
                 </p>
                 <a href="#!">
-                    <img src="{{ asset($favorite ? 'img/flexBottomHeader-8-2.svg' : 'img/flexBottomHeader-8.svg') }}" alt="">
+                    <img src="{{ cached_asset($favorite ? 'img/flexBottomHeader-8-2.svg' : 'img/flexBottomHeader-8.svg') }}" alt="">
                 </a>
             </div>
             <a href="tel:{{ $phone }}" class="tel-right-wrapper-girlCard">{{ $phone }}</a>
@@ -76,7 +76,7 @@
                         <span>{{ number_format($price2h, 0, '', ' ') }}</span>
                     </div>
                     <div class="line-blockPrecises-right-wrapper-girlCard__top"></div>
-                    <div style="background: url({{ asset('img/bgNight.png') }}) center center no-repeat;" class="blockPrecises-right-wrapper-girlCard__topBlock blockPrecises-right-wrapper-girlCard__topBlock-2">
+                    <div style="background: url({{ cached_asset('img/bgNight.png') }}) center center no-repeat;" class="blockPrecises-right-wrapper-girlCard__topBlock blockPrecises-right-wrapper-girlCard__topBlock-2">
                         <div class="hourFlex-blockPrecises-right-wrapper-girlCard__top">
                             <p>Ночь</p>
                         </div>
@@ -86,13 +86,13 @@
             </div>
             <div class="flexInfoCardSalonIcon">
                 <div class="flex-bottom-girlCard">
-                    <img src="{{ asset('img/flexInfoCardSalonIcon-1.svg') }}" alt="">
+                    <img src="{{ cached_asset('img/flexInfoCardSalonIcon-1.svg') }}" alt="">
                     <p>
                         Отзывы: {{ $reviews }}
                     </p>
                 </div>
                 <div class="flex-bottom-girlCard">
-                    <img src="{{ asset('img/flexInfoCardSalonIcon-2.svg') }}" alt="">
+                    <img src="{{ cached_asset('img/flexInfoCardSalonIcon-2.svg') }}" alt="">
                     <p>
                         Средняя оценка {{ $rating }}/5
                     </p>

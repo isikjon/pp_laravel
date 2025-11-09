@@ -1,7 +1,7 @@
 <div id="cityModal" class="modal" style="display: none;">
     <div class="modal-content modal-content-city">
         <span class="close closeCityModal">
-            <img src="{{ asset('img/close.svg') }}" alt="">
+            <img src="{{ cached_asset('img/close.svg') }}" alt="">
         </span>
         <div class="cityModalContent">
             <h3 style="text-align: center; margin-bottom: 30px; font-size: 24px; color: #7E1D32;">Выберите город</h3>
