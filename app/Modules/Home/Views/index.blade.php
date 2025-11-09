@@ -6,7 +6,7 @@
     <section class="mainContent">
         <div class="container">
             <div class="filtersBtn">
-                <img src="{{ asset('img/filter.svg') }}" alt="" width="24" height="24" decoding="async">
+                <img src="{{ cached_asset('img/filter.svg') }}" alt="" width="24" height="24" decoding="async">
                 Фильтры
             </div>
             <div class="textSection">
@@ -32,11 +32,11 @@
             <div class="paginationGirls">
                 @if($girls->onFirstPage())
                     <span class="arrowPagination arrowPagination-prev" style="opacity: 0.5; cursor: not-allowed;">
-                        <img src="{{ asset('img/arrowLeft.svg') }}" alt="" width="36" height="36" decoding="async">
+                        <img src="{{ cached_asset('img/arrowLeft.svg') }}" alt="" width="36" height="36" decoding="async">
                     </span>
                 @else
                     <a href="{{ $girls->previousPageUrl() }}" class="arrowPagination arrowPagination-prev">
-                        <img src="{{ asset('img/arrowLeft.svg') }}" alt="" width="36" height="36" decoding="async">
+                        <img src="{{ cached_asset('img/arrowLeft.svg') }}" alt="" width="36" height="36" decoding="async">
                     </a>
                 @endif
                 
@@ -78,11 +78,11 @@
                 
                 @if($girls->hasMorePages())
                     <a href="{{ $girls->nextPageUrl() }}" class="arrowPagination arrowPagination-next">
-                        <img src="{{ asset('img/arrowNext.svg') }}" alt="" width="36" height="36" decoding="async">
+                        <img src="{{ cached_asset('img/arrowNext.svg') }}" alt="" width="36" height="36" decoding="async">
                     </a>
                 @else
                     <span class="arrowPagination arrowPagination-next" style="opacity: 0.5; cursor: not-allowed;">
-                        <img src="{{ asset('img/arrowNext.svg') }}" alt="" width="36" height="36" decoding="async">
+                        <img src="{{ cached_asset('img/arrowNext.svg') }}" alt="" width="36" height="36" decoding="async">
                     </span>
                 @endif
             </div>
