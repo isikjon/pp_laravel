@@ -23,22 +23,17 @@
                 $placeholderPixel = 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///ywAAAAAAQABAAACAUwAOw==';
             @endphp
             <img
+                src="{{ $photo }}"
+                alt="Фото {{ $name }}"
+                class="photoGirl__img{{ $isHeroCard ? '' : ' deferred-image' }}"
+                loading="{{ $isHeroCard ? 'eager' : 'lazy' }}"
+                fetchpriority="{{ $isHeroCard ? 'high' : 'auto' }}"
+                decoding="async"
+                width="210"
+                height="315"
                 @if($isHeroCard)
-                    src="{{ $photo }}"
-                @else
-                    src="{{ $placeholderPixel }}"
-                    data-src="{{ $photo }}"
-                @endif
-                 alt="Фото {{ $name }}"
-                 class="photoGirl__img deferred-image"
-                 loading="{{ $isHeroCard ? 'eager' : 'lazy' }}"
-                 fetchpriority="{{ $isHeroCard ? 'high' : 'auto' }}"
-                 decoding="async"
-                 width="210"
-                 height="315"
-                 @if($isHeroCard)
                     data-immediate="true"
-                 @endif
+                @endif
             >
         </a>
         <div class="right-wrapper-girlCard">
