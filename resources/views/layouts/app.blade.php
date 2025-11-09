@@ -13,12 +13,12 @@
         $favoritesJsVersion = file_exists(public_path('js/favorites.js')) ? filemtime(public_path('js/favorites.js')) : time();
     @endphp
     <title>@yield('title', 'ProstitutkiMoscow')</title>
-    <link rel="preload" href="{{ cached_asset('css/style.css') }}" as="style" onload="this.onload=null;this.rel='stylesheet'">
-    <link rel="preload" href="{{ cached_asset('css/adaptive.css') }}" as="style" onload="this.onload=null;this.rel='stylesheet'">
-    <noscript>
+    {{-- <link rel="preload" href="{{ cached_asset('css/style.css') }}" as="style" onload="this.onload=null;this.rel='stylesheet'"> --}}
+    {{-- <link rel="preload" href="{{ cached_asset('css/adaptive.css') }}" as="style" onload="this.onload=null;this.rel='stylesheet'"> --}}
+    {{--    <noscript>
         <link rel="stylesheet" href="{{ cached_asset('css/style.css') }}">
         <link rel="stylesheet" href="{{ cached_asset('css/adaptive.css') }}">
-    </noscript>
+    </noscript> --}}
     <link rel="icon" href="{{ cached_asset('img/icon.png') }}" type="image/x-icon">
     <link rel="preconnect" href="https://msk-z.prostitutki-today.site" crossorigin>
     @stack('styles')
