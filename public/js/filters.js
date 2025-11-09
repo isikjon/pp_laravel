@@ -330,7 +330,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     <a href="/girl/${e.id}" class="photoGirl" aria-label="Открыть анкету ${e.name}">
                         ${e.hasStatus ? '<div class="status-photoGirl" aria-hidden="true"><img src="/img/status-photoGirl.png" alt="Фото проверено" loading="lazy" decoding="async" width="56" height="56"></div>' : ''}
                         ${e.hasVideo ? '<div class="video-photoGirl" aria-hidden="true"><img src="/img/video-photoGirl.png" alt="Есть видео" loading="lazy" decoding="async" width="56" height="56"></div>' : ''}
-                        <img src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///ywAAAAAAQABAAACAUwAOw==" data-src="${e.photo}" alt="Фото ${e.name}" class="photoGirl__img deferred-image" loading="lazy" decoding="async" fetchpriority="auto" width="200" height="300">
+                        <img src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///ywAAAAAAQABAAACAUwAOw==" data-src="${e.photo}" alt="Фото ${e.name}" class="photoGirl__img deferred-image" loading="lazy" decoding="async" fetchpriority="auto" width="210" height="315">
                     </a>
                     <div class="right-wrapper-girlCard">
                         <div class="name-girlCard">
