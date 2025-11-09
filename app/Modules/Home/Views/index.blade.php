@@ -8,7 +8,7 @@
     <section class="mainContent">
         <div class="container">
             <div class="filtersBtn">
-                <img src="{{ cached_asset('img/filter.svg') }}" alt="" width="24" height="24" decoding="async">
+                <span class="filtersBtn__icon" aria-hidden="true"></span>
                 Фильтры
             </div>
             <div class="textSection">

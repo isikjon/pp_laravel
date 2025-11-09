@@ -46,8 +46,8 @@
                 <a href="{{ $detailRoute ?? route('girl.show', ['id' => $id]) }}" style="color: inherit; text-decoration: none;" aria-label="Перейти в анкету {{ $name }}">
                     <p>{{ $name }}</p>
                 </a>
-                <a href="#!" data-girl-id="{{ $id }}" class="favorite-toggle" aria-label="{{ $favorite ? 'Удалить из избранного ' : 'Добавить в избранное ' }}{{ $name }}">
-                <img src="{{ cached_asset($favorite ? 'img/flexBottomHeader-8-2.svg' : 'img/flexBottomHeader-8.svg') }}" alt="{{ $favorite ? 'В избранном' : 'Добавить в избранное' }}" loading="lazy" decoding="async" width="24" height="24">
+                <a href="#" data-girl-id="{{ $id }}" class="favorite-toggle{{ $favorite ? ' is-active' : '' }}" aria-label="{{ $favorite ? 'Удалить из избранного ' : 'Добавить в избранное ' }}{{ $name }}">
+                    <span class="favorite-toggle__icon" aria-hidden="true"></span>
                 </a>
             </div>
             <p class="ageGirlCard">{{ $age }} года</p>

@@ -455,9 +455,9 @@ $(document).ready(function() {
         return `
             <div class="girlCard is-mobile-hidden mobile-hidden-default" data-girl-id="${girl.id}" data-mobile-initial-hidden="true">
                 <div class="wrapper-girlCard">
-                    <a href="/girl/${girl.id}" class="photoGirl" style="display: block; position: relative;" aria-label="Открыть анкету ${girl.name}">
-                        ${girl.hasStatus ? '<div class="status-photoGirl"><img src="/img/status-photoGirl.png" alt="Фото проверено" loading="lazy" decoding="async" width="20" height="20"></div>' : ''}
-                        ${girl.hasVideo ? '<div class="video-photoGirl"><img src="/img/video-photoGirl.png" alt="Есть видео" loading="lazy" decoding="async" width="20" height="20"></div>' : ''}
+                    <a href="/girl/${girl.id}" class="photoGirl" aria-label="Открыть анкету ${girl.name}">
+                        ${girl.hasStatus ? '<div class="status-photoGirl" aria-hidden="true"><img src="/img/status-photoGirl.png" alt="Фото проверено" loading="lazy" decoding="async" width="56" height="56"></div>' : ''}
+                        ${girl.hasVideo ? '<div class="video-photoGirl" aria-hidden="true"><img src="/img/video-photoGirl.png" alt="Есть видео" loading="lazy" decoding="async" width="56" height="56"></div>' : ''}
                         <img src="${PLACEHOLDER_PIXEL}" data-src="${girl.photo}" alt="Фото ${girl.name}" class="photoGirl__img deferred-image" loading="lazy" decoding="async" fetchpriority="auto" width="200" height="300">
                     </a>
                     <div class="right-wrapper-girlCard">
@@ -465,8 +465,8 @@ $(document).ready(function() {
                             <a href="/girl/${girl.id}" style="color: inherit; text-decoration: none;" aria-label="Перейти в анкету ${girl.name}">
                                 <p>${girl.name}</p>
                             </a>
-                            <a href="#" data-girl-id="${girl.id}" class="favorite-toggle" aria-label="${girl.favorite ? 'Удалить из избранного' : 'Добавить в избранное'} ${girl.name}">
-                                <img src="/img/${girl.favorite ? 'flexBottomHeader-8-2.svg' : 'flexBottomHeader-8.svg'}" alt="${girl.favorite ? 'В избранном' : 'Добавить в избранное'}" loading="lazy" decoding="async" width="24" height="24">
+                            <a href="#" data-girl-id="${girl.id}" class="favorite-toggle${girl.favorite ? ' is-active' : ''}" aria-label="${girl.favorite ? 'Удалить из избранного ' : 'Добавить в избранное '}${girl.name}">
+                                <span class="favorite-toggle__icon" aria-hidden="true"></span>
                             </a>
                         </div>
                         <p class="ageGirlCard">${girl.age} года</p>

@@ -1,22 +1,33 @@
-$(document).ready(function() {
+document.addEventListener('DOMContentLoaded', function () {
     console.log('Favorites.js loaded!');
-    
+
     function getFavorites() {
-        const favorites = localStorage.getItem('favorites');
-        return favorites ? JSON.parse(favorites) : [];
+        try {
+            const favorites = localStorage.getItem('favorites');
+            return favorites ? JSON.parse(favorites) : [];
+        } catch (error) {
+            console.error('Не удалось прочитать favorites из localStorage', error);
+            return [];
+        }
     }
-    
+
     function saveFavorites(favorites) {
-        localStorage.setItem('favorites', JSON.stringify(favorites));
-        updateCounter();
+        try {
+            localStorage.setItem('favorites', JSON.stringify(favorites));
+            updateCounter();
+        } catch (error) {
+            console.error('Не удалось сохранить favorites в localStorage', error);
+        }
     }
-    
+
     function updateCounter() {
         const count = getFavorites().length;
-        $('.favorites-counter').text(count);
+        document.querySelectorAll('.favorites-counter').forEach(function (el) {
+            el.textContent = count;
+        });
         console.log('Счетчик обновлен:', count);
     }
-    
+
     function addToFavorites(girlId) {
         const favorites = getFavorites();
         if (!favorites.includes(girlId)) {
@@ -26,9 +37,9 @@ $(document).ready(function() {
         }
         return false;
     }
-    
+
     function removeFromFavorites(girlId) {
-        let favorites = getFavorites();
+        const favorites = getFavorites();
         const index = favorites.indexOf(girlId);
         if (index > -1) {
             favorites.splice(index, 1);
@@ -37,117 +48,110 @@ $(document).ready(function() {
         }
         return false;
     }
-    
+
     function isInFavorites(girlId) {
         return getFavorites().includes(girlId);
     }
-    
-    function showPopup(message, type = 'success') {
-        const existingPopup = $('.favorite-popup');
-        if (existingPopup.length) {
+
+    function showPopup(message, type) {
+        const existingPopup = document.querySelector('.favorite-popup');
+        if (existingPopup) {
             existingPopup.remove();
         }
-        
-        const icon = type === 'success' 
+
+        const iconSvg = type === 'success'
             ? '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" fill="#FF0042"/></svg>'
             : '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" fill="#ccc"/></svg>';
-        
-        const popup = $(`
-            <div class="favorite-popup favorite-popup--${type}">
-                <div class="favorite-popup__content">
-                    <div class="favorite-popup__icon">${icon}</div>
-                    <div class="favorite-popup__message">${message}</div>
-                </div>
+
+        const popup = document.createElement('div');
+        popup.className = `favorite-popup favorite-popup--${type}`;
+        popup.innerHTML = `
+            <div class="favorite-popup__content">
+                <div class="favorite-popup__icon">${iconSvg}</div>
+                <div class="favorite-popup__message">${message}</div>
             </div>
-        `);
-        
-        $('body').append(popup);
-        
-        setTimeout(() => {
-            popup.addClass('favorite-popup--show');
-        }, 10);
-        
-        setTimeout(() => {
-            popup.removeClass('favorite-popup--show');
-            setTimeout(() => {
-                popup.remove();
-            }, 300);
+        `;
+
+        document.body.appendChild(popup);
+
+        requestAnimationFrame(function () {
+            popup.classList.add('favorite-popup--show');
+        });
+
+        setTimeout(function () {
+            popup.classList.remove('favorite-popup--show');
+            setTimeout(function () { popup.remove(); }, 300);
         }, 2500);
     }
-    
+
     function updateFavoriteIcon(girlId, isFavorite) {
-        const cards = $(`.girlCard[data-girl-id="${girlId}"]`);
-        
-        cards.each(function() {
-            const cardEl = $(this);
-            const girlName = cardEl.find('.name-girlCard p').first().text().trim();
-            const iconLink = cardEl.find('.name-girlCard .favorite-toggle');
-            const icon = iconLink.find('img');
+        document.querySelectorAll(`.girlCard[data-girl-id="${girlId}"]`).forEach(function (cardEl) {
+            const girlNameElement = cardEl.querySelector('.name-girlCard p');
+            const girlName = girlNameElement ? girlNameElement.textContent.trim() : '';
+            const iconLink = cardEl.querySelector('.name-girlCard .favorite-toggle');
+            if (!iconLink) {
+                return;
+            }
             if (isFavorite) {
-                icon.attr('src', '/img/flexBottomHeader-8-2.svg');
-                icon.attr('alt', 'В избранном');
-                iconLink.addClass('is-favorite').attr('aria-label', `Удалить из избранного ${girlName}`);
+                iconLink.classList.add('is-active');
+                iconLink.setAttribute('aria-label', `Удалить из избранного ${girlName}`);
             } else {
-                icon.attr('src', '/img/flexBottomHeader-8.svg');
-                icon.attr('alt', 'Добавить в избранное');
-                iconLink.removeClass('is-favorite').attr('aria-label', `Добавить в избранное ${girlName}`);
+                iconLink.classList.remove('is-active');
+                iconLink.setAttribute('aria-label', `Добавить в избранное ${girlName}`);
             }
         });
     }
-    
+
     function initFavorites() {
         const favorites = getFavorites();
         console.log('Избранных девушек:', favorites.length);
-        
-        favorites.forEach(girlId => {
+        favorites.forEach(function (girlId) {
             updateFavoriteIcon(girlId, true);
         });
     }
-    
-    $(document).on('click', '.name-girlCard .favorite-toggle', function(e) {
-        e.preventDefault();
-        
-        console.log('=== КЛИК ПО СЕРДЕЧКУ ===');
-        
-        let girlId = $(this).attr('data-girl-id');
-        console.log('ID из data-атрибута:', girlId);
-        
-        if (!girlId) {
-            const card = $(this).closest('.girlCard');
-            girlId = card.attr('data-girl-id');
-            console.log('ID из карточки:', girlId);
+
+    function extractGirlIdFromCard(card) {
+        if (!card) {
+            return null;
         }
-        
-        if (!girlId) {
-            const card = $(this).closest('.girlCard');
-            let girlLink = card.find('a[href*="/girl/"]').first().attr('href');
-            
-            if (!girlLink) {
-                girlLink = card.find('.photoGirl').attr('href');
-            }
-            
-            if (girlLink) {
-                girlId = girlLink.split('/').pop();
-                console.log('ID из ссылки:', girlId);
-            }
+        const girlId = card.getAttribute('data-girl-id');
+        if (girlId) {
+            return girlId;
         }
-        
+        const link = card.querySelector('a[href*="/girl/"]');
+        if (link) {
+            return link.getAttribute('href').split('/').pop();
+        }
+        return null;
+    }
+
+    document.addEventListener('click', function (event) {
+        const toggle = event.target.closest('.favorite-toggle');
+        if (!toggle) {
+            return;
+        }
+        event.preventDefault();
+
+        let girlId = toggle.getAttribute('data-girl-id');
+        if (!girlId) {
+            girlId = extractGirlIdFromCard(toggle.closest('.girlCard'));
+        }
+
         if (!girlId) {
             console.error('Не удалось найти ID девушки!');
             return;
         }
-        
-        const card = $(this).closest('.girlCard');
-        const girlName = card.find('.name-girlCard p').first().text().trim();
-        
-        console.log('Имя девушки:', girlName);
-        
+
+        const card = toggle.closest('.girlCard');
+        const girlNameEl = card ? card.querySelector('.name-girlCard p') : null;
+        const girlName = girlNameEl ? girlNameEl.textContent.trim() : '';
+
         if (isInFavorites(girlId)) {
             console.log('Удаляем из избранного');
             removeFromFavorites(girlId);
             updateFavoriteIcon(girlId, false);
             showPopup(`${girlName} удалена из избранного`, 'remove');
-            $(document).trigger('favoriteRemoved', [girlId]);
+            document.dispatchEvent(new CustomEvent('favoriteRemoved', { detail: girlId }));
         } else {
             console.log('Добавляем в избранное');
             addToFavorites(girlId);
@@ -155,15 +159,15 @@ $(document).ready(function() {
             showPopup(`${girlName} добавлена в избранное`, 'success');
         }
     });
-    
+
     initFavorites();
     updateCounter();
-    
-    window.updateFavoritesAfterLoad = function() {
-        setTimeout(() => {
+
+    window.updateFavoritesAfterLoad = function () {
+        requestAnimationFrame(function () {
             initFavorites();
             updateCounter();
-        }, 100);
+        });
     };
 });
 
