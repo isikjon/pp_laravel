@@ -382,48 +382,6 @@
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    // Загрузка опций для select полей из БД
-    fetch('/api/filter-options')
-        .then(response => response.json())
-        .then(data => {
-            // Цвет волос
-            const hairColorSelect = document.getElementById('hairColorSelect');
-            data.hair_colors.forEach(color => {
-                const option = document.createElement('option');
-                option.value = color;
-                option.textContent = color;
-                hairColorSelect.appendChild(option);
-            });
-
-            // Интим стрижка
-            const intimateTrimSelect = document.getElementById('intimateTrimSelect');
-            data.intimate_trims.forEach(trim => {
-                const option = document.createElement('option');
-                option.value = trim;
-                option.textContent = trim;
-                intimateTrimSelect.appendChild(option);
-            });
-
-            // Национальность
-            const nationalitySelect = document.getElementById('nationalitySelect');
-            data.nationalities.forEach(nationality => {
-                const option = document.createElement('option');
-                option.value = nationality;
-                option.textContent = nationality;
-                nationalitySelect.appendChild(option);
-            });
-
-            // Округ
-            const districtSelect = document.getElementById('districtSelect');
-            data.districts.forEach(district => {
-                const option = document.createElement('option');
-                option.value = district;
-                option.textContent = district;
-                districtSelect.appendChild(option);
-            });
-        })
-        .catch(error => console.error('Ошибка загрузки опций фильтров:', error));
-
     // Переключение дополнительных фильтров
     const moreFiltersToggle = document.getElementById('moreFiltersToggle');
     const additionalFilters = document.getElementById('additionalFilters');

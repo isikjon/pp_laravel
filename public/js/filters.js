@@ -3,9 +3,55 @@ $(document).ready(function() {
     let loading = false;
     let hasMore = true;
     let currentFilters = {};
+    let filterOptionsPromise = null;
+
+    function populateSelect(selectId, items) {
+        const select = document.getElementById(selectId);
+        if (!select || !Array.isArray(items) || select.dataset.populated === 'true') {
+            return;
+        }
+
+        const fragment = document.createDocumentFragment();
+        items.forEach(function(item) {
+            if (!item) {
+                return;
+            }
+            const option = document.createElement('option');
+            option.value = item;
+            option.textContent = item;
+            fragment.appendChild(option);
+        });
+        select.appendChild(fragment);
+        select.dataset.populated = 'true';
+    }
+
+    function loadFilterOptionsOnce() {
+        if (filterOptionsPromise) {
+            return filterOptionsPromise;
+        }
+
+        filterOptionsPromise = fetch('/api/filter-options')
+            .then(function(response) {
+                return response.json();
+            })
+            .then(function(data) {
+                populateSelect('hairColorSelect', data.hair_colors);
+                populateSelect('intimateTrimSelect', data.intimate_trims);
+                populateSelect('nationalitySelect', data.nationalities);
+                populateSelect('districtSelect', data.districts);
+                populateSelect('regionSelect', data.regions);
+            })
+            .catch(function(error) {
+                console.error('Failed to load filter options', error);
+                filterOptionsPromise = null;
+            });
+
+        return filterOptionsPromise;
+    }
     
     $('.filtersBtn').on('click', function(e) {
         e.preventDefault();
+        loadFilterOptionsOnce();
         $('#modal__project1').fadeIn(300);
     });
     
