@@ -97,7 +97,7 @@
             @endif
             
             <a href="#" target="_blank" class="bannerBottomTG" aria-label="Открыть рекламный баннер Telegram">
-                <img src="{{ cached_asset('img/bannerTG.webp') }}" alt="Рекламный баннер Telegram" loading="lazy" decoding="async" width="5280" height="612">
+                <img src="{{ cached_asset('img/bannerTG.webp') }}" alt="Рекламный баннер Telegram" loading="lazy" decoding="async">
             </a>
             
             <div class="textBottomPage">
