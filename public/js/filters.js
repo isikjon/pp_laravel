@@ -9,6 +9,13 @@ $(document).ready(function() {
     let currentFilters = {};
     const APPEND_SKELETON_COUNT = 4;
 
+    function smoothScrollToGirlsSection() {
+        const section = document.querySelector('.girlsSection');
+        if (section && typeof section.scrollIntoView === 'function') {
+            section.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+    }
+
     function createSkeletonCard() {
         return `
             <div class="girlCard girlCard--skeleton" data-skeleton="append" aria-hidden="true">
@@ -165,9 +172,7 @@ $(document).ready(function() {
             currentPage = page - 1;
             loadGirls(page, false);
             
-            $('html, body').animate({
-                scrollTop: $('.girlsSection').offset().top - 100
-            }, 500);
+            smoothScrollToGirlsSection();
         }
     });
     
@@ -178,9 +183,7 @@ $(document).ready(function() {
         const newPage = currentPage + 1;
         loadGirls(newPage, false);
         
-        $('html, body').animate({
-            scrollTop: $('.girlsSection').offset().top - 100
-        }, 500);
+        smoothScrollToGirlsSection();
     });
     
     $(document).on('click', '.arrowPagination-prev', function(e) {
@@ -190,9 +193,7 @@ $(document).ready(function() {
         const newPage = currentPage - 1;
         loadGirls(newPage, false);
         
-        $('html, body').animate({
-            scrollTop: $('.girlsSection').offset().top - 100
-        }, 500);
+        smoothScrollToGirlsSection();
     });
     
     function getFilters() {

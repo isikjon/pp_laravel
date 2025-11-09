@@ -2,3 +2,6 @@
 @media screen and (max-width:1350px){.girlCard{width:100%!important;max-width:none;}.girlsSection{grid-template-columns:repeat(auto-fill,minmax(300px,1fr));}}
 @media screen and (max-width:930px){.girlsSection{grid-template-columns:repeat(auto-fill,minmax(280px,1fr));}}
 @media screen and (max-width:600px){.girlsSection{grid-template-columns:minmax(0,1fr);}.girlCard{min-height:420px;}}
+@media screen and (max-width:1200px){.center-flexTopHeader{flex-wrap:wrap;gap:12px;}.cityChoose,.headerMetro{min-width:calc(50% - 12px);width:calc(50% - 12px);}.rightHeaderTop .search-rightHeaderTop{flex:1 1 200px;}}
+@media screen and (max-width:930px){.flexTopHeader{flex-wrap:wrap;gap:16px;}.center-flexTopHeader{order:3;width:100%;justify-content:space-between;}.cityChoose,.headerMetro{width:48%;}.rightHeaderTop{order:2;width:100%;justify-content:space-between;}.rightHeaderTop .search-rightHeaderTop{flex:1 1 100%;max-width:none;}}
+@media screen and (max-width:600px){.center-flexTopHeader{flex-direction:column;align-items:flex-start;gap:8px;}.cityChoose,.headerMetro{width:100%;}}

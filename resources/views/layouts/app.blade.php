@@ -15,6 +15,7 @@
     <title>@yield('title', 'ProstitutkiMoscow')</title>
     <link rel="preload" href="{{ cached_asset('css/style.css') }}" as="style" onload="this.onload=null;this.rel='stylesheet'">
     <link rel="preload" href="{{ cached_asset('css/adaptive.css') }}" as="style" onload="this.onload=null;this.rel='stylesheet'">
+    <link rel="preload" href="{{ cached_asset('img/logo.svg') }}" as="image" fetchpriority="high" type="image/svg+xml">
     <noscript>
         <link rel="stylesheet" href="{{ cached_asset('css/style.css') }}">
         <link rel="stylesheet" href="{{ cached_asset('css/adaptive.css') }}">

@@ -38,3 +38,17 @@
 @media screen and (max-width:768px){.girlsSection{grid-template-columns:minmax(0,1fr);}}
 @media screen and (max-width:560px){.girlCard{min-height:420px;}}
 .girlCard--skeleton{min-height:360px;}
+
+/* header stability */
+.flexTopHeader{display:flex;align-items:center;justify-content:space-between;gap:24px;flex-wrap:nowrap;}
+.flexTopHeader>a{flex:0 0 auto;}
+.center-flexTopHeader{flex:0 0 auto;display:flex;align-items:center;gap:20px;white-space:nowrap;}
+.center-flexTopHeader svg{flex:0 0 auto;}
+.center-flexTopHeader p{margin:0;white-space:nowrap;}
+.cityChoose,.headerMetro{display:flex;align-items:center;gap:10px;padding:6px 12px;border-radius:12px;background:rgba(238,238,238,.4);min-height:44px;min-width:220px;}
+.cityChoose span,.headerMetro span{display:inline-block;min-width:90px;}
+.rightHeaderTop{flex:1 1 auto;display:flex;align-items:center;justify-content:flex-end;gap:20px;min-width:260px;}
+.rightHeaderTop .search-rightHeaderTop{flex:0 0 240px;}
+.blockPrecises-right-wrapper-girlCard{min-height:180px;display:flex;flex-direction:column;gap:10px;}
+.blockPrecises-right-wrapper-girlCard__top,.blockPrecises-right-wrapper-girlCard__top-1{min-height:90px;}
+.blockPrecises-right-wrapper-girlCard__topBlock{min-height:80px;display:flex;flex-direction:column;justify-content:space-between;}

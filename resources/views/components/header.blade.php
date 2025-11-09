@@ -5,7 +5,7 @@
     <div class="container">
         <div class="flexTopHeader">
             <a href="{{ route('home') }}">
-                <img src="{{ cached_asset('img/logo.svg') }}" alt="ProstitutkiMoscow" class="logo" width="233" height="41" decoding="async">
+                <img src="{{ cached_asset('img/logo.svg') }}" alt="ProstitutkiMoscow" class="logo" width="233" height="41" decoding="async" fetchpriority="high">
             </a>
             <div class="center-flexTopHeader">
                 <div class="cityChoose">
