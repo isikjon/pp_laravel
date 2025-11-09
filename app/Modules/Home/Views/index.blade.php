@@ -20,13 +20,19 @@
                 </p>
             </div>
             
-            <div class="girlsSection">
-                @foreach($girls as $girl)
+            <div class="girlsSection" data-current-page="{{ $girls->currentPage() }}">
+                @foreach(($initialGirls ?? $girls) as $girl)
                     @include('components.girl-card', array_merge($girl, ['fetch_high' => $loop->first]))
                 @endforeach
             </div>
+
+            <script>
+                window.__DEFERRED_GIRLS = @json(($preloadedGirls ?? collect())->values());
+                window.__HAS_MORE_PAGES = @json($girls->hasMorePages());
+                window.__CURRENT_PAGE = @json($girls->currentPage());
+            </script>
             
-            <a href="#!" class="more-info">
+            <a href="#!" class="more-info" @if(empty($hasMoreInitial)) style="display:none" @endif>
                 Показать ещё
             </a>
             
@@ -91,7 +97,7 @@
             @endif
             
             <a href="#" target="_blank" class="bannerBottomTG" aria-label="Открыть рекламный баннер Telegram">
-                <img src="{{ asset('img/bannerTG.png') }}" alt="Рекламный баннер Telegram" loading="lazy" decoding="async">
+                <img src="{{ asset('img/bannerTG.png') }}" alt="Рекламный баннер Telegram" loading="lazy" decoding="async" width="5280" height="612">
             </a>
             
             <div class="textBottomPage">

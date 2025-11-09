@@ -1,8 +1,16 @@
 $(document).ready(function() {
-    let currentPage = 1;
+    let currentPage = typeof window.__CURRENT_PAGE === 'number' ? window.__CURRENT_PAGE : 1;
     let loading = false;
-    let hasMore = true;
+    const PLACEHOLDER_PIXEL = 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///ywAAAAAAQABAAACAUwAOw==';
+    let preloadedGirls = Array.isArray(window.__DEFERRED_GIRLS) ? window.__DEFERRED_GIRLS : [];
+    let hasLocalPreloaded = preloadedGirls.length > 0;
+    let hasMorePages = !!window.__HAS_MORE_PAGES;
+    let hasMore = hasMorePages;
     let currentFilters = {};
+    
+    if (!hasLocalPreloaded && !hasMorePages) {
+        $('.more-info').hide();
+    }
     let filterOptionsPromise = null;
 
     function populateSelect(selectId, items) {
@@ -78,9 +86,27 @@ $(document).ready(function() {
     
     $('.more-info').on('click', function(e) {
         e.preventDefault();
-        if (hasMore && !loading) {
-            loadGirls(currentPage + 1, true);
+        
+        if (hasLocalPreloaded && preloadedGirls.length) {
+            appendGirls(preloadedGirls);
+            preloadedGirls = [];
+            hasLocalPreloaded = false;
+            if (!hasMorePages) {
+                $('.more-info').hide();
+            }
+            return;
         }
+
+        if (!hasMore && !hasMorePages) {
+            $(this).hide();
+            return;
+        }
+
+        if (loading) {
+            return;
+        }
+
+        loadGirls(currentPage + 1, true);
     });
     
     $(document).on('click', '.block-paginationGirls', function(e) {
@@ -219,6 +245,8 @@ $(document).ready(function() {
                     $('.more-info').show();
                 }
 
+                hasMorePages = hasMore;
+
                 loading = false;
                 
                 if (!append) {
@@ -246,6 +274,8 @@ $(document).ready(function() {
             return;
         }
         
+        preloadedGirls = [];
+        hasLocalPreloaded = false;
         if (girls.length === 0) {
             container.html('<div class="no-results"><p>По вашему запросу ничего не найдено. Попробуйте изменить фильтры.</p></div>');
         } else {
@@ -254,6 +284,10 @@ $(document).ready(function() {
                 html += createGirlCard(girl);
             });
             container.html(html);
+        }
+
+        if (typeof window.observeDeferredImages === 'function') {
+            window.observeDeferredImages(container[0]);
         }
     }
     
@@ -265,6 +299,10 @@ $(document).ready(function() {
             card.hide();
             container.append(card);
             card.fadeIn(400);
+
+            if (typeof window.observeDeferredImages === 'function') {
+                window.observeDeferredImages(card[0]);
+            }
         });
     }
     
@@ -275,7 +313,7 @@ $(document).ready(function() {
                     <a href="/girl/${girl.id}" class="photoGirl" style="display: block; position: relative;" aria-label="Открыть анкету ${girl.name}">
                         ${girl.hasStatus ? '<div class="status-photoGirl"><img src="/img/status-photoGirl.png" alt="Фото проверено" loading="lazy" decoding="async" width="20" height="20"></div>' : ''}
                         ${girl.hasVideo ? '<div class="video-photoGirl"><img src="/img/video-photoGirl.png" alt="Есть видео" loading="lazy" decoding="async" width="20" height="20"></div>' : ''}
-                        <img src="${girl.photo}" alt="Фото ${girl.name}" class="photoGirl__img" loading="lazy" decoding="async" width="200" height="300">
+                        <img src="${PLACEHOLDER_PIXEL}" data-src="${girl.photo}" alt="Фото ${girl.name}" class="photoGirl__img deferred-image" loading="lazy" decoding="async" fetchpriority="auto" width="200" height="300">
                     </a>
                     <div class="right-wrapper-girlCard">
                         <div class="name-girlCard">

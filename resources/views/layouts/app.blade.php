@@ -41,6 +41,68 @@
     <script defer src="{{ cached_asset('js/app.js') }}"></script>
     <script defer src="{{ cached_asset('js/city.js') }}"></script>
     <script defer src="{{ cached_asset('js/favorites.js') }}"></script>
+    <script>
+        (function () {
+            let observerInstance = null;
+
+            function loadImage(img) {
+                if (!img || img.dataset.loaded === 'true') {
+                    return;
+                }
+                const realSrc = img.getAttribute('data-src');
+                if (realSrc) {
+                    img.src = realSrc;
+                    img.removeAttribute('data-src');
+                }
+                img.dataset.loaded = 'true';
+            }
+
+            function getObserver() {
+                if (observerInstance || !('IntersectionObserver' in window)) {
+                    return observerInstance;
+                }
+
+                observerInstance = new IntersectionObserver(function (entries) {
+                    entries.forEach(function (entry) {
+                        if (entry.isIntersecting) {
+                            loadImage(entry.target);
+                            observerInstance.unobserve(entry.target);
+                        }
+                    });
+                }, { rootMargin: '150px 0px' });
+
+                return observerInstance;
+            }
+
+            window.observeDeferredImages = function (scope) {
+                const context = scope instanceof Element ? scope : document;
+                const images = context.querySelectorAll ? context.querySelectorAll('img.deferred-image[data-src]') : [];
+
+                if (!images.length) {
+                    return;
+                }
+
+                const observer = getObserver();
+
+                images.forEach(function (img) {
+                    if (img.dataset.immediate === 'true') {
+                        loadImage(img);
+                        return;
+                    }
+
+                    if (observer) {
+                        observer.observe(img);
+                    } else {
+                        loadImage(img);
+                    }
+                });
+            };
+
+            document.addEventListener('DOMContentLoaded', function () {
+                window.observeDeferredImages();
+            });
+        })();
+    </script>
     @stack('scripts')
     @yield('page_scripts')
 </body>

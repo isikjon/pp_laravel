@@ -42,8 +42,8 @@
                 <div class="hamburger-menu">
                     <input id="menu__toggle" type="checkbox" aria-label="Открыть главное меню" aria-controls="mainMobileMenu">
                     <label class="menu__btn" for="menu__toggle">
-                        <img src="{{ cached_asset('img/burger.svg') }}" alt="" class="burgerSvg" loading="lazy" decoding="async">
-                        <img class="closeBurger" src="{{ cached_asset('img/closeBurger.svg') }}" alt="" loading="lazy" decoding="async">
+                        <img src="{{ cached_asset('img/burger.svg') }}" alt="" class="burgerSvg" loading="lazy" decoding="async" width="36" height="36">
+                        <img class="closeBurger" src="{{ cached_asset('img/closeBurger.svg') }}" alt="" loading="lazy" decoding="async" width="36" height="36">
                     </label>
                     <ul class="menu__box" id="mainMobileMenu">
                         <li class="content-burger">

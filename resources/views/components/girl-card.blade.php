@@ -11,7 +11,19 @@
                 <img src="{{ cached_asset('img/video-photoGirl.png') }}" alt="Есть видео" loading="lazy" decoding="async" width="56" height="56">
             </div>
             @endif
-            <img src="{{ $photo }}" alt="Фото {{ $name }}" class="photoGirl__img" loading="{{ !empty($fetch_high) ? 'eager' : 'lazy' }}" decoding="async" width="210" height="315" @if(!empty($fetch_high)) fetchpriority="high" @endif>
+            @php
+                $placeholderPixel = 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///ywAAAAAAQABAAACAUwAOw==';
+            @endphp
+            <img src="{{ $placeholderPixel }}"
+                 data-src="{{ $photo }}"
+                 alt="Фото {{ $name }}"
+                 class="photoGirl__img deferred-image"
+                 loading="{{ !empty($fetch_high) ? 'eager' : 'lazy' }}"
+                 fetchpriority="{{ !empty($fetch_high) ? 'high' : 'auto' }}"
+                 decoding="async"
+                 width="210"
+                 height="315"
+                 @if(!empty($fetch_high)) data-immediate="true" @endif>
         </a>
         <div class="right-wrapper-girlCard">
             <div class="name-girlCard">

@@ -95,7 +95,11 @@ $(document).ready(function() {
             html += createGirlCard(girl);
         });
         
-        $('.girlsSection').html(html);
+        const container = $('.girlsSection');
+        container.html(html);
+        if (typeof window.observeDeferredImages === 'function') {
+            window.observeDeferredImages(container[0]);
+        }
         console.log('HTML вставлен, карточек в DOM:', $('.girlCard').length);
     }
     
@@ -116,7 +120,7 @@ $(document).ready(function() {
                     <a href="/girl/${girl.id}" class="photoGirl" style="display: block; position: relative;" aria-label="Открыть анкету ${girl.name || 'без имени'}">
                         ${girl.hasStatus ? '<div class="status-photoGirl"><img src="/img/status-photoGirl.png" alt="Фото проверено"></div>' : ''}
                         ${girl.hasVideo ? '<div class="video-photoGirl"><img src="/img/video-photoGirl.png" alt="Есть видео"></div>' : ''}
-                        <img src="${girl.photo || '/img/noimage.png'}" alt="Фото ${girl.name || 'без имени'}" class="photoGirl__img">
+                        <img src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///ywAAAAAAQABAAACAUwAOw==" data-src="${girl.photo || '/img/noimage.png'}" alt="Фото ${girl.name || 'без имени'}" class="photoGirl__img deferred-image" loading="lazy" decoding="async" width="210" height="315">
                     </a>
                     <div class="right-wrapper-girlCard">
                         <div class="name-girlCard">

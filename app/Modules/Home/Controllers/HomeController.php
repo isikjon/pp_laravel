@@ -242,6 +242,19 @@ class HomeController extends Controller
         $girlsFormatted = $girls->map(function ($girl) {
             return $this->formatGirlForCard($girl);
         })->values();
+
+        $initialRenderCount = 6;
+        $initialGirls = $girlsFormatted;
+        $preloadedGirls = collect();
+
+        if ($page == 1 && $girlsFormatted->count() > $initialRenderCount) {
+            $initialGirls = $girlsFormatted->slice(0, $initialRenderCount)->values();
+            $preloadedGirls = $girlsFormatted->slice($initialRenderCount)->values();
+        }
+
+        if ($page > 1) {
+            $initialGirls = $girlsFormatted;
+        }
         
         if ($request->ajax() || $request->wantsJson() || $request->header('X-Requested-With') === 'XMLHttpRequest') {
             return response()->json([
@@ -252,7 +265,7 @@ class HomeController extends Controller
             ]);
         }
         
-        $girls = new \Illuminate\Pagination\LengthAwarePaginator(
+        $paginatorGirls = new \Illuminate\Pagination\LengthAwarePaginator(
             $girlsFormatted,
             $total,
             $perPage,
@@ -260,7 +273,7 @@ class HomeController extends Controller
             ['path' => $request->url()]
         );
         
-        $girls->appends($request->except('page'));
+        $paginatorGirls->appends($request->except('page'));
         
         $metros = Girl::select('metro')
             ->distinct()
@@ -272,7 +285,19 @@ class HomeController extends Controller
             ->sort()
             ->values();
         
-        return view('home::index', compact('girls', 'metros', 'cityName'));
+        $hasMoreInitial = ($page * $perPage) < $total;
+        if ($page == 1) {
+            $hasMoreInitial = $preloadedGirls->isNotEmpty() || $hasMoreInitial;
+        }
+
+        return view('home::index', [
+            'girls' => $paginatorGirls,
+            'initialGirls' => $initialGirls,
+            'preloadedGirls' => $preloadedGirls,
+            'hasMoreInitial' => $hasMoreInitial,
+            'metros' => $metros,
+            'cityName' => $cityName,
+        ]);
     }
     
     private function formatGirlForCard($girl)
