@@ -200,7 +200,7 @@ $(document).ready(function() {
                 <div class="bottom-girlCard">
                     <div class="flex-bottom-girlCard">
                         <img src="/img/flex-bottom-girlCard-1.svg" alt="" aria-hidden="true">
-                        <p style="color: #00A81E">${girl.verified || 'Фото проверены'}</p>
+                        <p class="verified-status-text">${girl.verified || 'Фото проверены'}</p>
                     </div>
                     <div class="right-bottom-girlCard">
                         ${girl.outcall ? '<div class="flex-bottom-girlCard"><img src="/img/flex-bottom-girlCard-2.svg" alt="" aria-hidden="true"><p>Выезд</p></div>' : ''}

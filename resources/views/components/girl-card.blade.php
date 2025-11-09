@@ -95,7 +95,7 @@
     <div class="bottom-girlCard">
         <div class="flex-bottom-girlCard">
             <img src="{{ cached_asset('img/flex-bottom-girlCard-1.svg') }}" alt="" loading="lazy" decoding="async" width="18" height="18" aria-hidden="true">
-            <p style="color: #00A81E">{{ $verified ?? 'Фото проверены' }}</p>
+            <p class="verified-status-text">{{ $verified ?? 'Фото проверены' }}</p>
         </div>
         <div class="right-bottom-girlCard">
             @if($outcall ?? false)

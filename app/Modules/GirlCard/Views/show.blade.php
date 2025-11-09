@@ -119,10 +119,8 @@
                             </p>
                             @if($girl['verified'])
                             <div class="flex-bottom-girlCard">
-                                <img src="{{ asset('img/flex-bottom-girlCard-1.svg') }}" alt="">
-                                <p style="color: #00A81E">
-                                    Фото проверены
-                                </p>
+                                <img src="{{ asset('img/flex-bottom-girlCard-1.svg') }}" alt="" loading="lazy" decoding="async">
+                                <p class="verified-status-text">{{ $girl['verified'] ?? 'Фото проверены' }}</p>
                             </div>
                             @endif
                         </div>
