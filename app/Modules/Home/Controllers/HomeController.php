@@ -128,25 +128,69 @@ class HomeController extends Controller
         $perPage = 20;
         $page = $request->get('page', 1);
         
-        $allGirls = $query->get();
+        $needsCollectionFilter = !empty($filterServices) || !empty($filterPlaces) || !empty($filterFinish) || $filterVerified || $request->filled('price_1h_from') || $request->filled('price_1h_to') || $request->filled('price_2h_from') || $request->filled('price_2h_to');
         
-        if (!empty($filterServices)) {
-            $allGirls = $allGirls->filter(function($girl) use ($filterServices) {
-                $services = $girl->services ?? [];
-                foreach ($filterServices as $service) {
-                    $parts = explode('_', $service, 2);
-                    if (count($parts) === 2) {
-                        $category = $parts[0];
-                        $serviceType = $parts[1];
-                        
+        if (!$needsCollectionFilter) {
+            $total = $query->count();
+            $girls = $query->skip(($page - 1) * $perPage)->take($perPage)->get();
+        } else {
+            $allGirls = $query->get();
+            
+            if (!empty($filterServices)) {
+                $allGirls = $allGirls->filter(function($girl) use ($filterServices) {
+                    $services = $girl->services ?? [];
+                    foreach ($filterServices as $service) {
+                        $parts = explode('_', $service, 2);
+                        if (count($parts) === 2) {
+                            $category = $parts[0];
+                            $serviceType = $parts[1];
+                            
+                            $found = false;
+                            
+                            if (isset($services[$service]) && ($services[$service] === 'да' || $services[$service] === true)) {
+                                $found = true;
+                            }
+                            
+                            if (!$found && isset($services[$category]) && is_array($services[$category])) {
+                                if (isset($services[$category][$serviceType]) && ($services[$category][$serviceType] === 'да' || $services[$category][$serviceType] === true)) {
+                                    $found = true;
+                                }
+                            }
+                            
+                            if (!$found) {
+                                return false;
+                            }
+                        }
+                    }
+                    return true;
+                });
+            }
+            
+            if (!empty($filterPlaces)) {
+                $allGirls = $allGirls->filter(function($girl) use ($filterPlaces) {
+                    $places = $girl->meeting_places ?? [];
+                    foreach ($filterPlaces as $place) {
+                        if (!isset($places[$place]) || ($places[$place] !== 'да' && $places[$place] !== true)) {
+                            return false;
+                        }
+                    }
+                    return true;
+                });
+            }
+            
+            if (!empty($filterFinish)) {
+                $allGirls = $allGirls->filter(function($girl) use ($filterFinish) {
+                    $services = $girl->services ?? [];
+                    foreach ($filterFinish as $finish) {
                         $found = false;
                         
-                        if (isset($services[$service]) && ($services[$service] === 'да' || $services[$service] === true)) {
+                        $flatKey = 'Окончание_' . $finish;
+                        if (isset($services[$flatKey]) && ($services[$flatKey] === 'да' || $services[$flatKey] === true)) {
                             $found = true;
                         }
                         
-                        if (!$found && isset($services[$category]) && is_array($services[$category])) {
-                            if (isset($services[$category][$serviceType]) && ($services[$category][$serviceType] === 'да' || $services[$category][$serviceType] === true)) {
+                        if (!$found && isset($services['Окончание']) && is_array($services['Окончание'])) {
+                            if (isset($services['Окончание'][$finish]) && ($services['Окончание'][$finish] === 'да' || $services['Окончание'][$finish] === true)) {
                                 $found = true;
                             }
                         }
@@ -155,89 +199,50 @@ class HomeController extends Controller
                             return false;
                         }
                     }
-                }
-                return true;
-            });
-        }
-        
-        if (!empty($filterPlaces)) {
-            $allGirls = $allGirls->filter(function($girl) use ($filterPlaces) {
-                $places = $girl->meeting_places ?? [];
-                foreach ($filterPlaces as $place) {
-                    if (!isset($places[$place]) || ($places[$place] !== 'да' && $places[$place] !== true)) {
-                        return false;
-                    }
-                }
-                return true;
-            });
-        }
-        
-        if (!empty($filterFinish)) {
-            $allGirls = $allGirls->filter(function($girl) use ($filterFinish) {
-                $services = $girl->services ?? [];
-                foreach ($filterFinish as $finish) {
-                    $found = false;
-                    
-                    $flatKey = 'Окончание_' . $finish;
-                    if (isset($services[$flatKey]) && ($services[$flatKey] === 'да' || $services[$flatKey] === true)) {
-                        $found = true;
-                    }
-                    
-                    if (!$found && isset($services['Окончание']) && is_array($services['Окончание'])) {
-                        if (isset($services['Окончание'][$finish]) && ($services['Окончание'][$finish] === 'да' || $services['Окончание'][$finish] === true)) {
-                            $found = true;
-                        }
-                    }
-                    
-                    if (!$found) {
-                        return false;
-                    }
-                }
-                return true;
-            });
-        }
-        
-        if ($filterVerified) {
-            $allGirls = $allGirls->filter(function($girl) {
-                $images = $girl->media_images ?? [];
-                return is_array($images) && count($images) >= 3;
-            });
-        }
-        
-        // Фильтр по цене 1 час
-        if ($request->filled('price_1h_from') || $request->filled('price_1h_to')) {
-            $priceFrom = $request->filled('price_1h_from') ? (int)$request->price_1h_from : 0;
-            $priceTo = $request->filled('price_1h_to') ? (int)$request->price_1h_to : PHP_INT_MAX;
+                    return true;
+                });
+            }
             
-            $allGirls = $allGirls->filter(function($girl) use ($priceFrom, $priceTo) {
-                $tariffs = $girl->tariffs ?? [];
-                $price1h = $this->extractPrice($tariffs, '1 час');
-                if ($price1h) {
-                    $priceValue = (int)preg_replace('/[^0-9]/', '', $price1h);
-                    return $priceValue >= $priceFrom && $priceValue <= $priceTo;
-                }
-                return false;
-            });
-        }
-        
-        // Фильтр по цене 2 часа
-        if ($request->filled('price_2h_from') || $request->filled('price_2h_to')) {
-            $priceFrom = $request->filled('price_2h_from') ? (int)$request->price_2h_from : 0;
-            $priceTo = $request->filled('price_2h_to') ? (int)$request->price_2h_to : PHP_INT_MAX;
+            if ($filterVerified) {
+                $allGirls = $allGirls->filter(function($girl) {
+                    $images = $girl->media_images ?? [];
+                    return is_array($images) && count($images) >= 3;
+                });
+            }
             
-            $allGirls = $allGirls->filter(function($girl) use ($priceFrom, $priceTo) {
-                $tariffs = $girl->tariffs ?? [];
-                $price2h = $this->extractPrice($tariffs, '2 часа');
-                if ($price2h) {
-                    $priceValue = (int)preg_replace('/[^0-9]/', '', $price2h);
-                    return $priceValue >= $priceFrom && $priceValue <= $priceTo;
-                }
-                return false;
-            });
+            if ($request->filled('price_1h_from') || $request->filled('price_1h_to')) {
+                $priceFrom = $request->filled('price_1h_from') ? (int)$request->price_1h_from : 0;
+                $priceTo = $request->filled('price_1h_to') ? (int)$request->price_1h_to : PHP_INT_MAX;
+                
+                $allGirls = $allGirls->filter(function($girl) use ($priceFrom, $priceTo) {
+                    $tariffs = $girl->tariffs ?? [];
+                    $price1h = $this->extractPrice($tariffs, '1 час');
+                    if ($price1h) {
+                        $priceValue = (int)preg_replace('/[^0-9]/', '', $price1h);
+                        return $priceValue >= $priceFrom && $priceValue <= $priceTo;
+                    }
+                    return false;
+                });
+            }
+            
+            if ($request->filled('price_2h_from') || $request->filled('price_2h_to')) {
+                $priceFrom = $request->filled('price_2h_from') ? (int)$request->price_2h_from : 0;
+                $priceTo = $request->filled('price_2h_to') ? (int)$request->price_2h_to : PHP_INT_MAX;
+                
+                $allGirls = $allGirls->filter(function($girl) use ($priceFrom, $priceTo) {
+                    $tariffs = $girl->tariffs ?? [];
+                    $price2h = $this->extractPrice($tariffs, '2 часа');
+                    if ($price2h) {
+                        $priceValue = (int)preg_replace('/[^0-9]/', '', $price2h);
+                        return $priceValue >= $priceFrom && $priceValue <= $priceTo;
+                    }
+                    return false;
+                });
+            }
+            
+            $total = $allGirls->count();
+            $girls = $allGirls->forPage($page, $perPage);
         }
-        
-        $total = $allGirls->count();
-        $girls = $allGirls->forPage($page, $perPage);
         
         $girlsFormatted = $girls->map(function ($girl) {
             return $this->formatGirlForCard($girl);
