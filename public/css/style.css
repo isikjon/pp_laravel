@@ -30,3 +30,11 @@
 .skeleton-box--photo{height:100%;width:100%;border-radius:12px;}
 .skeleton-row{display:flex;align-items:center;gap:12px;width:100%;}
 @keyframes skeleton-loading{0%{background-position:100% 50%;}100%{background-position:0 50%;}}
+
+/* girl cards layout refinements */
+.girlsSection{display:grid!important;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:32px 24px;align-items:stretch;}
+.girlCard{width:100%!important;max-width:none;min-height:360px;}
+@media screen and (max-width:1024px){.girlsSection{grid-template-columns:repeat(auto-fill,minmax(300px,1fr));}}
+@media screen and (max-width:768px){.girlsSection{grid-template-columns:minmax(0,1fr);}}
+@media screen and (max-width:560px){.girlCard{min-height:420px;}}
+.girlCard--skeleton{min-height:360px;}
