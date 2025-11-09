@@ -188,8 +188,32 @@
         let filtersScriptLoading = false;
         const filtersScriptCallbacks = [];
 
+        function whenJqueryReady(callback) {
+            if (window.jQuery) {
+                callback();
+                return;
+            }
+
+            console.log('[filters-loader] jQuery not ready yet, waiting...');
+            const startTime = Date.now();
+            const interval = setInterval(function () {
+                if (window.jQuery) {
+                    clearInterval(interval);
+                    console.log('[filters-loader] jQuery detected after', Date.now() - startTime, 'ms');
+                    callback();
+                    return;
+                }
+
+                if (Date.now() - startTime > 5000) {
+                    clearInterval(interval);
+                    console.error('[filters-loader] jQuery was not found within 5s');
+                }
+            }, 50);
+        }
+
         function loadFiltersScript(callback) {
             if (filtersScriptLoaded) {
+                console.log('[filters-loader] filters.js already loaded');
                 if (typeof callback === 'function') {
                     callback();
                 }
@@ -201,41 +225,49 @@
             }
 
             if (filtersScriptLoading) {
+                console.log('[filters-loader] filters.js load in progress');
                 return;
             }
 
             filtersScriptLoading = true;
+            console.log('[filters-loader] starting filters.js load', filtersScriptSrc);
 
-            const script = document.createElement('script');
-            script.src = filtersScriptSrc;
-            script.defer = true;
-            script.addEventListener('load', function () {
-                filtersScriptLoaded = true;
-                filtersScriptLoading = false;
-                while (filtersScriptCallbacks.length) {
-                    const fn = filtersScriptCallbacks.shift();
-                    try { fn(); } catch (error) { console.error(error); }
-                }
-            }, { once: true });
-            script.addEventListener('error', function () {
-                filtersScriptLoading = false;
-                console.warn('Failed to load filters.js');
-            }, { once: true });
-            document.head.appendChild(script);
+            whenJqueryReady(function () {
+                const script = document.createElement('script');
+                script.src = filtersScriptSrc;
+                script.defer = true;
+                script.addEventListener('load', function () {
+                    console.log('[filters-loader] filters.js loaded');
+                    filtersScriptLoaded = true;
+                    filtersScriptLoading = false;
+                    while (filtersScriptCallbacks.length) {
+                        const fn = filtersScriptCallbacks.shift();
+                        try { fn(); } catch (error) { console.error('[filters-loader] callback error', error); }
+                    }
+                }, { once: true });
+                script.addEventListener('error', function () {
+                    filtersScriptLoading = false;
+                    console.error('[filters-loader] failed to load filters.js');
+                }, { once: true });
+                document.head.appendChild(script);
+            });
         }
 
         if ('requestIdleCallback' in window) {
             requestIdleCallback(function () {
+                console.log('[filters-loader] requestIdleCallback trigger');
                 loadFiltersScript();
             });
         } else {
             window.addEventListener('load', function () {
+                console.log('[filters-loader] window load trigger');
                 loadFiltersScript();
             });
         }
 
         document.addEventListener('click', function onFirstInteractive(event) {
             if (event.target.closest('.filtersBtn') || event.target.closest('.more-info') || event.target.closest('.btn-formFilterModal__btn')) {
+                console.log('[filters-loader] user interaction trigger');
                 loadFiltersScript();
                 document.removeEventListener('click', onFirstInteractive);
             }
