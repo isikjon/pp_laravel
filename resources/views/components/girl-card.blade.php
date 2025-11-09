@@ -20,20 +20,23 @@
             </div>
             @endif
             @php
-                $placeholderPixel = 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///ywAAAAAAQABAAACAUwAOw==';
+                $isHeroCard = !empty($fetch_high);
             @endphp
             <img
-                src="{{ $photo }}"
+                src="{{ $isHeroCard ? $photo : 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///ywAAAAAAQABAAACAUwAOw==' }}"
+                @unless($isHeroCard)
+                    data-src="{{ $photo }}"
+                    class="photoGirl__img deferred-image"
+                @else
+                    class="photoGirl__img"
+                    data-immediate="true"
+                @endunless
                 alt="Фото {{ $name }}"
-                class="photoGirl__img{{ $isHeroCard ? '' : ' deferred-image' }}"
                 loading="{{ $isHeroCard ? 'eager' : 'lazy' }}"
                 fetchpriority="{{ $isHeroCard ? 'high' : 'auto' }}"
                 decoding="async"
                 width="210"
                 height="315"
-                @if($isHeroCard)
-                    data-immediate="true"
-                @endif
             >
         </a>
         <div class="right-wrapper-girlCard">

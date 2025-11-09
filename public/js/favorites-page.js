@@ -184,14 +184,14 @@ $(document).ready(function() {
                                 </div>
                             </div>
                             <div class="blockPrecises-right-wrapper-girlCard__top">
-                                <div style="background: url(/img/bgAnal.png) center center no-repeat;" class="blockPrecises-right-wrapper-girlCard__topBlock blockPrecises-right-wrapper-girlCard__topBlock-2">
+                                <div class="blockPrecises-right-wrapper-girlCard__topBlock" data-theme="anal">
                                     <div class="hourFlex-blockPrecises-right-wrapper-girlCard__top">
                                         <p>Анал</p>
                                     </div>
                                     <span>${girl.priceAnal ? girl.priceAnal.toLocaleString('ru-RU') : '-'}</span>
                                 </div>
                                 <div class="line-blockPrecises-right-wrapper-girlCard__top"></div>
-                                <div style="background: url(/img/bgNight.png) center center no-repeat;" class="blockPrecises-right-wrapper-girlCard__topBlock blockPrecises-right-wrapper-girlCard__topBlock-2">
+                                <div class="blockPrecises-right-wrapper-girlCard__topBlock" data-theme="night">
                                     <div class="hourFlex-blockPrecises-right-wrapper-girlCard__top">
                                         <p>Ночь</p>
                                     </div>

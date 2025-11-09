@@ -188,6 +188,8 @@
         let filtersScriptLoaded = false;
         let filtersScriptLoading = false;
         const filtersScriptCallbacks = [];
+        let jqueryLoading = false;
+        const jqueryCallbacks = [];
 
         function ensureJquery(callback) {
             if (window.jQuery) {

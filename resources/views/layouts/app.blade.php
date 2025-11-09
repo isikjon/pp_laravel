@@ -52,10 +52,6 @@
         .right-wrapper-girlCard{flex:1 1 auto;display:flex;flex-direction:column;gap:7px;max-width:100%;}
         .name-girlCard{display:flex;align-items:center;gap:10px;}
         .name-girlCard p{font-size:20px;font-weight:500;margin:0;}
-        .favorite-toggle{display:inline-flex;align-items:center;justify-content:center;width:36px;height:36px;border-radius:50%;background:rgba(126,29,50,.08);transition:background .2s ease;}
-        .favorite-toggle__icon{display:block;width:24px;height:24px;background-repeat:no-repeat;background-size:24px 24px;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none'%3E%3Cpath d='M16.8199 2H7.17989C5.04989 2 3.31989 3.74 3.31989 5.86V19.95C3.31989 21.75 4.60989 22.51 6.18989 21.64L11.0699 18.93C11.5899 18.64 12.4299 18.64 12.9399 18.93L17.8199 21.64C19.3999 22.52 20.6899 21.76 20.6899 19.95V5.86C20.6799 3.74 18.9499 2 16.8199 2Z' stroke='%237E1D32' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");}
-        .favorite-toggle.is-active{background:rgba(126,29,50,.15);}
-        .favorite-toggle.is-active .favorite-toggle__icon{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none'%3E%3Cpath d='M16.82 2H7.18C5.05 2 3.32 3.74 3.32 5.86V19.95C3.32 21.75 4.61 22.51 6.19 21.64L11.07 18.93C11.59 18.64 12.43 18.64 12.94 18.93L17.82 21.64C19.4 22.52 20.69 21.76 20.69 19.95V5.86C20.68 3.74 18.95 2 16.82 2Z' fill='%237E1D32' stroke='%237E1D32' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");}
         .ageGirlCard{font-size:16px;color:#292D33;margin:0;}
         .line-right-wrapper-girlCard{border-top:1px dashed #DADADA;margin:6px 0;}
         .infoParameters-right-wrapper-girlCard{display:flex;gap:15px;flex-wrap:wrap;font-size:14px;}
@@ -67,9 +63,17 @@
         .metro-right-wrapper-girlCard{color:#03AFFF;font-size:14px;}
         .blockPrecises-right-wrapper-girlCard{min-height:184px;display:flex;flex-direction:column;gap:12px;}
         .blockPrecises-right-wrapper-girlCard__top,.blockPrecises-right-wrapper-girlCard__top-1{display:flex;align-items:stretch;width:100%;min-height:88px;gap:10px;}
-        .blockPrecises-right-wrapper-girlCard__topBlock{flex:1 1 0;min-height:88px;border-radius:12px;padding:10px;display:flex;flex-direction:column;justify-content:space-between;background:linear-gradient(135deg,#fee97f 0%,#ffdf65 100%);position:relative;overflow:hidden;}
-        .blockPrecises-right-wrapper-girlCard__topBlock[data-theme="night"]{background:linear-gradient(135deg,#1d1a4a 0%,#312d73 100%);color:#FFFFFF;}
-        .blockPrecises-right-wrapper-girlCard__topBlock[data-theme="anal"]{background:linear-gradient(135deg,#7e1d32 0%,#b52b4c 100%);color:#FFFFFF;}
+        .blockPrecises-right-wrapper-girlCard__topBlock{flex:0 0 70px;width:70px!important;min-height:88px;border-radius:12px;padding:10px;display:flex;flex-direction:column;align-items:center;justify-content:space-between;background:linear-gradient(135deg,#fee97f 0%,#ffdf65 100%);position:relative;overflow:hidden;color:#292D33;}
+        .blockPrecises-right-wrapper-girlCard__topBlock[data-theme="hour-1"],.blockPrecises-right-wrapper-girlCard__topBlock[data-theme="hour-2"]{color:#292D33;}
+        .blockPrecises-right-wrapper-girlCard__topBlock[data-theme="anal"],.blockPrecises-right-wrapper-girlCard__topBlock[data-theme="night"]{background:linear-gradient(135deg,#7e1d32 0%,#b52b4c 100%);color:#FFFFFF;}
+        .blockPrecises-right-wrapper-girlCard__topBlock[data-theme="night"]{background:linear-gradient(135deg,#1d1a4a 0%,#312d73 100%);}
+        .blockPrecises-right-wrapper-girlCard__topBlock span{font-weight:600;color:inherit;}
+        .hourFlex-blockPrecises-right-wrapper-girlCard__top{display:flex;align-items:center;justify-content:center;gap:5px;}
+        .hourFlex-blockPrecises-right-wrapper-girlCard__top p{margin:0;color:inherit;font-weight:600;}
+        .favorite-toggle{display:inline-flex;align-items:center;justify-content:center;width:36px;height:36px;border-radius:50%;background:rgba(126,29,50,.08);transition:background .2s ease;}
+        .favorite-toggle__icon{display:block;width:24px;height:24px;background-repeat:no-repeat;background-size:24px 24px;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none'%3E%3Cpath d='M16.8199 2H7.17989C5.04989 2 3.31989 3.74 3.31989 5.86V19.95C3.31989 21.75 4.60989 22.51 6.18989 21.64L11.0699 18.93C11.5899 18.64 12.4299 18.64 12.9399 18.93L17.8199 21.64C19.3999 22.52 20.6899 21.76 20.6899 19.95V5.86C20.6799 3.74 18.9499 2 16.8199 2Z' stroke='%237E1D32' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");}
+        .favorite-toggle.is-active,.favorite-toggle.is-favorite{background:rgba(126,29,50,.15);}
+        .favorite-toggle.is-active .favorite-toggle__icon,.favorite-toggle.is-favorite .favorite-toggle__icon{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none'%3E%3Cpath d='M16.82 2H7.18C5.05 2 3.32 3.74 3.32 5.86V19.95C3.32 21.75 4.61 22.51 6.19 21.64L11.07 18.93C11.59 18.64 12.43 18.64 12.94 18.93L17.82 21.64C19.4 22.52 20.69 21.76 20.69 19.95V5.86C20.68 3.74 18.95 2 16.82 2Z' fill='%237E1D32' stroke='%237E1D32' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");}
         .bottom-girlCard{display:flex;align-items:center;justify-content:space-between;gap:12px;font-size:12px;color:#6E6E6E;}
         .flex-bottom-girlCard{display:inline-flex;align-items:center;gap:8px;}
         .verified-status-text{color:#006400;font-weight:600;}
