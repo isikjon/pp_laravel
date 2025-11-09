@@ -43,64 +43,109 @@
     <script defer src="{{ cached_asset('js/favorites.js') }}"></script>
     <script>
         (function () {
-            let observerInstance = null;
-
-            function loadImage(img) {
-                if (!img || img.dataset.loaded === 'true') {
-                    return;
-                }
-                const realSrc = img.getAttribute('data-src');
-                if (realSrc) {
-                    img.src = realSrc;
-                    img.removeAttribute('data-src');
-                }
-                img.dataset.loaded = 'true';
+            if (typeof window === 'undefined') {
+                return;
             }
 
-            function getObserver() {
-                if (observerInstance || !('IntersectionObserver' in window)) {
-                    return observerInstance;
-                }
-
-                observerInstance = new IntersectionObserver(function (entries) {
+            if (!window.__girlCardLogger && 'ResizeObserver' in window) {
+                var sizeCache = new WeakMap();
+                var resizeObserver = new ResizeObserver(function (entries) {
                     entries.forEach(function (entry) {
-                        if (entry.isIntersecting) {
-                            loadImage(entry.target);
-                            observerInstance.unobserve(entry.target);
+                        var el = entry.target;
+                        if (el.classList && el.classList.contains('girlCard--skeleton')) {
+                            return;
+                        }
+                        var rect = entry.contentRect;
+                        var current = {
+                            width: Math.round(rect.width),
+                            height: Math.round(rect.height)
+                        };
+                        var prev = sizeCache.get(el);
+                        if (!prev || prev.width !== current.width || prev.height !== current.height) {
+                            console.debug('[girlCard:resize]', {
+                                id: el.dataset ? el.dataset.girlId || null : null,
+                                width: current.width,
+                                height: current.height,
+                                deltaWidth: prev ? current.width - prev.width : null,
+                                deltaHeight: prev ? current.height - prev.height : null,
+                                timestamp: performance.now ? performance.now().toFixed(1) : null
+                            });
+                            sizeCache.set(el, current);
                         }
                     });
-                }, { rootMargin: '150px 0px' });
+                });
 
-                return observerInstance;
-            }
+                var observeCards = function (scope) {
+                    var context = scope && scope.querySelectorAll ? scope : document;
+                    var cards = context.querySelectorAll('.girlCard:not(.girlCard--skeleton)');
+                    cards.forEach(function (card) {
+                        if (!sizeCache.has(card)) {
+                            sizeCache.set(card, {
+                                width: card.offsetWidth,
+                                height: card.offsetHeight
+                            });
+                            console.debug('[girlCard:init]', {
+                                id: card.dataset ? card.dataset.girlId || null : null,
+                                width: card.offsetWidth,
+                                height: card.offsetHeight,
+                                timestamp: performance.now ? performance.now().toFixed(1) : null
+                            });
+                        }
+                        resizeObserver.observe(card);
+                    });
+                };
 
-            window.observeDeferredImages = function (scope) {
-                const context = scope instanceof Element ? scope : document;
-                const images = context.querySelectorAll ? context.querySelectorAll('img.deferred-image[data-src]') : [];
+                document.addEventListener('DOMContentLoaded', function () {
+                    observeCards(document);
+                });
 
-                if (!images.length) {
-                    return;
-                }
-
-                const observer = getObserver();
-
-                images.forEach(function (img) {
-                    if (img.dataset.immediate === 'true') {
-                        loadImage(img);
-                        return;
-                    }
-
-                    if (observer) {
-                        observer.observe(img);
+                document.addEventListener('girlCards:mutated', function (event) {
+                    if (event.detail && event.detail.scope) {
+                        observeCards(event.detail.scope);
                     } else {
-                        loadImage(img);
+                        observeCards(document);
                     }
                 });
-            };
 
-            document.addEventListener('DOMContentLoaded', function () {
-                window.observeDeferredImages();
-            });
+                window.__girlCardLogger = {
+                    observe: observeCards,
+                    resizeObserver: resizeObserver
+                };
+            }
+
+            if ('PerformanceObserver' in window) {
+                try {
+                    var clsObserver = new PerformanceObserver(function (list) {
+                        list.getEntries().forEach(function (entry) {
+                            if (entry.hadRecentInput) {
+                                return;
+                            }
+                            var sources = (entry.sources || []).map(function (source) {
+                                if (!source.node) {
+                                    return null;
+                                }
+                                var classList = source.node.classList ? Array.from(source.node.classList).join('.') : '';
+                                return {
+                                    selector: classList || source.node.tagName.toLowerCase(),
+                                    text: source.node.textContent ? source.node.textContent.trim().slice(0, 80) : '',
+                                    previousRect: source.previousRect,
+                                    currentRect: source.currentRect
+                                };
+                            }).filter(Boolean);
+                            console.warn('[CLS]', {
+                                value: entry.value,
+                                time: entry.startTime.toFixed(1),
+                                sources: sources
+                            });
+                        });
+                    });
+
+                    clsObserver.observe({ type: 'layout-shift', buffered: true });
+                    window.__clsObserver = clsObserver;
+                } catch (error) {
+                    console.debug('Layout shift observer unavailable', error);
+                }
+            }
         })();
     </script>
     @stack('scripts')

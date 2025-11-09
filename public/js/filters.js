@@ -7,7 +7,50 @@ $(document).ready(function() {
     let hasMorePages = !!window.__HAS_MORE_PAGES;
     let hasMore = hasMorePages;
     let currentFilters = {};
-    
+    const APPEND_SKELETON_COUNT = 4;
+
+    function createSkeletonCard() {
+        return `
+            <div class="girlCard girlCard--skeleton" data-skeleton="append" aria-hidden="true">
+                <div class="wrapper-girlCard">
+                    <div class="photoGirl">
+                        <div class="skeleton-box skeleton-box--photo"></div>
+                    </div>
+                    <div class="right-wrapper-girlCard">
+                        <div class="skeleton-box skeleton-box--title"></div>
+                        <div class="skeleton-box skeleton-box--subtitle"></div>
+                        <div class="skeleton-row">
+                            <div class="skeleton-box skeleton-box--chip"></div>
+                            <div class="skeleton-box skeleton-box--chip"></div>
+                        </div>
+                        <div class="skeleton-box skeleton-box--line"></div>
+                        <div class="skeleton-box skeleton-box--line"></div>
+                    </div>
+                </div>
+                <div class="bottom-girlCard">
+                    <div class="skeleton-box skeleton-box--chip"></div>
+                </div>
+            </div>
+        `;
+    }
+
+    function addAppendSkeletons(count = APPEND_SKELETON_COUNT) {
+        const container = $('.girlsSection');
+        if (!container.length) {
+            return;
+        }
+        removeAppendSkeletons();
+        let skeletonHtml = '';
+        for (let i = 0; i < count; i++) {
+            skeletonHtml += createSkeletonCard();
+        }
+        container.append(skeletonHtml);
+    }
+
+    function removeAppendSkeletons() {
+        $('.girlCard--skeleton[data-skeleton="append"]').remove();
+    }
+
     if (!hasLocalPreloaded && !hasMorePages) {
         $('.more-info').hide();
     }
@@ -209,6 +252,7 @@ $(document).ready(function() {
         
         if (append) {
             showLoader();
+            addAppendSkeletons();
         } else {
             showSectionLoader();
         }
@@ -231,6 +275,7 @@ $(document).ready(function() {
                 if (append) {
                     appendGirls(response.girls);
                     hideLoader();
+                    removeAppendSkeletons();
                 } else {
                     replaceGirls(response.girls);
                     hideSectionLoader();
@@ -260,6 +305,7 @@ $(document).ready(function() {
             error: function() {
                 hideLoader();
                 hideSectionLoader();
+                removeAppendSkeletons();
                 loading = false;
                 
                 alert('Произошла ошибка при загрузке данных. Попробуйте еще раз.');
@@ -273,6 +319,8 @@ $(document).ready(function() {
         if (!container.length) {
             return;
         }
+        
+        removeAppendSkeletons();
         
         preloadedGirls = [];
         hasLocalPreloaded = false;
@@ -289,10 +337,14 @@ $(document).ready(function() {
         if (typeof window.observeDeferredImages === 'function') {
             window.observeDeferredImages(container[0]);
         }
+
+        document.dispatchEvent(new CustomEvent('girlCards:mutated', { detail: { scope: container[0] } }));
     }
     
     function appendGirls(girls) {
         const container = $('.girlsSection');
+        
+        removeAppendSkeletons();
         
         girls.forEach(function(girl) {
             const card = $(createGirlCard(girl));
@@ -304,6 +356,10 @@ $(document).ready(function() {
                 window.observeDeferredImages(card[0]);
             }
         });
+
+        if (container.length) {
+            document.dispatchEvent(new CustomEvent('girlCards:mutated', { detail: { scope: container[0] } }));
+        }
     }
     
     function createGirlCard(girl) {

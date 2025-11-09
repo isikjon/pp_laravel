@@ -8,3 +8,25 @@
 .bannerBottomTG{aspect-ratio:5280/612;max-height:260px;}
 .bannerBottomTG img{height:100%;object-fit:cover;}
 @media screen and (max-width:930px){.bannerBottomTG{max-height:180px;}}
+
+/* girl card layout overrides */
+.girlCard{display:flex;flex-direction:column;width:100%;max-width:420px;height:auto;}
+@media screen and (max-width:768px){.girlCard{max-width:100%;}.photoGirl{max-width:100%;}}
+.photoGirl{flex:0 0 auto;width:100%;max-width:210px;aspect-ratio:2/3;height:auto;}
+.photoGirl__img{width:100%;height:100%;object-fit:cover;}
+.wrapper-girlCard{align-items:stretch;}
+
+/* skeleton placeholders */
+.girlCard--skeleton{position:relative;overflow:hidden;pointer-events:none;}
+.girlCard--skeleton .wrapper-girlCard{gap:16px;}
+.girlCard--skeleton .photoGirl{background:#f3f3f3;display:flex;align-items:center;justify-content:center;}
+.girlCard--skeleton .right-wrapper-girlCard{width:100%;gap:12px;}
+.girlCard--skeleton .bottom-girlCard{width:100%;justify-content:flex-start;gap:12px;}
+.skeleton-box{width:100%;height:14px;border-radius:8px;background:linear-gradient(90deg,#ececec 25%,#f5f5f5 37%,#ececec 63%);background-size:400% 100%;animation:skeleton-loading 1.4s ease infinite;}
+.skeleton-box--title{height:22px;width:70%;}
+.skeleton-box--subtitle{height:18px;width:50%;}
+.skeleton-box--line{height:12px;width:100%;}
+.skeleton-box--chip{height:26px;width:45%;border-radius:999px;}
+.skeleton-box--photo{height:100%;width:100%;border-radius:12px;}
+.skeleton-row{display:flex;align-items:center;gap:12px;width:100%;}
+@keyframes skeleton-loading{0%{background-position:100% 50%;}100%{background-position:0 50%;}}
