@@ -10,6 +10,10 @@ class CacheResponseHeaders
 {
     public function handle(Request $request, Closure $next): Response
     {
+        if ($request->is('admin/*') || $request->is('admin')) {
+            return $next($request);
+        }
+
         /** @var \Symfony\Component\HttpFoundation\Response $response */
         $response = $next($request);
 
