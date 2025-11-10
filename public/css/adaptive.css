@@ -243,6 +243,11 @@
     }
 }
 @media screen and (max-width: 930px) {
+    .blockPrecises-right-wrapper-girlCard__top,
+    .blockPrecises-right-wrapper-girlCard__top-1 {
+        justify-content: center !important;
+        margin: 0 auto !important;
+    }
     .container {
         padding: 0 20px;
     }
