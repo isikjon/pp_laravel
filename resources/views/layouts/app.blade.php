@@ -20,9 +20,9 @@
         body{overflow-x:hidden;}
         a{color:#292D33;text-decoration:none;}
         img{max-width:100%;height:auto;display:block;}
-        .container{width:100%;max-width:1320px;margin:0 auto;padding:0 16px;position:relative;min-height:600px;}
+        .container{width:100%;max-width:1320px;margin:0 auto;padding:0 16px;position:relative;}
         header{position:fixed;top:0;width:100%;background:#FFFFFF;box-shadow:0 5px 20px rgba(44,41,51,.10);padding:15px 0 20px;z-index:10;}
-        main{margin-top:180px;min-height:calc(100vh - 180px);}
+        main{margin-top:180px;}
         .flexTopHeader{display:flex;align-items:center;justify-content:space-between;gap:24px;flex-wrap:nowrap;}
         .flexTopHeader>a{flex:0 0 auto;display:inline-flex;align-items:center;}
         .center-flexTopHeader{flex:0 0 auto;display:flex;align-items:center;gap:20px;white-space:nowrap;}
