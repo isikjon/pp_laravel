@@ -1,9 +1,9 @@
 document.addEventListener('DOMContentLoaded', function() {
-    const noImagePath = '/img/noimage.png';
+    const noImagePath = 'https://prostitutkitest.com/img/noimage.png';
     const excludeClasses = ['status-photoGirl', 'video-photoGirl', 'favorite-toggle__icon'];
     
     function shouldHandleImage(img) {
-        if (!img.src || img.src.includes('data:image')) {
+        if (!img.src || img.src.includes('data:image') || img.src === noImagePath) {
             return false;
         }
         
@@ -13,7 +13,7 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         }
         
-        if (img.src.includes('/img/') && !img.src.includes('prostitutki-today') && !img.src.includes('files.')) {
+        if (img.src.includes('/img/') && !img.src.includes('prostitutki-today') && !img.src.includes('prostitutkitest') && !img.src.includes('files.')) {
             return false;
         }
         
@@ -25,7 +25,7 @@ document.addEventListener('DOMContentLoaded', function() {
             return;
         }
         
-        if (img.src !== window.location.origin + noImagePath && !img.dataset.fallbackApplied) {
+        if (img.src !== noImagePath && !img.dataset.fallbackApplied) {
             img.dataset.fallbackApplied = 'true';
             img.src = noImagePath;
             img.removeAttribute('srcset');
