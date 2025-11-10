@@ -78,14 +78,6 @@
         .flex-bottom-girlCard{display:inline-flex;align-items:center;gap:8px;}
         .verified-status-text{color:#006400;font-weight:600;}
         .more-info{display:flex;align-items:center;justify-content:center;min-height:48px;padding:12px 24px;border-radius:12px;background:#7E1D32;color:#FFFFFF;margin:35px auto 0;width:max-content;}
-        @media (max-width:1200px){.center-flexTopHeader{flex-wrap:wrap;gap:12px;}.cityChoose,.headerMetro{min-width:calc(50% - 12px);width:calc(50% - 12px);}.rightHeaderTop .search-rightHeaderTop{max-width:none;}}
-        @media (max-width:930px){.flexTopHeader{flex-wrap:wrap;gap:16px;}.center-flexTopHeader{order:3;width:100%;justify-content:space-between;}.cityChoose,.headerMetro{width:48%;}.rightHeaderTop{order:2;width:100%;justify-content:space-between;}.rightHeaderTop .search-rightHeaderTop{flex:1 1 100%;}}
-        header{position:fixed;top:0;width:100%;background:#FFFFFF;box-shadow:0 5px 20px rgba(44,41,51,.10);padding:15px 0 20px;z-index:10;height:auto;min-height:140px;}
-        .flexTopHeader{display:flex;align-items:center;justify-content:space-between;gap:24px;flex-wrap:nowrap;min-height:60px;}
-        .rightHeaderTop{min-height:48px;flex:1 1 auto;display:flex;align-items:center;justify-content:flex-end;gap:20px;}
-        .modalRegistration,.telHeader,.favorites-link{flex:0 0 auto;height:48px;display:inline-flex;align-items:center;}
-        .search-rightHeaderTop{height:48px;}
-        @media (max-width:930px){header{min-height:180px;}.flexTopHeader{flex-wrap:wrap;}.rightHeaderTop{width:100%;justify-content:space-between;}}
         @media (max-width:768px){.girlsSection{display:flex!important;flex-direction:column!important;gap:24px!important;min-height:1080px!important;}.girlCard{min-height:540px!important;width:100%!important;}.wrapper-girlCard{flex-direction:column!important;align-items:center!important;gap:16px!important;}.photoGirl{width:100%!important;max-width:280px!important;height:420px!important;flex:0 0 420px!important;}.photoGirl__img{width:100%!important;height:420px!important;}.right-wrapper-girlCard{width:100%!important;max-width:100%!important;}.girlCard.is-mobile-hidden,.girlCard.mobile-hidden-default{display:none!important;}}
     </style>
     <link rel="preload" href="{{ cached_asset('css/style.css') }}" as="style">
