@@ -11,8 +11,11 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware) {
-        $middleware->prepend(\App\Http\Middleware\CacheResponseHeaders::class);
-        $middleware->append(\App\Http\Middleware\GzipResponse::class);
+        $middleware->web(prepend: [
+            \App\Http\Middleware\CacheResponseHeaders::class,
+        ], append: [
+            \App\Http\Middleware\GzipResponse::class,
+        ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {
         //
