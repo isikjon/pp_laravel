@@ -107,7 +107,7 @@
         display: flex;
         align-items: center;
         cursor: pointer;
-        z-index: 10100;
+        z-index: 9000;
         width: 36px;
         height: 36px;
         position: relative;
@@ -124,7 +124,7 @@
         background: rgba(255, 255, 255, 1);
         backdrop-filter: blur(10px);
         transition-duration: 0.25s;
-        z-index: 10050;
+        z-index: 8999;
         padding: 20px 50px 30px;
         overflow-y: auto;
     }
@@ -792,7 +792,7 @@
     .modal-content {
         width: 95% !important;
         max-width: 95% !important;
-        padding: 10px 8px !important;
+        padding: 8px 6px !important;
         max-height: 95vh !important;
         overflow-y: auto !important;
     }
@@ -810,23 +810,23 @@
         max-height: none !important;
         overflow-y: visible !important;
         padding-right: 0 !important;
-        gap: 12px !important;
+        gap: 8px !important;
     }
     .flexTop-formFilterModal,
     .flexBottom-formFilterModal {
         flex-direction: column !important;
-        gap: 12px !important;
+        gap: 8px !important;
     }
     .column-checkbox-formFilterModal {
         width: 100% !important;
     }
     .column-checkbox-formFilterModal h3 {
         font-size: 15px !important;
-        margin-bottom: 8px !important;
+        margin-bottom: 6px !important;
     }
     .flex-column-checkbox-formFilterModal {
         font-size: 13px !important;
-        gap: 6px !important;
+        gap: 4px !important;
     }
     .flex-column-checkbox-formFilterModal input {
         width: 16px !important;
@@ -841,48 +841,48 @@
     .flex-block-column-checkbox-formFilterModal__number input {
         min-height: 36px !important;
         font-size: 13px !important;
-        padding: 6px 10px !important;
+        padding: 5px 8px !important;
     }
     .flex-block-column-checkbox-formFilterModal__number span {
         font-size: 13px !important;
     }
     .additionalParams > div {
         grid-template-columns: 1fr !important;
-        gap: 8px !important;
+        gap: 6px !important;
     }
     .additionalParams {
         padding: 0 !important;
-        margin-top: 10px !important;
+        margin-top: 8px !important;
     }
     .additionalParams h5 {
         font-size: 15px !important;
-        margin-bottom: 8px !important;
+        margin-bottom: 6px !important;
     }
     .additionalParams select,
     .additionalParams input {
         font-size: 13px !important;
         min-height: 38px !important;
-        padding: 8px 10px !important;
+        padding: 6px 8px !important;
     }
     .additionalParams .select-wrapper {
         width: 100% !important;
     }
     .additionalParams .select-wrapper label {
         font-size: 13px !important;
-        margin-bottom: 6px !important;
+        margin-bottom: 4px !important;
     }
     .moreFilters {
-        margin: 10px 0 !important;
+        margin: 8px 0 !important;
     }
     .moreFilters p {
         font-size: 13px !important;
     }
     .lastCheckBoxBottomModal {
         flex-wrap: wrap !important;
-        gap: 8px !important;
+        gap: 6px !important;
     }
     .btn-formFilterModal {
-        margin-top: 8px !important;
+        margin-top: 6px !important;
     }
     .btn-formFilterModal__btn {
         width: 100% !important;
@@ -919,7 +919,7 @@
     .modal-content {
         width: 95% !important;
         max-width: 95% !important;
-        padding: 12px 10px !important;
+        padding: 10px 8px !important;
         max-height: 90vh !important;
         overflow-y: auto !important;
     }
@@ -940,7 +940,7 @@
     }
     .flexTop-formFilterModal,
     .flexBottom-formFilterModal {
-        gap: 12px;
+        gap: 10px;
         flex-direction: column !important;
     }
     .column-checkbox-formFilterModal {
@@ -948,11 +948,11 @@
     }
     .column-checkbox-formFilterModal h3 {
         font-size: 16px !important;
-        margin-bottom: 8px !important;
+        margin-bottom: 6px !important;
     }
     .flex-column-checkbox-formFilterModal {
         font-size: 14px !important;
-        gap: 6px !important;
+        gap: 5px !important;
     }
     .flex-column-checkbox-formFilterModal input {
         width: 18px !important;
@@ -964,18 +964,18 @@
     .flex-block-column-checkbox-formFilterModal__number input {
         min-height: 38px !important;
         font-size: 14px !important;
-        padding: 6px 10px !important;
+        padding: 5px 8px !important;
     }
     .additionalParams {
-        margin-top: 12px !important;
+        margin-top: 10px !important;
     }
     .additionalParams h5 {
         font-size: 16px !important;
-        margin-bottom: 8px !important;
+        margin-bottom: 6px !important;
     }
     .additionalParams > div {
         grid-template-columns: repeat(2, 1fr) !important;
-        padding: 0 5px !important;
+        padding: 0 3px !important;
     }
     .additionalParams select {
         min-height: 40px !important;
@@ -983,7 +983,7 @@
     }
     .lastCheckBoxBottomModal {
         flex-wrap: wrap !important;
-        gap: 10px !important;
+        gap: 8px !important;
     }
     .btn-formFilterModal__btn {
         width: 100% !important;
@@ -991,7 +991,7 @@
         font-size: 15px !important;
     }
     .moreFilters {
-        margin: 12px 0 !important;
+        margin: 10px 0 !important;
     }
     .moreFilters p {
         font-size: 14px !important;
