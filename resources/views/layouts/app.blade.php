@@ -154,6 +154,7 @@
     <script defer src="{{ cached_asset('js/city.js') }}"></script>
     <script defer src="{{ cached_asset('js/filters.js') }}"></script>
     <script defer src="{{ cached_asset('js/favorites.js') }}"></script>
+    <script defer src="{{ cached_asset('js/menu.js') }}"></script>
     <script>
         (function () {
             if (typeof window === 'undefined') {
