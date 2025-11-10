@@ -80,8 +80,9 @@
         .more-info{display:flex;align-items:center;justify-content:center;min-height:48px;padding:12px 24px;border-radius:12px;background:#7E1D32;color:#FFFFFF;margin:35px auto 0;width:max-content;}
         @media (max-width:1200px){.center-flexTopHeader{flex-wrap:wrap;gap:12px;}.cityChoose,.headerMetro{min-width:calc(50% - 12px);width:calc(50% - 12px);}.rightHeaderTop .search-rightHeaderTop{max-width:none;}}
         @media (max-width:930px){.flexTopHeader{flex-wrap:wrap;gap:16px;}.center-flexTopHeader{order:3;width:100%;justify-content:space-between;}.cityChoose,.headerMetro{width:48%;}.rightHeaderTop{order:2;width:100%;justify-content:space-between;}.rightHeaderTop .search-rightHeaderTop{flex:1 1 100%;}}
+        header{min-height:140px;}
+        .rightHeaderTop{min-height:48px;flex:1 1 auto;display:flex;align-items:center;justify-content:flex-end;gap:20px;}
         @media (max-width:768px){.girlsSection{display:flex!important;flex-direction:column!important;gap:24px!important;min-height:1080px!important;}.girlCard{min-height:540px!important;width:100%!important;}.wrapper-girlCard{flex-direction:column!important;align-items:center!important;gap:16px!important;}.photoGirl{width:100%!important;max-width:280px!important;height:420px!important;flex:0 0 420px!important;}.photoGirl__img{width:100%!important;height:420px!important;}.right-wrapper-girlCard{width:100%!important;max-width:100%!important;}.girlCard.is-mobile-hidden,.girlCard.mobile-hidden-default{display:none!important;}}
-        @media (max-width:600px){.center-flexTopHeader{flex-direction:column;align-items:flex-start;gap:8px;}.cityChoose,.headerMetro{width:100%;}}
     </style>
     <link rel="preload" href="{{ cached_asset('css/style.css') }}" as="style">
     <link rel="preload" href="{{ cached_asset('css/adaptive.css') }}" as="style">
