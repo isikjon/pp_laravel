@@ -2,6 +2,8 @@
 
 @section('title', 'Индивидуалка ' . $girl['name'] . ' из ' . $girl['city'])
 
+@section('meta_description', $girl['description'] ?? 'Индивидуалка ' . $girl['name'] . ' из ' . $girl['city'] . '. Возраст: ' . ($girl['age'] ?? 'не указан') . '. Телефон: ' . ($girl['phone'] ?? 'не указан') . '.')
+
 @push('styles')
 <style>
 .photoGirlCardWrap {

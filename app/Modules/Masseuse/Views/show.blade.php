@@ -2,6 +2,8 @@
 
 @section('title', 'Массажистка ' . $girl['name'] . ' из ' . $girl['city'])
 
+@section('meta_description', $girl['description'] ?? 'Массажистка ' . $girl['name'] . ' из ' . $girl['city'] . '. Возраст: ' . ($girl['age'] ?? 'не указан') . '. Телефон: ' . ($girl['phone'] ?? 'не указан') . '.')
+
 @push('styles')
 <style>
 .photoGirlCardWrap {

@@ -2,6 +2,8 @@
 
 @section('title', $salonData['name'] . ' - Интим-салон')
 
+@section('meta_description', $salonData['description'] ?? 'Интим-салон ' . $salonData['name'] . ' в ' . ($salonData['city'] ?? 'Москве') . '. ' . ($salonData['schedule'] ?? '') . ' Телефон: ' . (is_array($salonData['phones']) ? implode(', ', $salonData['phones']) : ($salonData['phones'] ?? '')) . '.')
+
 @push('styles')
 <style>
 .salon-gallery {

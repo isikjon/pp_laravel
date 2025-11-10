@@ -2,6 +2,8 @@
 
 @section('title', $clubData['name'] . ' - Стрип-клуб')
 
+@section('meta_description', $clubData['description'] ?? 'Стрип-клуб ' . $clubData['name'] . ' в ' . ($clubData['city'] ?? 'Москве') . '. ' . ($clubData['schedule'] ?? '') . ' Телефон: ' . (is_array($clubData['phones']) ? implode(', ', $clubData['phones']) : ($clubData['phones'] ?? '')) . '.')
+
 @push('styles')
 <style>
 .club-gallery {
