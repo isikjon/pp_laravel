@@ -28,3 +28,4 @@ yarn-error.log
 /database/*.sqlite
 /database/*.db
 /database/database.sqlite
+/verstka

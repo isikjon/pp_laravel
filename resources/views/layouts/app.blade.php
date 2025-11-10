@@ -78,6 +78,15 @@
         .flex-bottom-girlCard{display:inline-flex;align-items:center;gap:8px;}
         .verified-status-text{color:#006400;font-weight:600;}
         .more-info{display:flex;align-items:center;justify-content:center;min-height:48px;padding:12px 24px;border-radius:12px;background:#7E1D32;color:#FFFFFF;margin:35px auto 0;width:max-content;}
+        .hamburger-menu{display:none;}
+        #menu__toggle{opacity:0;display:none;}
+        .menu__btn{display:flex;align-items:center;cursor:pointer;z-index:10100;width:36px;height:36px;position:relative;}
+        .menu__box{position:fixed;visibility:hidden;top:0;right:-100%;width:100%;height:100%;margin:0;list-style:none;background:rgba(255,255,255,1);backdrop-filter:blur(10px);transition-duration:0.25s;z-index:10050;padding:20px 50px 30px;overflow-y:auto;}
+        #menu__toggle:checked ~ .menu__box{visibility:visible;right:0;}
+        .closeBurger{display:none;}
+        #menu__toggle:checked ~ .menu__btn .closeBurger{display:flex;}
+        #menu__toggle:checked ~ .menu__btn .burgerSvg{display:none;}
+        @media (max-width:1220px){.hamburger-menu{display:block!important;}.center-flexTopHeader{display:none;}.lineHeader{display:none;}.flexBottomHeader{display:none;}}
         @media (max-width:768px){.girlsSection{display:flex!important;flex-direction:column!important;gap:24px!important;min-height:1080px!important;}.girlCard{min-height:540px!important;width:100%!important;}.wrapper-girlCard{flex-direction:column!important;align-items:center!important;gap:16px!important;}.photoGirl{width:100%!important;max-width:280px!important;height:420px!important;flex:0 0 420px!important;}.photoGirl__img{width:100%!important;height:420px!important;}.right-wrapper-girlCard{width:100%!important;max-width:100%!important;}.girlCard.is-mobile-hidden,.girlCard.mobile-hidden-default{display:none!important;}}
     </style>
     <link rel="preload" href="{{ cached_asset('css/style.css') }}" as="style">
