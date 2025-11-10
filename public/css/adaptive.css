@@ -140,9 +140,6 @@
     .flexBottomHeader {
         display: none;
     }
-    main {
-        margin-top: 100px;
-    }
     .listBurgerUl .flexBottomHeader {
         display: flex;
         flex-direction: column;
@@ -367,9 +364,6 @@
     .girlsSection {
         gap: 20px;
     }
-    main {
-        margin-top: 75px;
-    }
     .search-rightHeaderTop {
         display: none;
     }
@@ -587,9 +581,6 @@
     }
     .listBurgerUl li .logo {
         height: 40px;
-    }
-    main {
-        margin-top: 70px;
     }
     .filtersBtn {
         width: 100%;
@@ -1212,9 +1203,6 @@ header {
     font-weight: 500;
     line-height: 160%;
     transition: color 0.3s ease;
-}
-main {
-    margin-top: 180px;
 }
 .filtersBtn {
     display: inline-flex;

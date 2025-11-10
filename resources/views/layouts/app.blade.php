@@ -21,8 +21,8 @@
         a{color:#292D33;text-decoration:none;}
         img{max-width:100%;height:auto;display:block;}
         .container{width:100%;max-width:1320px;margin:0 auto;padding:0 16px;position:relative;}
-        header{position:fixed;top:0;width:100%;background:#FFFFFF;box-shadow:0 5px 20px rgba(44,41,51,.10);padding:15px 0 20px;z-index:10;}
-        main{margin-top:180px;}
+        header{position:unset!important;width:100%;background:#FFFFFF;box-shadow:0 5px 20px rgba(44,41,51,.10);padding:15px 0 20px;z-index:10;}
+        main{margin-top:30px;}
         .flexTopHeader{display:flex;align-items:center;justify-content:space-between;gap:24px;flex-wrap:nowrap;}
         .flexTopHeader>a{flex:0 0 auto;display:inline-flex;align-items:center;}
         .center-flexTopHeader{flex:0 0 auto;display:flex;align-items:center;gap:20px;white-space:nowrap;}
@@ -86,7 +86,7 @@
         .closeBurger{display:none;}
         #menu__toggle:checked ~ .menu__btn .closeBurger{display:flex;}
         #menu__toggle:checked ~ .menu__btn .burgerSvg{display:none;}
-        @media (max-width:1220px){.hamburger-menu{display:block!important;}.center-flexTopHeader{display:none!important;}.lineHeader{display:none!important;}.flexBottomHeader:not(.listBurgerUl .flexBottomHeader){display:none!important;}.rightHeaderTop .search-rightHeaderTop{display:none!important;}.rightHeaderTop .modalRegistration{display:none!important;}.rightHeaderTop{justify-content:flex-end!important;gap:0!important;}main{margin-top:80px!important;}}
+        @media (max-width:1220px){.hamburger-menu{display:block!important;}.center-flexTopHeader{display:none!important;}.lineHeader{display:none!important;}.flexBottomHeader:not(.listBurgerUl .flexBottomHeader){display:none!important;}.rightHeaderTop .search-rightHeaderTop{display:none!important;}.rightHeaderTop .modalRegistration{display:none!important;}.rightHeaderTop{justify-content:flex-end!important;gap:0!important;}}
         @media (max-width:768px){.girlsSection{display:flex!important;flex-direction:column!important;gap:24px!important;min-height:1080px!important;}.girlCard{min-height:540px!important;width:100%!important;}.wrapper-girlCard{flex-direction:column!important;align-items:center!important;gap:16px!important;}.photoGirl{width:100%!important;max-width:280px!important;height:420px!important;flex:0 0 420px!important;}.photoGirl__img{width:100%!important;height:420px!important;}.right-wrapper-girlCard{width:100%!important;max-width:100%!important;}.girlCard.is-mobile-hidden,.girlCard.mobile-hidden-default{display:none!important;}}
     </style>
     <link rel="preload" href="{{ cached_asset('css/style.css') }}" as="style">

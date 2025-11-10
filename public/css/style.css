@@ -206,7 +206,7 @@ button {
     margin: 22px 0;
 }
 header {
-    position: fixed;
+    position: unset !important;
     width: 100%;
     top: 0;
     background: #fff;
@@ -235,7 +235,7 @@ header {
     transition: color 0.3s ease;
 }
 main {
-    margin-top: 180px;
+    margin-top: 30px;
 }
 .filtersBtn {
     display: inline-flex;
