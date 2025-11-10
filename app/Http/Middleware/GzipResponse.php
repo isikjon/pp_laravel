@@ -10,7 +10,7 @@ class GzipResponse
 {
     public function handle(Request $request, Closure $next): Response
     {
-        if ($request->is('admin/*') || $request->is('admin')) {
+        if ($request->is('admin/*') || $request->is('admin') || $request->is('livewire/*')) {
             return $next($request);
         }
 
