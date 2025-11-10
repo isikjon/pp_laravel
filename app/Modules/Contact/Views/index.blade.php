@@ -19,7 +19,7 @@
                         <span>
                             E-mai:
                         </span>
-                        <input type="email" placeholder="example@example.com">
+                        <input type="email" placeholder="your@email.com">
                     </label>
                     <label class="select-column-checkbox-formFilterModal">
                         <span>
