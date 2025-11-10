@@ -17,6 +17,10 @@ return Application::configure(basePath: dirname(__DIR__))
         ], append: [
             \App\Http\Middleware\GzipResponse::class,
         ]);
+        
+        $middleware->trustProxies(at: [
+            '*',
+        ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {
         //
