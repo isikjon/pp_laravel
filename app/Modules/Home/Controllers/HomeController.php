@@ -296,7 +296,14 @@ class HomeController extends Controller
             $hasMoreInitial = $preloadedGirls->isNotEmpty() || $hasMoreInitial;
         }
 
-        $homeSettings = HomePageSettings::first();
+        try {
+            $homeSettings = HomePageSettings::first();
+            $pageTitle = $homeSettings->title ?? 'ProstitutkiMoscow';
+            $pageDescription = $homeSettings->description ?? 'Каталог анкет с подробными фильтрами и проверенными предложениями в Москве и Санкт-Петербурге.';
+        } catch (\Exception $e) {
+            $pageTitle = 'ProstitutkiMoscow';
+            $pageDescription = 'Каталог анкет с подробными фильтрами и проверенными предложениями в Москве и Санкт-Петербурге.';
+        }
         
         return view('home::index', [
             'girls' => $paginatorGirls,
@@ -305,8 +312,8 @@ class HomeController extends Controller
             'hasMoreInitial' => $hasMoreInitial,
             'metros' => $metros,
             'cityName' => $cityName,
-            'pageTitle' => $homeSettings->title ?? 'ProstitutkiMoscow',
-            'pageDescription' => $homeSettings->description ?? 'Каталог анкет с подробными фильтрами и проверенными предложениями в Москве и Санкт-Петербурге.',
+            'pageTitle' => $pageTitle,
+            'pageDescription' => $pageDescription,
         ]);
     }
     
