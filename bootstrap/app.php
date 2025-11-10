@@ -13,6 +13,14 @@ return Application::configure(basePath: dirname(__DIR__))
     )
     ->withMiddleware(function (Middleware $middleware) {
         $middleware->trustProxies(at: ['*']);
+        
+        $middleware->web(append: [
+            \App\Http\Middleware\CacheResponseHeaders::class,
+            \App\Http\Middleware\GzipResponse::class,
+        ], except: [
+            'admin/*',
+            'livewire/*',
+        ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {
         //
