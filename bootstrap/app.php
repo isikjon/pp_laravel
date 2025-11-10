@@ -12,15 +12,7 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware) {
-        $middleware->web(prepend: [
-            \App\Http\Middleware\CacheResponseHeaders::class,
-        ], append: [
-            \App\Http\Middleware\GzipResponse::class,
-        ]);
-        
-        $middleware->trustProxies(at: [
-            '*',
-        ]);
+        $middleware->trustProxies(at: ['*']);
     })
     ->withExceptions(function (Exceptions $exceptions) {
         //
