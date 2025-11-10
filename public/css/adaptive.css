@@ -745,7 +745,7 @@
         background: transparent !important;
     }
     .blockPrecises-right-wrapper-girlCard__topBlockTitle span {
-        font-size: 8px !important;
+        font-size: 12px !important;
         font-weight: 600;
         text-align: center;
         word-wrap: break-word;
@@ -3421,7 +3421,7 @@ footer {
     background: transparent !important;
 }
 .blockPrecises-right-wrapper-girlCard__topBlockTitle span {
-    font-size: 9px;
+    font-size: 14px;
     font-weight: 600;
     text-align: center;
     word-wrap: break-word;
