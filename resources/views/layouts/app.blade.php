@@ -148,6 +148,7 @@
     @include('components.metro-modal')
     @include('components.search-dropdown')
     @include('components.city-modal')
+    @include('components.filters-modals')
     
     <script defer src="{{ cached_asset('js/app.js') }}"></script>
     <script defer src="{{ cached_asset('js/city.js') }}"></script>

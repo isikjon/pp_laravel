@@ -1,4 +1,4 @@
-document.addEventListener("DOMContentLoaded", function () {
+(function () {
     let e = "number" == typeof window.__CURRENT_PAGE ? window.__CURRENT_PAGE : 1,
         t = !1,
         i = Array.isArray(window.__DEFERRED_GIRLS) ? window.__DEFERRED_GIRLS : [],
@@ -308,4 +308,4 @@ document.addEventListener("DOMContentLoaded", function () {
                 k(e - 1, !1), g();
             }
         });
-});
+})();
