@@ -526,6 +526,18 @@ main {
 .blockPrecises-right-wrapper-girlCard__topBlock p {
     color: inherit;
 }
+.blockPrecises-right-wrapper-girlCard__topBlockTitle {
+    background: transparent !important;
+}
+.blockPrecises-right-wrapper-girlCard__topBlockTitle span {
+    font-size: 9px;
+    font-weight: 600;
+    text-align: center;
+    word-wrap: break-word;
+    word-break: break-word;
+    hyphens: auto;
+    line-height: 1.2;
+}
 .blockPrecises-right-wrapper-girlCard__top {
     width: 100%;
     display: flex;
@@ -2215,6 +2227,18 @@ footer {
 }
 .blockPrecises-right-wrapper-girlCard__topBlock span {
     font-weight: 600;
+}
+.blockPrecises-right-wrapper-girlCard__topBlockTitle {
+    background: transparent !important;
+}
+.blockPrecises-right-wrapper-girlCard__topBlockTitle span {
+    font-size: 9px;
+    font-weight: 600;
+    text-align: center;
+    word-wrap: break-word;
+    word-break: break-word;
+    hyphens: auto;
+    line-height: 1.2;
 }
 .name-girlCard {
     display: flex;

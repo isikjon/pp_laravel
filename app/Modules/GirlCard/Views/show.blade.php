@@ -342,7 +342,7 @@
                                         </span>
                                 </div>
                                 <div class="line-blockPrecises-right-wrapper-girlCard__top"></div>
-                                <div style="background: url({{ asset('img/bgNight.png') }}) center center no-repeat;" class="blockPrecises-right-wrapper-girlCard__topBlock blockPrecises-right-wrapper-girlCard__topBlock-2">
+                                <div data-theme="night" class="blockPrecises-right-wrapper-girlCard__topBlock blockPrecises-right-wrapper-girlCard__topBlock-2">
                                     <div class="hourFlex-blockPrecises-right-wrapper-girlCard__top">
                                         <p>
                                             Ночь
@@ -390,7 +390,7 @@
                                         </span>
                                 </div>
                                 <div class="line-blockPrecises-right-wrapper-girlCard__top"></div>
-                                <div style="background: url({{ asset('img/bgNight.png') }}) center center no-repeat;" class="blockPrecises-right-wrapper-girlCard__topBlock blockPrecises-right-wrapper-girlCard__topBlock-2">
+                                <div data-theme="night" class="blockPrecises-right-wrapper-girlCard__topBlock blockPrecises-right-wrapper-girlCard__topBlock-2">
                                     <div class="hourFlex-blockPrecises-right-wrapper-girlCard__top">
                                         <p>
                                             Ночь
