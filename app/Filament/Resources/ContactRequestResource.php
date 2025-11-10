@@ -3,15 +3,12 @@
 namespace App\Filament\Resources;
 
 use App\Filament\Resources\ContactRequestResource\Pages;
-use App\Filament\Resources\ContactRequestResource\RelationManagers;
 use App\Models\ContactRequest;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
 
 class ContactRequestResource extends Resource
 {
@@ -27,40 +24,58 @@ class ContactRequestResource extends Resource
     {
         return $form
             ->schema([
-                Forms\Components\TextInput::make('name')
-                    ->required()
-                    ->disabled(),
-                Forms\Components\TextInput::make('email')
-                    ->email()
-                    ->required()
-                    ->disabled(),
-                Forms\Components\TextInput::make('phone')
-                    ->required()
-                    ->disabled(),
-                Forms\Components\TextInput::make('girl_anketa_id')
-                    ->label('Girl Anketa ID')
-                    ->disabled(),
-                Forms\Components\TextInput::make('girl_name')
-                    ->label('Girl Name')
-                    ->disabled(),
-                Forms\Components\TextInput::make('girl_phone')
-                    ->label('Girl Phone')
-                    ->disabled(),
-                Forms\Components\TextInput::make('girl_url')
-                    ->label('Girl Page URL')
-                    ->disabled()
-                    ->columnSpanFull(),
-                Forms\Components\TextInput::make('page_url')
-                    ->label('Request Page URL')
-                    ->disabled()
-                    ->columnSpanFull(),
-                Forms\Components\Select::make('status')
-                    ->options([
-                        'new' => 'New',
-                        'in_progress' => 'In Progress',
-                        'completed' => 'Completed',
-                    ])
-                    ->required(),
+                Forms\Components\Section::make('User Information')
+                    ->schema([
+                        Forms\Components\TextInput::make('name')
+                            ->label('Name')
+                            ->required()
+                            ->disabled(),
+                        Forms\Components\TextInput::make('email')
+                            ->label('Email')
+                            ->email()
+                            ->required()
+                            ->disabled(),
+                        Forms\Components\TextInput::make('phone')
+                            ->label('Phone')
+                            ->required()
+                            ->disabled(),
+                    ])->columns(3),
+                
+                Forms\Components\Section::make('Girl Information')
+                    ->schema([
+                        Forms\Components\TextInput::make('girl_anketa_id')
+                            ->label('Girl Anketa ID')
+                            ->disabled(),
+                        Forms\Components\TextInput::make('girl_name')
+                            ->label('Girl Name')
+                            ->disabled(),
+                        Forms\Components\TextInput::make('girl_phone')
+                            ->label('Girl Phone')
+                            ->disabled(),
+                        Forms\Components\TextInput::make('girl_url')
+                            ->label('Girl Page URL')
+                            ->url()
+                            ->disabled()
+                            ->columnSpanFull(),
+                    ])->columns(3),
+                
+                Forms\Components\Section::make('Request Details')
+                    ->schema([
+                        Forms\Components\TextInput::make('page_url')
+                            ->label('Request Page URL')
+                            ->url()
+                            ->disabled()
+                            ->columnSpanFull(),
+                        Forms\Components\Select::make('status')
+                            ->label('Status')
+                            ->options([
+                                'new' => 'New',
+                                'in_progress' => 'In Progress',
+                                'completed' => 'Completed',
+                            ])
+                            ->required()
+                            ->default('new'),
+                    ]),
             ]);
     }
 
@@ -69,38 +84,51 @@ class ContactRequestResource extends Resource
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('id')
+                    ->label('ID')
                     ->sortable(),
                 Tables\Columns\TextColumn::make('name')
-                    ->searchable(),
+                    ->label('User Name')
+                    ->searchable()
+                    ->sortable(),
                 Tables\Columns\TextColumn::make('email')
-                    ->searchable(),
+                    ->label('Email')
+                    ->searchable()
+                    ->copyable(),
                 Tables\Columns\TextColumn::make('phone')
-                    ->searchable(),
+                    ->label('Phone')
+                    ->searchable()
+                    ->copyable(),
                 Tables\Columns\TextColumn::make('girl_name')
+                    ->label('Girl Name')
                     ->searchable()
                     ->placeholder('—'),
                 Tables\Columns\TextColumn::make('girl_phone')
+                    ->label('Girl Phone')
                     ->searchable()
                     ->placeholder('—')
-                    ->label('Girl Phone'),
+                    ->copyable(),
                 Tables\Columns\TextColumn::make('girl_url')
+                    ->label('Girl URL')
                     ->searchable()
                     ->placeholder('—')
-                    ->label('Girl URL')
                     ->limit(30)
-                    ->url(fn ($record) => $record->girl_url, shouldOpenInNewTab: true),
+                    ->url(fn ($record) => $record->girl_url, shouldOpenInNewTab: true)
+                    ->copyable(),
                 Tables\Columns\BadgeColumn::make('status')
+                    ->label('Status')
                     ->colors([
                         'danger' => 'new',
                         'warning' => 'in_progress',
                         'success' => 'completed',
                     ]),
                 Tables\Columns\TextColumn::make('created_at')
+                    ->label('Created')
                     ->dateTime('d.m.Y H:i')
                     ->sortable(),
             ])
             ->filters([
                 Tables\Filters\SelectFilter::make('status')
+                    ->label('Status')
                     ->options([
                         'new' => 'New',
                         'in_progress' => 'In Progress',
@@ -108,6 +136,7 @@ class ContactRequestResource extends Resource
                     ]),
             ])
             ->actions([
+                Tables\Actions\ViewAction::make(),
                 Tables\Actions\EditAction::make(),
                 Tables\Actions\DeleteAction::make(),
             ])
@@ -122,7 +151,6 @@ class ContactRequestResource extends Resource
     public static function getRelations(): array
     {
         return [
-            //
         ];
     }
 
@@ -131,7 +159,9 @@ class ContactRequestResource extends Resource
         return [
             'index' => Pages\ListContactRequests::route('/'),
             'create' => Pages\CreateContactRequest::route('/create'),
+            'view' => Pages\ViewContactRequest::route('/{record}'),
             'edit' => Pages\EditContactRequest::route('/{record}/edit'),
         ];
     }
 }
+
