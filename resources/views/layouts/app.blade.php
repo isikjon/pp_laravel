@@ -86,7 +86,7 @@
         .closeBurger{display:none;}
         #menu__toggle:checked ~ .menu__btn .closeBurger{display:flex;}
         #menu__toggle:checked ~ .menu__btn .burgerSvg{display:none;}
-        @media (max-width:1220px){.hamburger-menu{display:block!important;}.center-flexTopHeader{display:none;}.lineHeader{display:none;}.flexBottomHeader{display:none;}}
+        @media (max-width:1220px){.hamburger-menu{display:block!important;}.center-flexTopHeader{display:none!important;}.lineHeader{display:none!important;}.flexBottomHeader:not(.listBurgerUl .flexBottomHeader){display:none!important;}.rightHeaderTop .search-rightHeaderTop{display:none!important;}.rightHeaderTop .modalRegistration{display:none!important;}.rightHeaderTop{justify-content:flex-end!important;gap:0!important;}main{margin-top:80px!important;}}
         @media (max-width:768px){.girlsSection{display:flex!important;flex-direction:column!important;gap:24px!important;min-height:1080px!important;}.girlCard{min-height:540px!important;width:100%!important;}.wrapper-girlCard{flex-direction:column!important;align-items:center!important;gap:16px!important;}.photoGirl{width:100%!important;max-width:280px!important;height:420px!important;flex:0 0 420px!important;}.photoGirl__img{width:100%!important;height:420px!important;}.right-wrapper-girlCard{width:100%!important;max-width:100%!important;}.girlCard.is-mobile-hidden,.girlCard.mobile-hidden-default{display:none!important;}}
     </style>
     <link rel="preload" href="{{ cached_asset('css/style.css') }}" as="style">
