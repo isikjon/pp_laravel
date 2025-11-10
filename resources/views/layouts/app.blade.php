@@ -177,25 +177,11 @@
                         };
                         var prev = sizeCache.get(el);
                         if (!prev) {
-                            console.debug('[girlCard:init]', {
-                                id: el.dataset ? el.dataset.girlId || null : null,
-                                width: current.width,
-                                height: current.height,
-                                timestamp: performance.now ? performance.now().toFixed(1) : null
-                            });
                             sizeCache.set(el, current);
                             return;
                         }
 
                         if (prev.width !== current.width || prev.height !== current.height) {
-                            console.debug('[girlCard:resize]', {
-                                id: el.dataset ? el.dataset.girlId || null : null,
-                                width: current.width,
-                                height: current.height,
-                                deltaWidth: current.width - prev.width,
-                                deltaHeight: current.height - prev.height,
-                                timestamp: performance.now ? performance.now().toFixed(1) : null
-                            });
                             sizeCache.set(el, current);
                         }
                     });
