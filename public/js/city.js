@@ -1,1 +1,51 @@
-document.addEventListener("DOMContentLoaded",(function(){const t=document.getElementById("cityModal"),e=document.querySelectorAll(".modal-cityChoose"),o=document.querySelector(".closeCityModal"),c=document.querySelectorAll(".cityItem");e.forEach((e=>{e.style.cursor="pointer",e.addEventListener("click",(function(e){e.preventDefault(),e.stopPropagation(),t.style.display="block",setTimeout((()=>{t.style.opacity="1"}),10)}))})),o&&o.addEventListener("click",(function(){t.style.opacity="0",setTimeout((()=>{t.style.display="none"}),300)})),window.addEventListener("click",(function(e){e.target===t&&(t.style.opacity="0",setTimeout((()=>{t.style.display="none"}),300))})),c.forEach((e=>{e.addEventListener("click",(function(){const e=this.getAttribute("data-city");localStorage.setItem("selectedCity",e),localStorage.removeItem("selectedMetro"),t.style.opacity="0",setTimeout((()=>{t.style.display="none"}),300),window.location.href=`/?city=${e}`}))})),function(){const t=new URLSearchParams(window.location.search).get("city");t&&localStorage.setItem("selectedCity",t);const o="spb"===(localStorage.getItem("selectedCity")||"moscow")?"Санкт-Петербург":"Москва";e.forEach((t=>{t.textContent=o}))}()}));
+document.addEventListener("DOMContentLoaded", function () {
+    const t = document.getElementById("cityModal"),
+        e = document.querySelectorAll(".modal-cityChoose"),
+        o = document.querySelector(".closeCityModal"),
+        c = document.querySelectorAll(".cityItem");
+    e.forEach((e) => {
+        (e.style.cursor = "pointer"),
+            e.addEventListener("click", function (e) {
+                e.preventDefault(),
+                    e.stopPropagation(),
+                    (t.style.display = "block"),
+                    setTimeout(() => {
+                        t.style.opacity = "1";
+                    }, 10);
+            });
+    }),
+        o &&
+            o.addEventListener("click", function () {
+                (t.style.opacity = "0"),
+                    setTimeout(() => {
+                        t.style.display = "none";
+                    }, 300);
+            }),
+        window.addEventListener("click", function (e) {
+            e.target === t &&
+                ((t.style.opacity = "0"),
+                setTimeout(() => {
+                    t.style.display = "none";
+                }, 300));
+        }),
+        c.forEach((e) => {
+            e.addEventListener("click", function () {
+                const e = this.getAttribute("data-city");
+                localStorage.setItem("selectedCity", e),
+                    localStorage.removeItem("selectedMetro"),
+                    (t.style.opacity = "0"),
+                    setTimeout(() => {
+                        t.style.display = "none";
+                    }, 300),
+                    (window.location.href = `/?city=${e}`);
+            });
+        }),
+        (function () {
+            const t = new URLSearchParams(window.location.search).get("city");
+            t && localStorage.setItem("selectedCity", t);
+            const o = "spb" === (localStorage.getItem("selectedCity") || "moscow") ? "Санкт-Петербург" : "Москва";
+            e.forEach((t) => {
+                t.textContent = o;
+            });
+        })();
+});

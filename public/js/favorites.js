@@ -1,1 +1,103 @@
-document.addEventListener("DOMContentLoaded",(function(){function t(){try{const t=localStorage.getItem("favorites");return t?JSON.parse(t):[]}catch(t){return[]}}function e(t){try{localStorage.setItem("favorites",JSON.stringify(t)),n()}catch(t){}}function n(){const e=t().length;document.querySelectorAll(".favorites-counter").forEach((function(t){t.textContent=e}))}function o(t,e){const n=document.querySelector(".favorite-popup");n&&n.remove();const o="success"===e?'<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" fill="#FF0042"/></svg>':'<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" fill="#ccc"/></svg>',i=document.createElement("div");i.className=`favorite-popup favorite-popup--${e}`,i.innerHTML=`\n            <div class="favorite-popup__content">\n                <div class="favorite-popup__icon">${o}</div>\n                <div class="favorite-popup__message">${t}</div>\n            </div>\n        `,document.body.appendChild(i),requestAnimationFrame((function(){i.classList.add("favorite-popup--show")})),setTimeout((function(){i.classList.remove("favorite-popup--show"),setTimeout((function(){i.remove()}),300)}),2500)}function i(t,e){document.querySelectorAll(`.girlCard[data-girl-id="${t}"]`).forEach((function(t){const n=t.querySelector(".name-girlCard p"),o=n?n.textContent.trim():"",i=t.querySelector(".name-girlCard .favorite-toggle");i&&(e?(i.classList.add("is-active"),i.setAttribute("aria-label",`Удалить из избранного ${o}`)):(i.classList.remove("is-active"),i.setAttribute("aria-label",`Добавить в избранное ${o}`)))}))}function r(){t().forEach((function(t){i(t,!0)}))}document.addEventListener("click",(function(n){const r=n.target.closest(".favorite-toggle");if(!r)return;n.preventDefault();let c=r.getAttribute("data-girl-id");if(c||(c=function(t){if(!t)return null;const e=t.getAttribute("data-girl-id");if(e)return e;const n=t.querySelector('a[href*="/girl/"]');return n?n.getAttribute("href").split("/").pop():null}(r.closest(".girlCard"))),!c)return;const s=r.closest(".girlCard"),a=s?s.querySelector(".name-girlCard p"):null,u=a?a.textContent.trim():"";!function(e){return t().includes(e)}(c)?(!function(n){const o=t();!o.includes(n)&&(o.push(n),e(o))}(c),i(c,!0),o(`${u} добавлена в избранное`,"success")):(!function(n){const o=t(),i=o.indexOf(n);i>-1&&(o.splice(i,1),e(o))}(c),i(c,!1),o(`${u} удалена из избранного`,"remove"),document.dispatchEvent(new CustomEvent("favoriteRemoved",{detail:c})))})),r(),n(),window.updateFavoritesAfterLoad=function(){requestAnimationFrame((function(){r(),n()}))}}));
+document.addEventListener("DOMContentLoaded", function () {
+    function t() {
+        try {
+            const t = localStorage.getItem("favorites");
+            return t ? JSON.parse(t) : [];
+        } catch (t) {
+            return [];
+        }
+    }
+    function e(t) {
+        try {
+            localStorage.setItem("favorites", JSON.stringify(t)), n();
+        } catch (t) {}
+    }
+    function n() {
+        const e = t().length;
+        document.querySelectorAll(".favorites-counter").forEach(function (t) {
+            t.textContent = e;
+        });
+    }
+    function o(t, e) {
+        const n = document.querySelector(".favorite-popup");
+        n && n.remove();
+        const o =
+                "success" === e
+                    ? '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" fill="#FF0042"/></svg>'
+                    : '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" fill="#ccc"/></svg>',
+            i = document.createElement("div");
+        (i.className = `favorite-popup favorite-popup--${e}`),
+            (i.innerHTML = `\n            <div class="favorite-popup__content">\n                <div class="favorite-popup__icon">${o}</div>\n                <div class="favorite-popup__message">${t}</div>\n            </div>\n        `),
+            document.body.appendChild(i),
+            requestAnimationFrame(function () {
+                i.classList.add("favorite-popup--show");
+            }),
+            setTimeout(function () {
+                i.classList.remove("favorite-popup--show"),
+                    setTimeout(function () {
+                        i.remove();
+                    }, 300);
+            }, 2500);
+    }
+    function i(t, e) {
+        document.querySelectorAll(`.girlCard[data-girl-id="${t}"]`).forEach(function (t) {
+            const n = t.querySelector(".name-girlCard p"),
+                o = n ? n.textContent.trim() : "",
+                i = t.querySelector(".name-girlCard .favorite-toggle");
+            i &&
+                (e
+                    ? (i.classList.add("is-active"), i.setAttribute("aria-label", `Удалить из избранного ${o}`))
+                    : (i.classList.remove("is-active"), i.setAttribute("aria-label", `Добавить в избранное ${o}`)));
+        });
+    }
+    function r() {
+        t().forEach(function (t) {
+            i(t, !0);
+        });
+    }
+    document.addEventListener("click", function (n) {
+        const r = n.target.closest(".favorite-toggle");
+        if (!r) return;
+        n.preventDefault();
+        let c = r.getAttribute("data-girl-id");
+        if (
+            (c ||
+                (c = (function (t) {
+                    if (!t) return null;
+                    const e = t.getAttribute("data-girl-id");
+                    if (e) return e;
+                    const n = t.querySelector('a[href*="/girl/"]');
+                    return n ? n.getAttribute("href").split("/").pop() : null;
+                })(r.closest(".girlCard"))),
+            !c)
+        )
+            return;
+        const s = r.closest(".girlCard"),
+            a = s ? s.querySelector(".name-girlCard p") : null,
+            u = a ? a.textContent.trim() : "";
+        !(function (e) {
+            return t().includes(e);
+        })(c)
+            ? (!(function (n) {
+                  const o = t();
+                  !o.includes(n) && (o.push(n), e(o));
+              })(c),
+              i(c, !0),
+              o(`${u} добавлена в избранное`, "success"))
+            : (!(function (n) {
+                  const o = t(),
+                      i = o.indexOf(n);
+                  i > -1 && (o.splice(i, 1), e(o));
+              })(c),
+              i(c, !1),
+              o(`${u} удалена из избранного`, "remove"),
+              document.dispatchEvent(new CustomEvent("favoriteRemoved", { detail: c })));
+    }),
+        r(),
+        n(),
+        (window.updateFavoritesAfterLoad = function () {
+            requestAnimationFrame(function () {
+                r(), n();
+            });
+        });
+});

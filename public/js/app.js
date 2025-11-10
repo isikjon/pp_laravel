@@ -1,1 +1,42 @@
-document.addEventListener("DOMContentLoaded",(()=>{const e=document.querySelector(".moreInfo");if(e){const t=document.querySelector(".flexTop-formFilterModal__none"),n=e.querySelector(".arrow-down"),o=e.querySelector("p");t&&n&&o&&e.addEventListener("click",(()=>{const e="flex"===t.style.display;t.style.display=e?"none":"flex",n.classList.toggle("rotated",!e),o.textContent=e?"Расширенный поиск":"Скрыть"}))}}));var jsTriggers=document.querySelectorAll(".js-tab-trigger"),jsContents=document.querySelectorAll(".js-tab-content");jsTriggers.forEach((function(e){e.addEventListener("click",(function(){var t=this.getAttribute("data-tab"),n=document.querySelector('.js-tab-content[data-tab="'+t+'"]'),o=document.querySelector(".js-tab-trigger.active"),c=document.querySelector(".js-tab-content.active");o.classList.remove("active"),e.classList.add("active"),c.classList.remove("active"),n.classList.add("active")}))})),document.addEventListener("DOMContentLoaded",(function(){const e=document.getElementById("menu__toggle"),t=document.querySelector(".menu__box");if(t){t.querySelectorAll("a:not(.modalRegistration)").forEach((function(t){t.addEventListener("click",(function(){e&&(e.checked=!1)}))}))}}));
+document.addEventListener("DOMContentLoaded", () => {
+    const e = document.querySelector(".moreInfo");
+    if (e) {
+        const t = document.querySelector(".flexTop-formFilterModal__none"),
+            n = e.querySelector(".arrow-down"),
+            o = e.querySelector("p");
+        t &&
+            n &&
+            o &&
+            e.addEventListener("click", () => {
+                const e = "flex" === t.style.display;
+                (t.style.display = e ? "none" : "flex"),
+                    n.classList.toggle("rotated", !e),
+                    (o.textContent = e ? "Расширенный поиск" : "Скрыть");
+            });
+    }
+});
+var jsTriggers = document.querySelectorAll(".js-tab-trigger"),
+    jsContents = document.querySelectorAll(".js-tab-content");
+jsTriggers.forEach(function (e) {
+    e.addEventListener("click", function () {
+        var t = this.getAttribute("data-tab"),
+            n = document.querySelector('.js-tab-content[data-tab="' + t + '"]'),
+            o = document.querySelector(".js-tab-trigger.active"),
+            c = document.querySelector(".js-tab-content.active");
+        o.classList.remove("active"),
+            e.classList.add("active"),
+            c.classList.remove("active"),
+            n.classList.add("active");
+    });
+}),
+    document.addEventListener("DOMContentLoaded", function () {
+        const e = document.getElementById("menu__toggle"),
+            t = document.querySelector(".menu__box");
+        if (t) {
+            t.querySelectorAll("a:not(.modalRegistration)").forEach(function (t) {
+                t.addEventListener("click", function () {
+                    e && (e.checked = !1);
+                });
+            });
+        }
+    });
