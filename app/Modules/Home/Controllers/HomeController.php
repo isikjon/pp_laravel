@@ -4,6 +4,7 @@ namespace App\Modules\Home\Controllers;
 
 use App\Http\Controllers\Controller;
 use App\Models\Girl;
+use App\Models\HomePageSettings;
 use Illuminate\Http\Request;
 
 class HomeController extends Controller
@@ -248,7 +249,7 @@ class HomeController extends Controller
             return $this->formatGirlForCard($girl);
         })->values();
 
-        $initialRenderCount = 6;
+        $initialRenderCount = 9;
         $initialGirls = $girlsFormatted;
         $preloadedGirls = collect();
 
@@ -295,6 +296,8 @@ class HomeController extends Controller
             $hasMoreInitial = $preloadedGirls->isNotEmpty() || $hasMoreInitial;
         }
 
+        $homeSettings = HomePageSettings::first();
+        
         return view('home::index', [
             'girls' => $paginatorGirls,
             'initialGirls' => $initialGirls,
@@ -302,6 +305,8 @@ class HomeController extends Controller
             'hasMoreInitial' => $hasMoreInitial,
             'metros' => $metros,
             'cityName' => $cityName,
+            'pageTitle' => $homeSettings->title ?? 'ProstitutkiMoscow',
+            'pageDescription' => $homeSettings->description ?? 'Каталог анкет с подробными фильтрами и проверенными предложениями в Москве и Санкт-Петербурге.',
         ]);
     }
     

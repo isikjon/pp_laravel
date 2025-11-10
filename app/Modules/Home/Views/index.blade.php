@@ -1,8 +1,8 @@
-@section('meta_description', 'Каталог с подробными фильтрами для выбора девушек в Москве и Санкт-Петербурге: проверенные анкеты, актуальные цены и удобный поиск по параметрам.')
-
 @extends('layouts.app')
 
-@section('title', 'Проститутки в ' . (($cityName ?? 'Москва') === 'Санкт-Петербург' ? 'Санкт-Петербурге' : 'Москве'))
+@section('title', $pageTitle ?? 'ProstitutkiMoscow')
+
+@section('meta_description', $pageDescription ?? 'Каталог анкет с подробными фильтрами и проверенными предложениями в Москве и Санкт-Петербурге.')
 
 @section('content')
     <section class="mainContent">
