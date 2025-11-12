@@ -52,7 +52,7 @@ class ReorderProfiles extends Page
                                 'strip_clubs' => 'Стрип-клубы',
                             ])
                             ->required()
-                            ->reactive()
+                            ->live()
                             ->afterStateUpdated(fn () => $this->loadProfiles()),
                         
                         Select::make('city')
@@ -62,7 +62,7 @@ class ReorderProfiles extends Page
                                 'Санкт-Петербург' => 'Санкт-Петербург',
                             ])
                             ->required()
-                            ->reactive()
+                            ->live()
                             ->afterStateUpdated(fn () => $this->loadProfiles()),
                     ])
                     ->columns(2),
@@ -75,7 +75,7 @@ class ReorderProfiles extends Page
                             ->options(fn () => $this->getProfileOptions())
                             ->searchable()
                             ->required()
-                            ->reactive()
+                            ->live()
                             ->disabled(fn () => empty($this->resourceType) || empty($this->city)),
                         
                         Select::make('newPosition')
@@ -87,8 +87,7 @@ class ReorderProfiles extends Page
                     ])
                     ->columns(2)
                     ->visible(fn () => !empty($this->resourceType) && !empty($this->city)),
-            ])
-            ->statePath('data');
+            ]);
     }
     
     protected function loadProfiles(): void
