@@ -16,6 +16,7 @@ use App\Models\Girl;
 use App\Models\Masseuse;
 use App\Models\Salon;
 use App\Models\StripClub;
+use Livewire\Attributes\Computed;
 
 class ReorderProfiles extends Page implements HasForms
 {
@@ -35,7 +36,52 @@ class ReorderProfiles extends Page implements HasForms
     public ?string $city = null;
     public ?int $selectedProfile = null;
     public ?int $newPosition = null;
-    public array $profilesList = [];
+    
+    // Не сериализуем profilesList в snapshot чтобы не перегружать память
+    // Используем Computed для ленивой загрузки
+    #[Computed]
+    protected function profilesList(): array
+    {
+        if (empty($this->resourceType) || empty($this->city)) {
+            return [];
+        }
+        
+        $tableName = $this->getTableName();
+        
+        if (empty($tableName)) {
+            return [];
+        }
+        
+        try {
+            // Загружаем только необходимые поля чтобы не перегружать память
+            $query = DB::table($tableName)
+                ->select('id', 'anketa_id', 'name', 'sort_order', 'city', 'metro')
+                ->limit(500); // Ограничиваем количество записей для экономии памяти
+            
+            // Проверяем наличие колонки sort_order
+            if (Schema::hasColumn($tableName, 'sort_order')) {
+                $query->orderBy('sort_order', 'asc');
+            }
+            $query->orderBy('id', 'asc');
+            
+            $profiles = $query->get();
+            
+            // Преобразуем stdClass в массив, оставляя только нужные поля
+            return $profiles->map(function($profile) {
+                return [
+                    'id' => $profile->id,
+                    'anketa_id' => $profile->anketa_id ?? null,
+                    'name' => $profile->name ?? 'Без имени',
+                    'sort_order' => $profile->sort_order ?? 999999,
+                    'city' => $profile->city ?? null,
+                    'metro' => $profile->metro ?? null,
+                ];
+            })->toArray();
+        } catch (\Exception $e) {
+            Log::error('ReorderProfiles::profilesList error: ' . $e->getMessage());
+            return [];
+        }
+    }
     
     public function mount(): void
     {
@@ -264,77 +310,19 @@ class ReorderProfiles extends Page implements HasForms
             'component_id' => $this->getId()
         ]);
         
+        // profilesList теперь Computed property, загружается автоматически
+        // Просто сбрасываем выбор если нужно
         if (empty($this->resourceType) || empty($this->city)) {
             Log::info('ReorderProfiles: loadProfiles - empty resourceType or city, clearing data');
-            $this->profilesList = [];
             $this->selectedProfile = null;
             $this->newPosition = null;
             return;
         }
         
-        $tableName = $this->getTableName();
-        
-        if (empty($tableName)) {
-            Log::warning('ReorderProfiles: loadProfiles - table name not found', [
-                'resourceType' => $this->resourceType,
-                'city' => $this->city
-            ]);
-            $this->profilesList = [];
-            $this->selectedProfile = null;
-            $this->newPosition = null;
-            return;
-        }
-        
-        try {
-            Log::info('ReorderProfiles: loadProfiles - querying database', [
-                'table' => $tableName,
-                'city' => $this->city,
-                'resourceType' => $this->resourceType
-            ]);
-            
-            // Используем DB::table() напрямую для надежности
-            $query = DB::table($tableName);
-            
-            // Проверяем наличие колонки sort_order
-            if (Schema::hasColumn($tableName, 'sort_order')) {
-                $query->orderBy('sort_order', 'asc');
-            }
-            $query->orderBy('id', 'asc');
-            
-            $profiles = $query->get();
-            
-            // Преобразуем stdClass в массив
-            $this->profilesList = $profiles->map(function($profile) {
-                return (array)$profile;
-            })->toArray();
-            
-            Log::info('ReorderProfiles: loadProfiles - profiles loaded', [
-                'count' => count($this->profilesList),
-                'first_few_ids' => array_slice(array_column($this->profilesList, 'id'), 0, 5),
-                'before_clear_selectedProfile' => $this->selectedProfile,
-                'before_clear_newPosition' => $this->newPosition
-            ]);
-            
-            // НЕ сбрасываем selectedProfile и newPosition, если они уже установлены
-            // Сбрасываем только если список профилей изменился (новый resourceType или city)
-            // Это позволит сохранить выбор пользователя
-            // $this->selectedProfile = null;
-            // $this->newPosition = null;
-            
-            Log::info('ReorderProfiles: loadProfiles - profiles loaded, keeping user selections', [
-                'selectedProfile' => $this->selectedProfile,
-                'newPosition' => $this->newPosition
-            ]);
-        } catch (\Exception $e) {
-            Log::error('ReorderProfiles::loadProfiles error: ' . $e->getMessage(), [
-                'resourceType' => $this->resourceType,
-                'city' => $this->city,
-                'trace' => $e->getTraceAsString()
-            ]);
-            $this->profilesList = [];
-            $this->selectedProfile = null;
-            $this->newPosition = null;
-        }
+        Log::info('ReorderProfiles: loadProfiles - profiles will be loaded via Computed property', [
+            'city' => $this->city,
+            'resourceType' => $this->resourceType
+        ]);
     }
     
     protected function getTableName(): string
@@ -352,14 +340,16 @@ class ReorderProfiles extends Page implements HasForms
     
     protected function getProfileOptions(): array
     {
-        if (empty($this->profilesList)) {
+        $profiles = $this->profilesList;
+        
+        if (empty($profiles)) {
             return [];
         }
         
         $options = [];
         $idField = $this->getIdField();
         
-        foreach ($this->profilesList as $profile) {
+        foreach ($profiles as $profile) {
             $position = $profile['sort_order'] ?? 999999;
             $anketaId = $profile[$idField] ?? 'N/A';
             $name = $profile['name'] ?? 'Без имени';
@@ -372,15 +362,17 @@ class ReorderProfiles extends Page implements HasForms
     
     protected function getPositionOptions(): array
     {
+        $profiles = $this->profilesList;
+        
         Log::info('ReorderProfiles: getPositionOptions called', [
-            'profilesList_empty' => empty($this->profilesList),
-            'profilesList_count' => count($this->profilesList),
+            'profilesList_empty' => empty($profiles),
+            'profilesList_count' => count($profiles),
             'selectedProfile' => $this->selectedProfile,
             'resourceType' => $this->resourceType,
             'city' => $this->city
         ]);
         
-        if (empty($this->profilesList)) {
+        if (empty($profiles)) {
             Log::warning('ReorderProfiles: getPositionOptions - profilesList is empty');
             return [];
         }
@@ -388,7 +380,7 @@ class ReorderProfiles extends Page implements HasForms
         $options = [];
         $idField = $this->getIdField();
         
-        foreach ($this->profilesList as $index => $profile) {
+        foreach ($profiles as $index => $profile) {
             $anketaId = $profile[$idField] ?? 'N/A';
             $name = $profile['name'] ?? 'Без имени';
             $currentPosition = $index + 1;
@@ -568,7 +560,10 @@ class ReorderProfiles extends Page implements HasForms
             ]);
             
             // Используем DB::table() напрямую для надежности
-            $query = DB::table($tableName);
+            // Загружаем только необходимые поля
+            $query = DB::table($tableName)
+                ->select('id', 'anketa_id', 'name', 'sort_order')
+                ->limit(500); // Ограничиваем количество записей для экономии памяти
             
             if (Schema::hasColumn($tableName, 'sort_order')) {
                 $query->orderBy('sort_order', 'asc');
