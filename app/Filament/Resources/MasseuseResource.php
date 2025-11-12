@@ -9,6 +9,8 @@ use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Facades\DB;
 
 class MasseuseResource extends Resource
 {
@@ -173,6 +175,18 @@ class MasseuseResource extends Resource
                 ]),
             ])
             ->defaultSort('created_at', 'desc');
+    }
+
+    public static function getEloquentQuery(): Builder
+    {
+        // Объединяем данные из обеих таблиц через union
+        $moscow = DB::table('masseuses_moscow')->select('*');
+        $spb = DB::table('masseuses_spb')->select('*');
+        
+        $union = $moscow->unionAll($spb);
+        
+        // Создаем подзапрос и используем его как таблицу
+        return Masseuse::fromSub($union, 'masseuses_combined');
     }
 
     public static function getRelations(): array
