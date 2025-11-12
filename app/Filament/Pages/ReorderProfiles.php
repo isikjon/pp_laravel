@@ -177,36 +177,79 @@ class ReorderProfiles extends Page implements HasForms
                         
                         Select::make('newPosition')
                             ->label('Новая позиция')
-                            ->options(fn () => $this->getPositionOptions())
+                            ->options(fn () => {
+                                $options = $this->getPositionOptions();
+                                Log::info('ReorderProfiles: getPositionOptions called', [
+                                    'options_count' => count($options),
+                                    'first_few_keys' => array_slice(array_keys($options), 0, 5),
+                                    'selectedProfile' => $this->selectedProfile,
+                                    'profilesCount' => count($this->profilesList)
+                                ]);
+                                return $options;
+                            })
                             ->searchable()
                             ->required()
-                            ->afterStateUpdated(function ($state) {
-                                Log::info('ReorderProfiles: newPosition changed', [
-                                    'old' => $this->newPosition,
-                                    'new' => $state,
-                                    'new_type' => gettype($state),
+                            ->live()
+                            ->afterStateUpdated(function ($state, $set) {
+                                Log::info('ReorderProfiles: newPosition afterStateUpdated TRIGGERED', [
+                                    'old_newPosition' => $this->newPosition,
+                                    'new_state' => $state,
+                                    'state_type' => gettype($state),
+                                    'state_is_null' => is_null($state),
+                                    'state_is_empty' => empty($state),
+                                    'state_is_string' => is_string($state),
+                                    'state_is_numeric' => is_numeric($state),
                                     'component_id' => $this->getId(),
-                                    'selectedProfile' => $this->selectedProfile
+                                    'selectedProfile' => $this->selectedProfile,
+                                    'selectedProfile_type' => gettype($this->selectedProfile),
+                                    'backtrace' => debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS, 5)
                                 ]);
                                 
                                 // Преобразуем в int, если это строка
+                                $originalState = $state;
                                 if (is_string($state) && is_numeric($state)) {
                                     $state = (int) $state;
+                                    Log::info('ReorderProfiles: newPosition converted from string to int', [
+                                        'original' => $originalState,
+                                        'converted' => $state
+                                    ]);
                                 }
                                 
+                                // Устанавливаем значение напрямую
                                 $this->newPosition = $state;
                                 
-                                Log::info('ReorderProfiles: newPosition set', [
+                                // Также устанавливаем через set для формы
+                                if (method_exists($set, '__invoke')) {
+                                    $set('newPosition', $state);
+                                }
+                                
+                                Log::info('ReorderProfiles: newPosition set AFTER', [
                                     'selectedProfile' => $this->selectedProfile,
                                     'selectedProfile_type' => gettype($this->selectedProfile),
                                     'newPosition' => $this->newPosition,
                                     'newPosition_type' => gettype($this->newPosition),
+                                    'newPosition_is_null' => is_null($this->newPosition),
+                                    'newPosition_is_empty' => empty($this->newPosition),
                                     'selectedProfile_empty' => empty($this->selectedProfile),
                                     'newPosition_empty' => empty($this->newPosition),
-                                    'canSubmit' => !empty($this->selectedProfile) && !empty($this->newPosition)
+                                    'canSubmit' => !empty($this->selectedProfile) && !empty($this->newPosition),
+                                    'all_properties' => [
+                                        'resourceType' => $this->resourceType,
+                                        'city' => $this->city,
+                                        'selectedProfile' => $this->selectedProfile,
+                                        'newPosition' => $this->newPosition
+                                    ]
                                 ]);
                             })
-                            ->disabled(fn () => empty($this->selectedProfile)),
+                            ->disabled(fn () => {
+                                $disabled = empty($this->selectedProfile);
+                                Log::info('ReorderProfiles: newPosition disabled check', [
+                                    'disabled' => $disabled,
+                                    'selectedProfile' => $this->selectedProfile,
+                                    'selectedProfile_empty' => empty($this->selectedProfile)
+                                ]);
+                                return $disabled;
+                            }),
                     ])
                     ->columns(2)
                     ->visible(fn () => !empty($this->resourceType) && !empty($this->city)),
@@ -322,7 +365,16 @@ class ReorderProfiles extends Page implements HasForms
     
     protected function getPositionOptions(): array
     {
+        Log::info('ReorderProfiles: getPositionOptions called', [
+            'profilesList_empty' => empty($this->profilesList),
+            'profilesList_count' => count($this->profilesList),
+            'selectedProfile' => $this->selectedProfile,
+            'resourceType' => $this->resourceType,
+            'city' => $this->city
+        ]);
+        
         if (empty($this->profilesList)) {
+            Log::warning('ReorderProfiles: getPositionOptions - profilesList is empty');
             return [];
         }
         
@@ -334,8 +386,23 @@ class ReorderProfiles extends Page implements HasForms
             $name = $profile['name'] ?? 'Без имени';
             $currentPosition = $index + 1;
             
-            $options[$profile['id']] = "Позиция {$currentPosition} | ID: {$profile['id']} | {$idField}: {$anketaId} | {$name}";
+            $profileId = $profile['id'] ?? null;
+            if ($profileId === null) {
+                Log::warning('ReorderProfiles: getPositionOptions - profile without id', [
+                    'index' => $index,
+                    'profile' => $profile
+                ]);
+                continue;
+            }
+            
+            $options[$profileId] = "Позиция {$currentPosition} | ID: {$profileId} | {$idField}: {$anketaId} | {$name}";
         }
+        
+        Log::info('ReorderProfiles: getPositionOptions - options generated', [
+            'options_count' => count($options),
+            'first_few_keys' => array_slice(array_keys($options), 0, 5),
+            'idField' => $idField
+        ]);
         
         return $options;
     }
@@ -371,10 +438,83 @@ class ReorderProfiles extends Page implements HasForms
             'newPosition_type' => gettype($this->newPosition),
             'selectedProfile_empty' => empty($this->selectedProfile),
             'newPosition_empty' => empty($this->newPosition),
+            'selectedProfile_is_null' => is_null($this->selectedProfile),
+            'newPosition_is_null' => is_null($this->newPosition),
             'canSubmit' => !empty($this->selectedProfile) && !empty($this->newPosition),
             'resourceType' => $this->resourceType,
             'city' => $this->city,
-            'profilesCount' => count($this->profilesList)
+            'profilesCount' => count($this->profilesList),
+            'all_properties' => get_object_vars($this)
+        ]);
+    }
+    
+    public function updatedNewPosition($value): void
+    {
+        Log::info('ReorderProfiles: updatedNewPosition() called (Livewire hook)', [
+            'value' => $value,
+            'value_type' => gettype($value),
+            'value_is_null' => is_null($value),
+            'value_is_empty' => empty($value),
+            'value_is_string' => is_string($value),
+            'value_is_numeric' => is_numeric($value),
+            'current_newPosition' => $this->newPosition,
+            'selectedProfile' => $this->selectedProfile,
+            'component_id' => $this->getId(),
+            'backtrace' => debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS, 3)
+        ]);
+        
+        // Преобразуем в int, если это строка
+        $originalValue = $value;
+        if (is_string($value) && is_numeric($value)) {
+            $value = (int) $value;
+            Log::info('ReorderProfiles: updatedNewPosition - converted to int', [
+                'original' => $originalValue,
+                'converted' => $value
+            ]);
+        }
+        
+        $this->newPosition = $value;
+        
+        Log::info('ReorderProfiles: updatedNewPosition() - value set', [
+            'newPosition' => $this->newPosition,
+            'newPosition_type' => gettype($this->newPosition),
+            'newPosition_is_null' => is_null($this->newPosition),
+            'selectedProfile' => $this->selectedProfile,
+            'canSubmit' => !empty($this->selectedProfile) && !empty($this->newPosition)
+        ]);
+    }
+    
+    public function updatedSelectedProfile($value): void
+    {
+        Log::info('ReorderProfiles: updatedSelectedProfile() called (Livewire hook)', [
+            'value' => $value,
+            'value_type' => gettype($value),
+            'value_is_null' => is_null($value),
+            'value_is_empty' => empty($value),
+            'current_selectedProfile' => $this->selectedProfile,
+            'component_id' => $this->getId(),
+            'backtrace' => debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS, 3)
+        ]);
+        
+        // Преобразуем в int, если это строка
+        $originalValue = $value;
+        if (is_string($value) && is_numeric($value)) {
+            $value = (int) $value;
+            Log::info('ReorderProfiles: updatedSelectedProfile - converted to int', [
+                'original' => $originalValue,
+                'converted' => $value
+            ]);
+        }
+        
+        $this->selectedProfile = $value;
+        // Сбрасываем newPosition при изменении selectedProfile
+        $this->newPosition = null;
+        
+        Log::info('ReorderProfiles: updatedSelectedProfile() - value set', [
+            'selectedProfile' => $this->selectedProfile,
+            'selectedProfile_type' => gettype($this->selectedProfile),
+            'newPosition_reset' => true,
+            'newPosition' => $this->newPosition
         ]);
     }
     
