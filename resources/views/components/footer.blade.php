@@ -27,9 +27,6 @@
                     © ProstitutkiMoscow, {{ date('Y') }}
                 </p>
                 <div class="right-btoom-flexContainerFooter">
-                    {{-- <a href="#contactFormModal" data-open-contact>
-                        Контакты
-                    </a> --}}
                     <a href="{{ route('home') }}">
                         Карта сайта
                     </a>
