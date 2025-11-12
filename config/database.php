@@ -42,28 +42,6 @@ return [
             'synchronous' => null,
         ],
 
-        'moscow' => [
-            'driver' => 'sqlite',
-            'url' => env('DB_MOSCOW_URL'),
-            'database' => env('DB_MOSCOW_DATABASE', database_path('moscow.sqlite')),
-            'prefix' => '',
-            'foreign_key_constraints' => env('DB_FOREIGN_KEYS', true),
-            'busy_timeout' => null,
-            'journal_mode' => null,
-            'synchronous' => null,
-        ],
-
-        'spb' => [
-            'driver' => 'sqlite',
-            'url' => env('DB_SPB_URL'),
-            'database' => env('DB_SPB_DATABASE', database_path('spb.sqlite')),
-            'prefix' => '',
-            'foreign_key_constraints' => env('DB_FOREIGN_KEYS', true),
-            'busy_timeout' => null,
-            'journal_mode' => null,
-            'synchronous' => null,
-        ],
-
         'mysql' => [
             'driver' => 'mysql',
             'url' => env('DB_URL'),

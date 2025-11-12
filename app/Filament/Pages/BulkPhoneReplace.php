@@ -43,14 +43,14 @@ class BulkPhoneReplace extends Page implements HasForms
             ->schema([
                 Section::make('Выбор диапазона')
                     ->schema([
-                        Select::make('database')
-                            ->label('База данных (Город)')
+                        Select::make('city')
+                            ->label('Город')
                             ->options([
-                                'moscow' => '🏛️ Москва',
-                                'spb' => '🌉 Санкт-Петербург',
+                                'Москва' => 'Москва',
+                                'Санкт-Петербург' => 'Санкт-Петербург',
                             ])
                             ->required()
-                            ->default('moscow')
+                            ->default('Москва')
                             ->live()
                             ->afterStateUpdated(fn ($state, callable $set) => [
                                 $set('resource_type', null),
@@ -58,7 +58,7 @@ class BulkPhoneReplace extends Page implements HasForms
                                 $set('from_id', null),
                                 $set('to_id', null),
                             ])
-                            ->helperText('Выберите базу данных для работы'),
+                            ->helperText('Выберите город для работы'),
                         
                         Select::make('resource_type')
                             ->label('Тип ресурса')
@@ -139,11 +139,12 @@ class BulkPhoneReplace extends Page implements HasForms
 
     protected function getRecordsForSelect(string $resourceType, string $search = ''): array
     {
-        $database = $this->data['database'] ?? 'moscow';
+        $city = $this->data['city'] ?? 'Москва';
         $model = $this->getModelClass($resourceType);
         
-        $query = $model::on($database)
+        $query = $model::query()
             ->select(['id', 'name'])
+            ->where('city', $city)
             ->limit(50);
         
         if (!empty($search)) {
@@ -162,9 +163,8 @@ class BulkPhoneReplace extends Page implements HasForms
 
     protected function getRecordLabel(string $resourceType, $id): string
     {
-        $database = $this->data['database'] ?? 'moscow';
         $model = $this->getModelClass($resourceType);
-        $record = $model::on($database)->find($id);
+        $record = $model::find($id);
         
         if (!$record) {
             return "ID: {$id}";
@@ -188,7 +188,7 @@ class BulkPhoneReplace extends Page implements HasForms
     {
         $data = $this->form->getState();
         
-        $database = $data['database'];
+        $city = $data['city'];
         $resourceType = $data['resource_type'];
         $rangeType = $data['range_type'];
         $newPhone = $data['new_phone'];
@@ -196,9 +196,9 @@ class BulkPhoneReplace extends Page implements HasForms
         $model = $this->getModelClass($resourceType);
         
         try {
-            DB::connection($database)->beginTransaction();
+            DB::beginTransaction();
             
-            $query = $model::on($database);
+            $query = $model::query()->where('city', $city);
             
             // Определяем диапазон
             switch ($rangeType) {
@@ -241,23 +241,21 @@ class BulkPhoneReplace extends Page implements HasForms
             }
             
             // Выполняем массовое обновление
-            $model::on($database)->whereIn('id', $recordIds)->update(['phone' => $newPhone]);
+            $model::whereIn('id', $recordIds)->update(['phone' => $newPhone]);
             
-            DB::connection($database)->commit();
-            
-            $cityName = $database === 'spb' ? 'Санкт-Петербурге' : 'Москве';
+            DB::commit();
             
             Notification::make()
                 ->success()
                 ->title('Успешно!')
-                ->body("Номер телефона обновлен для {$count} записей в базе данных: {$cityName}.")
+                ->body("Номер обновлен для {$count} записей в городе: {$city}.")
                 ->send();
             
             // Очищаем форму
             $this->form->fill();
             
         } catch (\Exception $e) {
-            DB::connection($database ?? 'moscow')->rollBack();
+            DB::rollBack();
             
             Notification::make()
                 ->danger()
@@ -278,20 +276,18 @@ class BulkPhoneReplace extends Page implements HasForms
                 ->modalHeading('Подтвердите массовую замену')
                 ->modalDescription(function () {
                     $data = $this->form->getState();
-                    $database = $data['database'] ?? 'moscow';
+                    $city = $data['city'] ?? 'Москва';
                     $rangeType = $data['range_type'] ?? 'all';
                     
-                    $cityName = $database === 'spb' ? 'Санкт-Петербург' : 'Москва';
-                    
                     $message = match ($rangeType) {
-                        'all' => 'Вы собираетесь заменить номер для ВСЕХ записей.',
-                        'first_500' => 'Вы собираетесь заменить номер для первых 500 записей.',
-                        'first_1000' => 'Вы собираетесь заменить номер для первых 1000 записей.',
-                        'custom' => 'Вы собираетесь заменить номер для записей в выбранном диапазоне.',
-                        default => 'Вы собираетесь выполнить массовую замену номеров.',
+                        'all' => 'Заменить номер для ВСЕХ записей.',
+                        'first_500' => 'Заменить номер для первых 500 записей.',
+                        'first_1000' => 'Заменить номер для первых 1000 записей.',
+                        'custom' => 'Заменить номер для записей в выбранном диапазоне.',
+                        default => 'Массовая замена номеров.',
                     };
                     
-                    return $message . "\n\nБаза данных: {$cityName}\n\nЭто действие нельзя отменить!";
+                    return $message . "\n\nГород: {$city}\n\nЭто действие нельзя отменить!";
                 })
                 ->modalSubmitActionLabel('Да, заменить')
                 ->modalCancelActionLabel('Отмена')
