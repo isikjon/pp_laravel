@@ -39,11 +39,26 @@ class ReorderProfiles extends Page implements HasForms
     
     public function mount(): void
     {
+        Log::info('ReorderProfiles: mount() called', [
+            'initial_resourceType' => $this->resourceType,
+            'initial_city' => $this->city,
+            'initial_selectedProfile' => $this->selectedProfile,
+            'initial_newPosition' => $this->newPosition,
+            'component_id' => $this->getId()
+        ]);
+        
         $this->form->fill([
             'resourceType' => $this->resourceType,
             'city' => $this->city,
             'selectedProfile' => $this->selectedProfile,
             'newPosition' => $this->newPosition,
+        ]);
+        
+        Log::info('ReorderProfiles: mount() - form filled', [
+            'resourceType' => $this->resourceType,
+            'city' => $this->city,
+            'selectedProfile' => $this->selectedProfile,
+            'newPosition' => $this->newPosition
         ]);
     }
     
@@ -65,8 +80,18 @@ class ReorderProfiles extends Page implements HasForms
                             ->required()
                             ->live()
                             ->afterStateUpdated(function ($state) {
+                                Log::info('ReorderProfiles: resourceType changed', [
+                                    'old' => $this->resourceType,
+                                    'new' => $state,
+                                    'component_id' => $this->getId()
+                                ]);
                                 $this->resourceType = $state;
                                 $this->loadProfiles();
+                                Log::info('ReorderProfiles: after loadProfiles', [
+                                    'resourceType' => $this->resourceType,
+                                    'city' => $this->city,
+                                    'profilesCount' => count($this->profilesList)
+                                ]);
                             }),
                         
                         Select::make('city')
@@ -78,8 +103,18 @@ class ReorderProfiles extends Page implements HasForms
                             ->required()
                             ->live()
                             ->afterStateUpdated(function ($state) {
+                                Log::info('ReorderProfiles: city changed', [
+                                    'old' => $this->city,
+                                    'new' => $state,
+                                    'component_id' => $this->getId()
+                                ]);
                                 $this->city = $state;
                                 $this->loadProfiles();
+                                Log::info('ReorderProfiles: after loadProfiles', [
+                                    'resourceType' => $this->resourceType,
+                                    'city' => $this->city,
+                                    'profilesCount' => count($this->profilesList)
+                                ]);
                             }),
                     ])
                     ->columns(2),
@@ -94,7 +129,19 @@ class ReorderProfiles extends Page implements HasForms
                             ->required()
                             ->live()
                             ->afterStateUpdated(function ($state) {
+                                Log::info('ReorderProfiles: selectedProfile changed', [
+                                    'old' => $this->selectedProfile,
+                                    'new' => $state,
+                                    'component_id' => $this->getId(),
+                                    'resourceType' => $this->resourceType,
+                                    'city' => $this->city
+                                ]);
                                 $this->selectedProfile = $state;
+                                Log::info('ReorderProfiles: selectedProfile set', [
+                                    'selectedProfile' => $this->selectedProfile,
+                                    'newPosition' => $this->newPosition,
+                                    'canSubmit' => !empty($this->selectedProfile) && !empty($this->newPosition)
+                                ]);
                             })
                             ->disabled(fn () => empty($this->resourceType) || empty($this->city)),
                         
@@ -104,7 +151,18 @@ class ReorderProfiles extends Page implements HasForms
                             ->searchable()
                             ->required()
                             ->afterStateUpdated(function ($state) {
+                                Log::info('ReorderProfiles: newPosition changed', [
+                                    'old' => $this->newPosition,
+                                    'new' => $state,
+                                    'component_id' => $this->getId(),
+                                    'selectedProfile' => $this->selectedProfile
+                                ]);
                                 $this->newPosition = $state;
+                                Log::info('ReorderProfiles: newPosition set', [
+                                    'selectedProfile' => $this->selectedProfile,
+                                    'newPosition' => $this->newPosition,
+                                    'canSubmit' => !empty($this->selectedProfile) && !empty($this->newPosition)
+                                ]);
                             })
                             ->disabled(fn () => empty($this->selectedProfile)),
                     ])
@@ -115,7 +173,14 @@ class ReorderProfiles extends Page implements HasForms
     
     protected function loadProfiles(): void
     {
+        Log::info('ReorderProfiles: loadProfiles called', [
+            'resourceType' => $this->resourceType,
+            'city' => $this->city,
+            'component_id' => $this->getId()
+        ]);
+        
         if (empty($this->resourceType) || empty($this->city)) {
+            Log::info('ReorderProfiles: loadProfiles - empty resourceType or city, clearing data');
             $this->profilesList = [];
             $this->selectedProfile = null;
             $this->newPosition = null;
@@ -125,6 +190,9 @@ class ReorderProfiles extends Page implements HasForms
         $model = $this->getModel();
         
         if (!$model) {
+            Log::warning('ReorderProfiles: loadProfiles - model not found', [
+                'resourceType' => $this->resourceType
+            ]);
             $this->profilesList = [];
             $this->selectedProfile = null;
             $this->newPosition = null;
@@ -133,6 +201,12 @@ class ReorderProfiles extends Page implements HasForms
         
         try {
             $tableName = $this->getTableName();
+            Log::info('ReorderProfiles: loadProfiles - querying database', [
+                'table' => $tableName,
+                'city' => $this->city,
+                'model' => $model
+            ]);
+            
             $query = $model::where('city', $this->city);
             
             // Проверяем наличие колонки sort_order
@@ -141,9 +215,18 @@ class ReorderProfiles extends Page implements HasForms
             }
             $query->orderBy('id', 'asc');
             
-            $this->profilesList = $query->get()->toArray();
+            $profiles = $query->get();
+            $this->profilesList = $profiles->toArray();
+            
+            Log::info('ReorderProfiles: loadProfiles - profiles loaded', [
+                'count' => count($this->profilesList),
+                'first_few_ids' => array_slice(array_column($this->profilesList, 'id'), 0, 5)
+            ]);
+            
             $this->selectedProfile = null;
             $this->newPosition = null;
+            
+            Log::info('ReorderProfiles: loadProfiles - cleared selectedProfile and newPosition');
         } catch (\Exception $e) {
             Log::error('ReorderProfiles::loadProfiles error: ' . $e->getMessage(), [
                 'resourceType' => $this->resourceType,
@@ -229,10 +312,40 @@ class ReorderProfiles extends Page implements HasForms
         };
     }
     
+    public function logButtonState(): void
+    {
+        Log::info('ReorderProfiles: logButtonState() called', [
+            'selectedProfile' => $this->selectedProfile,
+            'newPosition' => $this->newPosition,
+            'selectedProfile_type' => gettype($this->selectedProfile),
+            'newPosition_type' => gettype($this->newPosition),
+            'selectedProfile_empty' => empty($this->selectedProfile),
+            'newPosition_empty' => empty($this->newPosition),
+            'canSubmit' => !empty($this->selectedProfile) && !empty($this->newPosition),
+            'resourceType' => $this->resourceType,
+            'city' => $this->city,
+            'profilesCount' => count($this->profilesList)
+        ]);
+    }
+    
     public function reorder(): void
     {
+        Log::info('ReorderProfiles: reorder() called', [
+            'selectedProfile' => $this->selectedProfile,
+            'newPosition' => $this->newPosition,
+            'resourceType' => $this->resourceType,
+            'city' => $this->city,
+            'component_id' => $this->getId()
+        ]);
+        
         try {
             if (empty($this->selectedProfile) || empty($this->newPosition)) {
+                Log::warning('ReorderProfiles: reorder() - validation failed', [
+                    'selectedProfile_empty' => empty($this->selectedProfile),
+                    'newPosition_empty' => empty($this->newPosition),
+                    'selectedProfile_value' => $this->selectedProfile,
+                    'newPosition_value' => $this->newPosition
+                ]);
                 Notification::make()
                     ->title('Ошибка')
                     ->body('Выберите анкету и позицию')

@@ -16,14 +16,43 @@
             {{ $this->form }}
             
             <div class="mt-6 flex justify-end gap-3">
+                @php
+                    $isDisabled = empty($this->selectedProfile) || empty($this->newPosition);
+                    logger()->info('ReorderProfiles Blade: Button state check', [
+                        'selectedProfile' => $this->selectedProfile,
+                        'newPosition' => $this->newPosition,
+                        'selectedProfile_empty' => empty($this->selectedProfile),
+                        'newPosition_empty' => empty($this->newPosition),
+                        'isDisabled' => $isDisabled,
+                        'selectedProfile_type' => gettype($this->selectedProfile),
+                        'newPosition_type' => gettype($this->newPosition),
+                        'resourceType' => $this->resourceType ?? 'null',
+                        'city' => $this->city ?? 'null'
+                    ]);
+                @endphp
                 <x-filament::button
                     type="submit"
-                    :disabled="empty($this->selectedProfile) || empty($this->newPosition)"
+                    :disabled="$isDisabled"
                 >
                     Применить изменения
+                    @if($isDisabled)
+                        <span class="text-xs text-gray-500 ml-2">
+                            (Выберите анкету и позицию)
+                        </span>
+                    @endif
                 </x-filament::button>
             </div>
         </form>
+        
+        <div class="mt-4 p-4 bg-gray-100 dark:bg-gray-800 rounded text-xs">
+            <strong>Debug Info:</strong><br>
+            selectedProfile: {{ var_export($this->selectedProfile, true) }}<br>
+            newPosition: {{ var_export($this->newPosition, true) }}<br>
+            resourceType: {{ var_export($this->resourceType, true) }}<br>
+            city: {{ var_export($this->city, true) }}<br>
+            profilesCount: {{ count($this->profilesList) }}<br>
+            Button disabled: {{ $isDisabled ? 'true' : 'false' }}
+        </div>
         
         @if(!empty($this->profilesList))
             <div class="bg-white dark:bg-gray-800 rounded-xl shadow p-6">
