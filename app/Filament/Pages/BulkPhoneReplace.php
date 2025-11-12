@@ -3,6 +3,7 @@
 namespace App\Filament\Pages;
 
 use App\Models\Girl;
+use App\Models\Masseuse;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
@@ -13,6 +14,8 @@ use Filament\Forms\Get;
 use Filament\Notifications\Notification;
 use Filament\Pages\Page;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Schema;
+use Livewire\Attributes\Computed;
 
 class BulkPhoneReplace extends Page implements HasForms
 {
@@ -36,6 +39,74 @@ class BulkPhoneReplace extends Page implements HasForms
     {
         $this->form->fill();
     }
+    
+    #[Computed]
+    protected function profilesList(): array
+    {
+        $city = $this->data['city'] ?? 'Москва';
+        $resourceType = $this->data['resource_type'] ?? 'girls';
+        
+        if (empty($city) || empty($resourceType)) {
+            return [];
+        }
+        
+        $tableName = $this->getTableName($resourceType, $city);
+        
+        if (empty($tableName)) {
+            return [];
+        }
+        
+        try {
+            $anketaIdField = $this->getAnketaIdField($resourceType);
+            $query = DB::table($tableName)
+                ->select('id', 'name', $anketaIdField, 'sort_order', 'city', 'metro')
+                ->limit(500);
+            
+            if (Schema::hasColumn($tableName, 'sort_order')) {
+                $query->orderBy('sort_order', 'asc');
+            }
+            $query->orderBy('id', 'asc');
+            
+            $profiles = $query->get();
+            
+            return $profiles->map(function($profile) use ($anketaIdField) {
+                return [
+                    'id' => $profile->id,
+                    'anketa_id' => $profile->$anketaIdField ?? null,
+                    'name' => $profile->name ?? 'Без имени',
+                    'sort_order' => $profile->sort_order ?? 999999,
+                    'city' => $profile->city ?? null,
+                    'metro' => $profile->metro ?? null,
+                ];
+            })->toArray();
+        } catch (\Exception $e) {
+            return [];
+        }
+    }
+    
+    protected function getTableName(string $resourceType, string $city): string
+    {
+        $cityCode = $city === 'Москва' ? 'moscow' : 'spb';
+        
+        return match($resourceType) {
+            'girls' => $cityCode === 'moscow' ? 'girls_moscow' : 'girls_spb',
+            'masseuses' => $cityCode === 'moscow' ? 'masseuses_moscow' : 'masseuses_spb',
+            'salons' => 'salons',
+            'strip_clubs' => 'strip_clubs',
+            default => '',
+        };
+    }
+    
+    protected function getIdField(string $resourceType): string
+    {
+        return match($resourceType) {
+            'girls' => 'anketa_id',
+            'masseuses' => 'anketa_id',
+            'salons' => 'salon_id',
+            'strip_clubs' => 'club_id',
+            default => 'id',
+        };
+    }
 
     public function form(Form $form): Form
     {
@@ -52,12 +123,14 @@ class BulkPhoneReplace extends Page implements HasForms
                             ->required()
                             ->default('Москва')
                             ->live()
-                            ->afterStateUpdated(fn ($state, callable $set) => [
-                                $set('resource_type', null),
-                                $set('range_type', null),
-                                $set('from_id', null),
-                                $set('to_id', null),
-                            ])
+                            ->afterStateUpdated(function ($state, callable $set) {
+                                $set('resource_type', null);
+                                $set('range_type', null);
+                                $set('from_id', null);
+                                $set('to_id', null);
+                                unset($this->profilesList);
+                                $this->dispatch('$refresh');
+                            })
                             ->helperText('Выберите город для работы'),
                         
                         Select::make('resource_type')
@@ -71,11 +144,13 @@ class BulkPhoneReplace extends Page implements HasForms
                             ->required()
                             ->default('girls')
                             ->live()
-                            ->afterStateUpdated(fn ($state, callable $set) => [
-                                $set('range_type', null),
-                                $set('from_id', null),
-                                $set('to_id', null),
-                            ]),
+                            ->afterStateUpdated(function ($state, callable $set) {
+                                $set('range_type', null);
+                                $set('from_id', null);
+                                $set('to_id', null);
+                                unset($this->profilesList);
+                                $this->dispatch('$refresh');
+                            }),
                         
                         Select::make('range_type')
                             ->label('Диапазон')
@@ -140,39 +215,82 @@ class BulkPhoneReplace extends Page implements HasForms
     protected function getRecordsForSelect(string $resourceType, string $search = ''): array
     {
         $city = $this->data['city'] ?? 'Москва';
-        $model = $this->getModelClass($resourceType);
+        $tableName = $this->getTableName($resourceType, $city);
         $anketaIdField = $this->getAnketaIdField($resourceType);
         
-        $query = $model::query()
-            ->select(['id', 'name', $anketaIdField])
-            ->where('city', $city)
-            ->limit(50);
+        if (empty($tableName)) {
+            return [];
+        }
+        
+        $query = DB::table($tableName)
+            ->select('id', 'name', $anketaIdField, 'sort_order');
+        
+        if (Schema::hasColumn($tableName, 'sort_order')) {
+            $query->orderBy('sort_order', 'asc');
+        }
+        $query->orderBy('id', 'asc');
         
         if (!empty($search)) {
             $query->where(function ($q) use ($search, $anketaIdField) {
                 $q->where($anketaIdField, 'like', "%{$search}%")
-                  ->orWhere('name', 'like', "%{$search}%");
+                  ->orWhere('name', 'like', "%{$search}%")
+                  ->orWhere('id', 'like', "%{$search}%");
             });
         }
         
-        return $query->get()
-            ->mapWithKeys(fn ($record) => [
-                $record->id => "ID: {$record->$anketaIdField} - {$record->name}"
-            ])
-            ->toArray();
+        $query->limit(100);
+        
+        $profiles = $query->get();
+        $profilesList = $this->profilesList;
+        
+        return $profiles->mapWithKeys(function ($record) use ($anketaIdField, $profilesList) {
+            // Находим позицию в списке
+            $position = 999999;
+            foreach ($profilesList as $index => $profile) {
+                if ($profile['id'] == $record->id) {
+                    $position = $index + 1;
+                    break;
+                }
+            }
+            
+            $anketaId = $record->$anketaIdField ?? 'N/A';
+            $sortOrder = $record->sort_order ?? 999999;
+            
+            return [
+                $record->id => "#{$position} | ID: {$record->id} | {$anketaIdField}: {$anketaId} | {$record->name} | Позиция: {$sortOrder}"
+            ];
+        })->toArray();
     }
 
     protected function getRecordLabel(string $resourceType, $id): string
     {
-        $model = $this->getModelClass($resourceType);
+        $city = $this->data['city'] ?? 'Москва';
+        $tableName = $this->getTableName($resourceType, $city);
         $anketaIdField = $this->getAnketaIdField($resourceType);
-        $record = $model::find($id);
+        
+        if (empty($tableName)) {
+            return "ID: {$id}";
+        }
+        
+        $record = DB::table($tableName)->where('id', $id)->first();
         
         if (!$record) {
             return "ID: {$id}";
         }
         
-        return "ID: {$record->$anketaIdField} - {$record->name}";
+        $profilesList = $this->profilesList;
+        $position = 999999;
+        foreach ($profilesList as $index => $profile) {
+            if ($profile['id'] == $id) {
+                $position = $index + 1;
+                break;
+            }
+        }
+        
+        $anketaId = $record->$anketaIdField ?? 'N/A';
+        $sortOrder = $record->sort_order ?? 999999;
+        
+        return "#{$position} | ID: {$id} | {$anketaIdField}: {$anketaId} | {$record->name} | Позиция: {$sortOrder}";
     }
 
     protected function getModelClass(string $resourceType): string
@@ -206,12 +324,21 @@ class BulkPhoneReplace extends Page implements HasForms
         $rangeType = $data['range_type'];
         $newPhone = $data['new_phone'];
         
-        $model = $this->getModelClass($resourceType);
+        $tableName = $this->getTableName($resourceType, $city);
+        
+        if (empty($tableName)) {
+            Notification::make()
+                ->danger()
+                ->title('Ошибка!')
+                ->body('Неверный тип ресурса или город')
+                ->send();
+            return;
+        }
         
         try {
             DB::beginTransaction();
             
-            $query = $model::query()->where('city', $city);
+            $query = DB::table($tableName);
             
             // Определяем диапазон
             switch ($rangeType) {
@@ -250,11 +377,15 @@ class BulkPhoneReplace extends Page implements HasForms
                     ->body('В выбранном диапазоне нет записей для обновления.')
                     ->send();
                 
+                DB::rollBack();
                 return;
             }
             
             // Выполняем массовое обновление
-            $model::whereIn('id', $recordIds)->update(['phone' => $newPhone]);
+            DB::table($tableName)->whereIn('id', $recordIds)->update(['phone' => $newPhone]);
+            
+            // Сбрасываем кэш Computed property
+            unset($this->profilesList);
             
             DB::commit();
             

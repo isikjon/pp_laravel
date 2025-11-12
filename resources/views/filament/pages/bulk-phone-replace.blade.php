@@ -28,6 +28,42 @@
                 :full-width="true"
             />
         </x-filament-panels::form>
+        
+        @php
+            $city = $this->data['city'] ?? null;
+            $resourceType = $this->data['resource_type'] ?? null;
+            $profiles = $this->profilesList;
+        @endphp
+        
+        @if(!empty($city) && !empty($resourceType) && !empty($profiles))
+            <div class="bg-white dark:bg-gray-800 rounded-xl shadow p-6">
+                <h2 class="text-lg font-semibold mb-4">Текущий порядок ({{ count($profiles) }} анкет)</h2>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-sm">
+                        <thead class="border-b dark:border-gray-700">
+                            <tr class="text-left">
+                                <th class="pb-3 font-semibold">Позиция</th>
+                                <th class="pb-3 font-semibold">ID</th>
+                                <th class="pb-3 font-semibold">{{ ucfirst($this->getIdField($resourceType)) }}</th>
+                                <th class="pb-3 font-semibold">Имя</th>
+                                <th class="pb-3 font-semibold">Sort Order</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y dark:divide-gray-700">
+                            @foreach($profiles as $index => $profile)
+                                <tr class="hover:bg-gray-50 dark:hover:bg-gray-700/50">
+                                    <td class="py-3 font-semibold">{{ $index + 1 }}</td>
+                                    <td class="py-3">{{ $profile['id'] }}</td>
+                                    <td class="py-3">{{ $profile['anketa_id'] ?? 'N/A' }}</td>
+                                    <td class="py-3">{{ $profile['name'] ?? 'Без имени' }}</td>
+                                    <td class="py-3">{{ $profile['sort_order'] ?? 999999 }}</td>
+                                </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        @endif
     </div>
 </x-filament-panels::page>
 
