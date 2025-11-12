@@ -157,11 +157,9 @@ class MasseuseResource extends Resource
                 Tables\Filters\SelectFilter::make('city')
                     ->label('City')
                     ->options(function () {
-                        return Masseuse::query()
-                            ->whereNotNull('city')
-                            ->distinct()
-                            ->pluck('city', 'city')
-                            ->toArray();
+                        $moscow = Masseuse::forCity('moscow')->whereNotNull('city')->distinct()->pluck('city', 'city')->toArray();
+                        $spb = Masseuse::forCity('spb')->whereNotNull('city')->distinct()->pluck('city', 'city')->toArray();
+                        return array_merge($moscow, $spb);
                     }),
             ])
             ->actions([

@@ -19,9 +19,8 @@ class SearchController extends Controller
         }
         
         $selectedCity = $request->input('city', $request->cookie('selectedCity', 'moscow'));
-        $cityName = $selectedCity === 'spb' ? 'Санкт-Петербург' : 'Москва';
         
-        $girls = Girl::where('city', $cityName)
+        $girls = Girl::forCity($selectedCity)
             ->where('name', 'LIKE', '%' . $query . '%')
             ->whereNotNull('media_images')
             ->where('media_images', '!=', '')

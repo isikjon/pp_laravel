@@ -38,7 +38,7 @@ class IntimMapController extends Controller
         ];
         
         if (in_array('1', $types)) {
-            $girls = Girl::where('city', $cityName)
+            $girls = Girl::forCity($selectedCity)
                 ->whereNotNull('coordinates')
                 ->where('coordinates', '!=', '')
                 ->where('coordinates', '!=', 'null')

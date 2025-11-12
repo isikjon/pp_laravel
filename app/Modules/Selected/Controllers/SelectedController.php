@@ -28,7 +28,7 @@ class SelectedController extends Controller
                 ]);
             }
             
-            $girls = Girl::whereIn('anketa_id', $ids)
+            $girls = Girl::forCity($selectedCity)->whereIn('anketa_id', $ids)
                 ->whereNotNull('media_images')
                 ->where('media_images', '!=', '')
                 ->where('media_images', '!=', '[]')

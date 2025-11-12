@@ -165,20 +165,16 @@ class GirlResource extends Resource
                 Tables\Filters\SelectFilter::make('city')
                     ->label('City')
                     ->options(function () {
-                        return Girl::query()
-                            ->whereNotNull('city')
-                            ->distinct()
-                            ->pluck('city', 'city')
-                            ->toArray();
+                        $moscow = Girl::forCity('moscow')->whereNotNull('city')->distinct()->pluck('city', 'city')->toArray();
+                        $spb = Girl::forCity('spb')->whereNotNull('city')->distinct()->pluck('city', 'city')->toArray();
+                        return array_merge($moscow, $spb);
                     }),
                 Tables\Filters\SelectFilter::make('metro')
                     ->label('Metro')
                     ->options(function () {
-                        return Girl::query()
-                            ->whereNotNull('metro')
-                            ->distinct()
-                            ->pluck('metro', 'metro')
-                            ->toArray();
+                        $moscow = Girl::forCity('moscow')->whereNotNull('metro')->distinct()->pluck('metro', 'metro')->toArray();
+                        $spb = Girl::forCity('spb')->whereNotNull('metro')->distinct()->pluck('metro', 'metro')->toArray();
+                        return array_merge($moscow, $spb);
                     }),
             ])
             ->actions([

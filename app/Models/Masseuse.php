@@ -6,6 +6,8 @@ use Illuminate\Database\Eloquent\Model;
 
 class Masseuse extends Model
 {
+    protected $table = 'masseuses_moscow';
+
     protected $fillable = [
         'anketa_id',
         'sort_order',
@@ -40,4 +42,12 @@ class Masseuse extends Model
         'services' => 'array',
         'media_images' => 'array',
     ];
+
+    public static function forCity($city = 'moscow')
+    {
+        $model = new static();
+        $tableName = $city === 'spb' ? 'masseuses_spb' : 'masseuses_moscow';
+        $model->setTable($tableName);
+        return $model;
+    }
 }

@@ -19,15 +19,8 @@ class MasseuseController extends Controller
         
         $cityName = $selectedCity === 'spb' ? 'Санкт-Петербург' : 'Москва';
         
-        $query = Masseuse::query();
-        $query->where('city', $cityName);
-        
-        // СТРОГО сортировка по позиции по возрастанию 1,2,3,4,5...
-        if (\Schema::hasColumn('masseuses', 'sort_order')) {
-            $query->orderBy('sort_order', 'asc');
-        } else {
-            $query->orderBy('id', 'asc');
-        }
+        $query = Masseuse::forCity($selectedCity)->query();
+        $query->orderBy('sort_order', 'asc');
         
         $perPage = 20;
         $page = $request->get('page', 1);
@@ -64,7 +57,8 @@ class MasseuseController extends Controller
     
     public function show($id)
     {
-        $girlData = Masseuse::where('anketa_id', $id)->first();
+        $selectedCity = request()->input('city', request()->cookie('selectedCity', 'moscow'));
+        $girlData = Masseuse::forCity($selectedCity)->where('anketa_id', $id)->first();
         
         if (!$girlData) {
             abort(404, 'Девушка не найдена');
@@ -419,8 +413,9 @@ class MasseuseController extends Controller
     
     private function getSimilarGirls($currentGirl)
     {
-        $similarGirls = Masseuse::where('anketa_id', '!=', $currentGirl->anketa_id)
-            ->where('city', $currentGirl->city)
+        $selectedCity = request()->input('city', request()->cookie('selectedCity', 'moscow'));
+        $similarGirls = Masseuse::forCity($selectedCity)
+            ->where('anketa_id', '!=', $currentGirl->anketa_id)
             ->whereNotNull('media_images')
             ->where('media_images', '!=', '')
             ->where('media_images', '!=', '[]')

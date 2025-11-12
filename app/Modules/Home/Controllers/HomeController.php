@@ -12,8 +12,6 @@ class HomeController extends Controller
 {
     public function index(Request $request)
     {
-        $query = Girl::query();
-        
         $selectedCity = $request->input('city', $request->cookie('selectedCity', 'moscow'));
         
         if ($request->has('city')) {
@@ -21,14 +19,9 @@ class HomeController extends Controller
         }
         
         $cityName = $selectedCity === 'spb' ? 'Санкт-Петербург' : 'Москва';
-        $query->where('city', $cityName);
+        $query = Girl::forCity($selectedCity)->query();
         
-        // СТРОГО сортировка по позиции по возрастанию 1,2,3,4,5...
-        if (\Schema::hasColumn('girls', 'sort_order')) {
-            $query->orderBy('sort_order', 'asc');
-        } else {
-            $query->orderBy('id', 'asc');
-        }
+        $query->orderBy('sort_order', 'asc');
         
         $filterServices = [];
         $filterPlaces = [];
@@ -289,9 +282,8 @@ class HomeController extends Controller
         
         $paginatorGirls->appends($request->except('page'));
         
-        $metros = Girl::select('metro')
+        $metros = Girl::forCity($selectedCity)->select('metro')
             ->distinct()
-            ->where('city', $cityName)
             ->whereNotNull('metro')
             ->where('metro', '!=', '')
             ->pluck('metro')
