@@ -272,11 +272,12 @@ class ReorderProfiles extends Page implements HasForms
             return;
         }
         
-        $model = $this->getModel();
+        $tableName = $this->getTableName();
         
-        if (!$model) {
-            Log::warning('ReorderProfiles: loadProfiles - model not found', [
-                'resourceType' => $this->resourceType
+        if (empty($tableName)) {
+            Log::warning('ReorderProfiles: loadProfiles - table name not found', [
+                'resourceType' => $this->resourceType,
+                'city' => $this->city
             ]);
             $this->profilesList = [];
             $this->selectedProfile = null;
@@ -285,16 +286,14 @@ class ReorderProfiles extends Page implements HasForms
         }
         
         try {
-            $tableName = $this->getTableName();
             Log::info('ReorderProfiles: loadProfiles - querying database', [
                 'table' => $tableName,
                 'city' => $this->city,
-                'model' => $model,
                 'resourceType' => $this->resourceType
             ]);
             
-            // Используем правильную таблицу через from()
-            $query = $model::from($tableName);
+            // Используем DB::table() напрямую для надежности
+            $query = DB::table($tableName);
             
             // Проверяем наличие колонки sort_order
             if (Schema::hasColumn($tableName, 'sort_order')) {
@@ -303,7 +302,11 @@ class ReorderProfiles extends Page implements HasForms
             $query->orderBy('id', 'asc');
             
             $profiles = $query->get();
-            $this->profilesList = $profiles->toArray();
+            
+            // Преобразуем stdClass в массив
+            $this->profilesList = $profiles->map(function($profile) {
+                return (array)$profile;
+            })->toArray();
             
             Log::info('ReorderProfiles: loadProfiles - profiles loaded', [
                 'count' => count($this->profilesList),
@@ -564,8 +567,8 @@ class ReorderProfiles extends Page implements HasForms
                 'resourceType' => $this->resourceType
             ]);
             
-            // Используем правильную таблицу через from()
-            $query = $model::from($tableName);
+            // Используем DB::table() напрямую для надежности
+            $query = DB::table($tableName);
             
             if (Schema::hasColumn($tableName, 'sort_order')) {
                 $query->orderBy('sort_order', 'asc');
@@ -578,10 +581,11 @@ class ReorderProfiles extends Page implements HasForms
             $targetIndex = null;
             
             foreach ($profiles as $index => $profile) {
-                if ($profile->id == $this->selectedProfile) {
+                $profileId = $profile->id;
+                if ($profileId == $this->selectedProfile) {
                     $selectedIndex = $index;
                 }
-                if ($profile->id == $this->newPosition) {
+                if ($profileId == $this->newPosition) {
                     $targetIndex = $index;
                 }
             }
@@ -601,22 +605,35 @@ class ReorderProfiles extends Page implements HasForms
             }
             
             // Переставляем элементы в массиве
-            $selectedProfile = $profiles[$selectedIndex];
-            $profiles->forget($selectedIndex);
-            $profiles = $profiles->values(); // Перестраиваем индексы
+            $profilesArray = $profiles->toArray();
+            $selectedProfile = $profilesArray[$selectedIndex];
+            unset($profilesArray[$selectedIndex]);
+            $profilesArray = array_values($profilesArray); // Перестраиваем индексы
             
             // Вставляем на новую позицию
-            $profiles->splice($targetIndex, 0, [$selectedProfile]);
+            array_splice($profilesArray, $targetIndex, 0, [$selectedProfile]);
             
             // Обновляем sort_order для всех профилей
-            $tableName = $this->getTableName();
             $hasSortOrder = Schema::hasColumn($tableName, 'sort_order');
             
-            foreach ($profiles as $index => $profile) {
-                if ($hasSortOrder) {
-                    $profile->sort_order = ($index + 1) * 10;
+            foreach ($profilesArray as $index => $profile) {
+                $profileArr = (array)$profile;
+                $id = $profileArr['id'] ?? null;
+                
+                if (!$id) {
+                    Log::warning('ReorderProfiles: profile without id', ['profile' => $profileArr]);
+                    continue;
                 }
-                $profile->save();
+                
+                $updateData = [];
+                
+                if ($hasSortOrder) {
+                    $updateData['sort_order'] = ($index + 1) * 10;
+                }
+                
+                if (!empty($updateData)) {
+                    DB::table($tableName)->where('id', $id)->update($updateData);
+                }
             }
             
             DB::commit();
