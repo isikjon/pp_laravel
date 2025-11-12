@@ -45,9 +45,17 @@ class Girl extends Model
 
     public static function forCity($city = 'moscow')
     {
-        $model = new static();
         $tableName = $city === 'spb' ? 'girls_spb' : 'girls_moscow';
-        $model->setTable($tableName);
-        return $model;
+        return (new static())->setTable($tableName);
+    }
+
+    public function newQuery()
+    {
+        if (!$this->getTable() || $this->getTable() === 'girls_moscow') {
+            $city = request()->input('city', request()->cookie('selectedCity', 'moscow'));
+            $tableName = $city === 'spb' ? 'girls_spb' : 'girls_moscow';
+            $this->setTable($tableName);
+        }
+        return parent::newQuery();
     }
 }

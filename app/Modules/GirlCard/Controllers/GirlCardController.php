@@ -10,7 +10,8 @@ class GirlCardController extends Controller
     public function show($id)
     {
         $selectedCity = request()->input('city', request()->cookie('selectedCity', 'moscow'));
-        $girlData = Girl::forCity($selectedCity)->where('anketa_id', $id)->first();
+        $tableName = $selectedCity === 'spb' ? 'girls_spb' : 'girls_moscow';
+        $girlData = Girl::from($tableName)->where('anketa_id', $id)->first();
         
         if (!$girlData) {
             abort(404, 'Девушка не найдена');
@@ -451,7 +452,8 @@ class GirlCardController extends Controller
         $currentPriceInt = $currentPrice ? (int)str_replace(' ', '', $currentPrice) : null;
         
         $selectedCity = request()->input('city', request()->cookie('selectedCity', 'moscow'));
-        $similarGirls = Girl::forCity($selectedCity)
+        $tableName = $selectedCity === 'spb' ? 'girls_spb' : 'girls_moscow';
+        $similarGirls = Girl::from($tableName)
             ->where('anketa_id', '!=', $currentGirl->anketa_id)
             ->whereNotNull('media_images')
             ->where('media_images', '!=', '')

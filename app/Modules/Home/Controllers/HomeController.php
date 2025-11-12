@@ -19,7 +19,8 @@ class HomeController extends Controller
         }
         
         $cityName = $selectedCity === 'spb' ? 'Санкт-Петербург' : 'Москва';
-        $query = Girl::forCity($selectedCity)->query();
+        $tableName = $selectedCity === 'spb' ? 'girls_spb' : 'girls_moscow';
+        $query = Girl::from($tableName)->query();
         
         $query->orderBy('sort_order', 'asc');
         
@@ -282,7 +283,8 @@ class HomeController extends Controller
         
         $paginatorGirls->appends($request->except('page'));
         
-        $metros = Girl::forCity($selectedCity)->select('metro')
+        $tableName = $selectedCity === 'spb' ? 'girls_spb' : 'girls_moscow';
+        $metros = Girl::from($tableName)->select('metro')
             ->distinct()
             ->whereNotNull('metro')
             ->where('metro', '!=', '')

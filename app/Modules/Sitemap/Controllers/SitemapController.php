@@ -93,8 +93,8 @@ class SitemapController extends Controller
             'priority' => '0.5'
         ];
         
-        $girlsMoscow = Girl::forCity('moscow')->select('anketa_id', 'updated_at')->get();
-        $girlsSpb = Girl::forCity('spb')->select('anketa_id', 'updated_at')->get();
+        $girlsMoscow = Girl::from('girls_moscow')->select('anketa_id', 'updated_at')->get();
+        $girlsSpb = Girl::from('girls_spb')->select('anketa_id', 'updated_at')->get();
         $girls = $girlsMoscow->merge($girlsSpb);
         foreach ($girls as $girl) {
             $urls[] = [
@@ -105,8 +105,8 @@ class SitemapController extends Controller
             ];
         }
         
-        $masseusesMoscow = Masseuse::forCity('moscow')->select('anketa_id', 'updated_at')->get();
-        $masseusesSpb = Masseuse::forCity('spb')->select('anketa_id', 'updated_at')->get();
+        $masseusesMoscow = Masseuse::from('masseuses_moscow')->select('anketa_id', 'updated_at')->get();
+        $masseusesSpb = Masseuse::from('masseuses_spb')->select('anketa_id', 'updated_at')->get();
         $masseuses = $masseusesMoscow->merge($masseusesSpb);
         foreach ($masseuses as $masseuse) {
             $urls[] = [

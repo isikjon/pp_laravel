@@ -28,7 +28,8 @@ class SelectedController extends Controller
                 ]);
             }
             
-            $girls = Girl::forCity($selectedCity)->whereIn('anketa_id', $ids)
+            $tableName = $selectedCity === 'spb' ? 'girls_spb' : 'girls_moscow';
+            $girls = Girl::from($tableName)->whereIn('anketa_id', $ids)
                 ->whereNotNull('media_images')
                 ->where('media_images', '!=', '')
                 ->where('media_images', '!=', '[]')

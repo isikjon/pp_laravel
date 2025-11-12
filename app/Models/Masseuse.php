@@ -45,9 +45,17 @@ class Masseuse extends Model
 
     public static function forCity($city = 'moscow')
     {
-        $model = new static();
         $tableName = $city === 'spb' ? 'masseuses_spb' : 'masseuses_moscow';
-        $model->setTable($tableName);
-        return $model;
+        return (new static())->setTable($tableName);
+    }
+
+    public function newQuery()
+    {
+        if (!$this->getTable() || $this->getTable() === 'masseuses_moscow') {
+            $city = request()->input('city', request()->cookie('selectedCity', 'moscow'));
+            $tableName = $city === 'spb' ? 'masseuses_spb' : 'masseuses_moscow';
+            $this->setTable($tableName);
+        }
+        return parent::newQuery();
     }
 }

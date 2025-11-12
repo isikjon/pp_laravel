@@ -18,8 +18,8 @@ class MasseuseController extends Controller
         }
         
         $cityName = $selectedCity === 'spb' ? 'Санкт-Петербург' : 'Москва';
-        
-        $query = Masseuse::forCity($selectedCity)->query();
+        $tableName = $selectedCity === 'spb' ? 'masseuses_spb' : 'masseuses_moscow';
+        $query = Masseuse::from($tableName)->query();
         $query->orderBy('sort_order', 'asc');
         
         $perPage = 20;
@@ -58,7 +58,8 @@ class MasseuseController extends Controller
     public function show($id)
     {
         $selectedCity = request()->input('city', request()->cookie('selectedCity', 'moscow'));
-        $girlData = Masseuse::forCity($selectedCity)->where('anketa_id', $id)->first();
+        $tableName = $selectedCity === 'spb' ? 'masseuses_spb' : 'masseuses_moscow';
+        $girlData = Masseuse::from($tableName)->where('anketa_id', $id)->first();
         
         if (!$girlData) {
             abort(404, 'Девушка не найдена');
@@ -414,7 +415,8 @@ class MasseuseController extends Controller
     private function getSimilarGirls($currentGirl)
     {
         $selectedCity = request()->input('city', request()->cookie('selectedCity', 'moscow'));
-        $similarGirls = Masseuse::forCity($selectedCity)
+        $tableName = $selectedCity === 'spb' ? 'masseuses_spb' : 'masseuses_moscow';
+        $similarGirls = Masseuse::from($tableName)
             ->where('anketa_id', '!=', $currentGirl->anketa_id)
             ->whereNotNull('media_images')
             ->where('media_images', '!=', '')
