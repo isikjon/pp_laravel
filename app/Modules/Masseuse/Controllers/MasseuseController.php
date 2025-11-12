@@ -47,10 +47,11 @@ class MasseuseController extends Controller
             $total,
             $perPage,
             $page,
-            ['path' => $request->url()]
+            ['path' => $request->url(), 'query' => $request->query()]
         );
         
-        $girls->appends($request->except('page'));
+        // Сохраняем параметр city в пагинации
+        $girls->appends(['city' => $selectedCity]);
         
         return view('masseuse::index', compact('girls', 'cityName', 'selectedCity'));
     }

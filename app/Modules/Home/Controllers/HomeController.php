@@ -278,10 +278,11 @@ class HomeController extends Controller
             $total,
             $perPage,
             $page,
-            ['path' => $request->url()]
+            ['path' => $request->url(), 'query' => $request->query()]
         );
         
-        $paginatorGirls->appends($request->except('page'));
+        // Сохраняем параметр city в пагинации
+        $paginatorGirls->appends(['city' => $selectedCity]);
         
         $tableName = $selectedCity === 'spb' ? 'girls_spb' : 'girls_moscow';
         $metros = Girl::from($tableName)->select('metro')
