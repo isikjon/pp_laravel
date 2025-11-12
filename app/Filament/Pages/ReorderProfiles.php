@@ -5,16 +5,21 @@ namespace App\Filament\Pages;
 use Filament\Pages\Page;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Section;
+use Filament\Forms\Concerns\InteractsWithForms;
+use Filament\Forms\Contracts\HasForms;
 use Filament\Forms\Form;
 use Filament\Notifications\Notification;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Schema;
 use App\Models\Girl;
 use App\Models\Masseuse;
 use App\Models\Salon;
 use App\Models\StripClub;
 
-class ReorderProfiles extends Page
+class ReorderProfiles extends Page implements HasForms
 {
+    use InteractsWithForms;
+    
     protected static ?string $navigationIcon = 'heroicon-o-arrows-up-down';
     
     protected static string $view = 'filament.pages.reorder-profiles';
@@ -94,6 +99,8 @@ class ReorderProfiles extends Page
     {
         if (empty($this->resourceType) || empty($this->city)) {
             $this->profilesList = [];
+            $this->selectedProfile = null;
+            $this->newPosition = null;
             return;
         }
         
@@ -101,14 +108,40 @@ class ReorderProfiles extends Page
         
         if (!$model) {
             $this->profilesList = [];
+            $this->selectedProfile = null;
+            $this->newPosition = null;
             return;
         }
         
-        $this->profilesList = $model::where('city', $this->city)
-            ->orderBy('sort_order', 'asc')
-            ->orderBy('id', 'asc')
-            ->get()
-            ->toArray();
+        try {
+            $tableName = $this->getTableName();
+            $query = $model::where('city', $this->city);
+            
+            // Проверяем наличие колонки sort_order
+            if (Schema::hasColumn($tableName, 'sort_order')) {
+                $query->orderBy('sort_order', 'asc');
+            }
+            $query->orderBy('id', 'asc');
+            
+            $this->profilesList = $query->get()->toArray();
+            $this->selectedProfile = null;
+            $this->newPosition = null;
+        } catch (\Exception $e) {
+            $this->profilesList = [];
+            $this->selectedProfile = null;
+            $this->newPosition = null;
+        }
+    }
+    
+    protected function getTableName(): string
+    {
+        return match($this->resourceType) {
+            'girls' => 'girls',
+            'masseuses' => 'masseuses',
+            'salons' => 'salons',
+            'strip_clubs' => 'strip_clubs',
+            default => '',
+        };
     }
     
     protected function getProfileOptions(): array
@@ -194,10 +227,15 @@ class ReorderProfiles extends Page
             DB::beginTransaction();
             
             // Находим профили
-            $profiles = $model::where('city', $this->city)
-                ->orderBy('sort_order', 'asc')
-                ->orderBy('id', 'asc')
-                ->get();
+            $tableName = $this->getTableName();
+            $query = $model::where('city', $this->city);
+            
+            if (Schema::hasColumn($tableName, 'sort_order')) {
+                $query->orderBy('sort_order', 'asc');
+            }
+            $query->orderBy('id', 'asc');
+            
+            $profiles = $query->get();
             
             $selectedIndex = null;
             $targetIndex = null;
@@ -234,8 +272,13 @@ class ReorderProfiles extends Page
             $profiles->splice($targetIndex, 0, [$selectedProfile]);
             
             // Обновляем sort_order для всех профилей
+            $tableName = $this->getTableName();
+            $hasSortOrder = Schema::hasColumn($tableName, 'sort_order');
+            
             foreach ($profiles as $index => $profile) {
-                $profile->sort_order = ($index + 1) * 10;
+                if ($hasSortOrder) {
+                    $profile->sort_order = ($index + 1) * 10;
+                }
                 $profile->save();
             }
             
