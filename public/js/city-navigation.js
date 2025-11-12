@@ -1,83 +1,75 @@
-// City Navigation Helper
-// Обновляет ссылки навигации с параметром города
-
+// Dynamically add city parameter to all internal links that don't have it
 document.addEventListener('DOMContentLoaded', function() {
-    function getCurrentCity() {
-        // Получаем город из URL
+    function updateLinksWithCity() {
         const urlParams = new URLSearchParams(window.location.search);
-        const cityFromUrl = urlParams.get('city');
-        if (cityFromUrl) {
-            return cityFromUrl;
-        }
+        const currentCity = urlParams.get('city') || localStorage.getItem('selectedCity') || 'moscow';
         
-        // Получаем город из localStorage
-        const cityFromStorage = localStorage.getItem('selectedCity');
-        if (cityFromStorage) {
-            return cityFromStorage;
-        }
+        // Get all internal links
+        const links = document.querySelectorAll('a[href^="/"], a[href*="' + window.location.hostname + '"]');
         
-        // Получаем город из cookie
-        const cookies = document.cookie.split(';');
-        for (let cookie of cookies) {
-            const [name, value] = cookie.trim().split('=');
-            if (name === 'selectedCity') {
-                return decodeURIComponent(value);
-            }
-        }
-        
-        return 'moscow'; // дефолтное значение
-    }
-    
-    function updateNavigationLinks() {
-        const currentCity = getCurrentCity();
-        
-        if (currentCity && currentCity !== 'moscow') {
-            // Обновляем ссылки в навигации
-            const links = document.querySelectorAll('a[href*="/masseuse"], a[href*="/salons"], a[href*="/stripclubs"], a[href*="/intim-map"], a[href="/"]');
-            
-            links.forEach(link => {
+        links.forEach(function(link) {
+            try {
                 const href = link.getAttribute('href');
                 if (!href) return;
                 
-                // Проверяем, нет ли уже параметра city в ссылке
-                if (href.includes('?')) {
-                    const [baseUrl, queryString] = href.split('?');
-                    const params = new URLSearchParams(queryString);
-                    if (!params.has('city')) {
-                        params.set('city', currentCity);
-                        link.setAttribute('href', baseUrl + '?' + params.toString());
-                    }
-                } else {
-                    // Добавляем параметр city
-                    const separator = href.includes('#') ? '&' : '?';
-                    if (!href.includes('city=')) {
-                        link.setAttribute('href', href + separator + 'city=' + currentCity);
-                    }
+                // Skip if it's an anchor link or external link
+                if (href.startsWith('#') || href.startsWith('javascript:') || href.startsWith('mailto:') || href.startsWith('tel:')) {
+                    return;
                 }
-            });
-        }
-    }
-    
-    // Устанавливаем cookie при загрузке страницы
-    function ensureCityInCookie() {
-        const currentCity = getCurrentCity();
-        
-        // Устанавливаем cookie
-        const expiryDate = new Date();
-        expiryDate.setFullYear(expiryDate.getFullYear() + 1);
-        document.cookie = `selectedCity=${currentCity}; expires=${expiryDate.toUTCString()}; path=/; SameSite=Lax`;
-    }
-    
-    // Инициализация
-    updateNavigationLinks();
-    ensureCityInCookie();
-    
-    // Обновляем ссылки при изменении города
-    const cityItems = document.querySelectorAll('.cityItem');
-    cityItems.forEach(item => {
-        item.addEventListener('click', function() {
-            setTimeout(updateNavigationLinks, 100);
+                
+                // Parse URL
+                let url;
+                try {
+                    url = new URL(href, window.location.origin);
+                } catch (e) {
+                    // If it's a relative URL, create a full URL
+                    url = new URL(href, window.location.origin);
+                }
+                
+                // Only modify internal links
+                if (url.hostname !== window.location.hostname && url.hostname !== '') {
+                    return;
+                }
+                
+                // Skip admin and API routes
+                if (url.pathname.startsWith('/admin') || url.pathname.startsWith('/api')) {
+                    return;
+                }
+                
+                // Add city parameter if it doesn't exist
+                if (!url.searchParams.has('city')) {
+                    url.searchParams.set('city', currentCity);
+                    link.setAttribute('href', url.pathname + url.search + (url.hash || ''));
+                }
+            } catch (e) {
+                // Silently fail for invalid URLs
+                console.debug('Error updating link:', e);
+            }
         });
+    }
+    
+    // Update links on page load
+    updateLinksWithCity();
+    
+    // Update links when DOM changes (for dynamically added content)
+    const observer = new MutationObserver(function(mutations) {
+        let shouldUpdate = false;
+        mutations.forEach(function(mutation) {
+            if (mutation.addedNodes.length > 0) {
+                mutation.addedNodes.forEach(function(node) {
+                    if (node.nodeType === 1 && (node.tagName === 'A' || node.querySelectorAll('a').length > 0)) {
+                        shouldUpdate = true;
+                    }
+                });
+            }
+        });
+        if (shouldUpdate) {
+            updateLinksWithCity();
+        }
+    });
+    
+    observer.observe(document.body, {
+        childList: true,
+        subtree: true
     });
 });
-

@@ -4,7 +4,7 @@
     @endphp
     <div class="container">
         <div class="flexTopHeader">
-            <a href="{{ route('home') }}">
+            <a href="{{ route('home', ['city' => $selectedCity ?? 'moscow']) }}">
                 <img src="{{ cached_asset('img/logo.svg') }}" alt="ProstitutkiMoscow" class="logo" width="233" height="41" decoding="async" fetchpriority="high">
             </a>
             <div class="center-flexTopHeader">
@@ -49,7 +49,7 @@
                         <li class="content-burger">
                             <ul class="listBurgerUl">
                                 <li>
-                                    <a href="{{ route('home') }}">
+                                    <a href="{{ route('home', ['city' => $selectedCity ?? 'moscow']) }}">
                                         <img src="{{ cached_asset('img/logo.svg') }}" alt="ProstitutkiMoscow" class="logo" width="233" height="41" loading="lazy" decoding="async">
                                     </a>
                                     <div class="cityChoose">

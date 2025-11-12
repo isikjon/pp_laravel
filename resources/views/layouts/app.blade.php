@@ -152,6 +152,7 @@
     
     <script defer src="{{ cached_asset('js/app.js') }}"></script>
     <script defer src="{{ cached_asset('js/city-new.js') }}"></script>
+    <script defer src="{{ cached_asset('js/city-navigation.js') }}"></script>
     <script defer src="{{ cached_asset('js/filters.js') }}"></script>
     <script defer src="{{ cached_asset('js/favorites.js') }}"></script>
     <script defer src="{{ cached_asset('js/menu.js') }}"></script>
