@@ -36,6 +36,8 @@ class ReorderProfiles extends Page implements HasForms
     public ?int $newPosition = null;
     public array $profilesList = [];
     
+    public array $data = [];
+    
     public function mount(): void
     {
         $this->form->fill();
@@ -58,7 +60,10 @@ class ReorderProfiles extends Page implements HasForms
                             ])
                             ->required()
                             ->live()
-                            ->afterStateUpdated(fn () => $this->loadProfiles()),
+                            ->afterStateUpdated(function ($state) {
+                                $this->resourceType = $state;
+                                $this->loadProfiles();
+                            }),
                         
                         Select::make('city')
                             ->label('Город')
@@ -68,7 +73,10 @@ class ReorderProfiles extends Page implements HasForms
                             ])
                             ->required()
                             ->live()
-                            ->afterStateUpdated(fn () => $this->loadProfiles()),
+                            ->afterStateUpdated(function ($state) {
+                                $this->city = $state;
+                                $this->loadProfiles();
+                            }),
                     ])
                     ->columns(2),
                 
@@ -81,6 +89,9 @@ class ReorderProfiles extends Page implements HasForms
                             ->searchable()
                             ->required()
                             ->live()
+                            ->afterStateUpdated(function ($state) {
+                                $this->selectedProfile = $state;
+                            })
                             ->disabled(fn () => empty($this->resourceType) || empty($this->city)),
                         
                         Select::make('newPosition')
@@ -88,11 +99,15 @@ class ReorderProfiles extends Page implements HasForms
                             ->options(fn () => $this->getPositionOptions())
                             ->searchable()
                             ->required()
+                            ->afterStateUpdated(function ($state) {
+                                $this->newPosition = $state;
+                            })
                             ->disabled(fn () => empty($this->selectedProfile)),
                     ])
                     ->columns(2)
                     ->visible(fn () => !empty($this->resourceType) && !empty($this->city)),
-            ]);
+            ])
+            ->statePath('data');
     }
     
     protected function loadProfiles(): void
