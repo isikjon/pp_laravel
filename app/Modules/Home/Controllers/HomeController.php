@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Girl;
 use App\Models\HomePageSettings;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Schema;
 
 class HomeController extends Controller
 {
@@ -22,8 +23,12 @@ class HomeController extends Controller
         $cityName = $selectedCity === 'spb' ? 'Санкт-Петербург' : 'Москва';
         $query->where('city', $cityName);
         
-        // Сортировка по позиции, затем по ID
-        $query->orderBy('sort_order', 'asc')->orderBy('id', 'desc');
+        // Сортировка по позиции, затем по ID (если колонка существует)
+        if (\Schema::hasColumn('girls', 'sort_order')) {
+            $query->orderBy('sort_order', 'asc')->orderBy('id', 'desc');
+        } else {
+            $query->orderBy('id', 'desc');
+        }
         
         $filterServices = [];
         $filterPlaces = [];

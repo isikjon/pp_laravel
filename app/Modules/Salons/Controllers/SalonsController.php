@@ -5,6 +5,7 @@ namespace App\Modules\Salons\Controllers;
 use App\Http\Controllers\Controller;
 use App\Models\Salon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Schema;
 
 class SalonsController extends Controller
 {
@@ -18,10 +19,16 @@ class SalonsController extends Controller
         
         $cityName = $selectedCity === 'spb' ? 'Санкт-Петербург' : 'Москва';
         
-        $salons = Salon::where('city', $cityName)
-            ->orderBy('sort_order', 'asc')
-            ->orderBy('id', 'desc')
-            ->paginate(12);
+        $query = Salon::where('city', $cityName);
+        
+        // Сортировка по позиции, затем по ID (если колонка существует)
+        if (\Schema::hasColumn('salons', 'sort_order')) {
+            $query->orderBy('sort_order', 'asc')->orderBy('id', 'desc');
+        } else {
+            $query->orderBy('id', 'desc');
+        }
+        
+        $salons = $query->paginate(12);
         
         return view('salons::index', compact('salons', 'cityName', 'selectedCity'));
     }

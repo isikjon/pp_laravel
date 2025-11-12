@@ -5,6 +5,7 @@ namespace App\Modules\Masseuse\Controllers;
 use App\Http\Controllers\Controller;
 use App\Models\Masseuse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Schema;
 
 class MasseuseController extends Controller
 {
@@ -21,8 +22,12 @@ class MasseuseController extends Controller
         $query = Masseuse::query();
         $query->where('city', $cityName);
         
-        // Сортировка по позиции, затем по ID
-        $query->orderBy('sort_order', 'asc')->orderBy('id', 'desc');
+        // Сортировка по позиции, затем по ID (если колонка существует)
+        if (\Schema::hasColumn('masseuses', 'sort_order')) {
+            $query->orderBy('sort_order', 'asc')->orderBy('id', 'desc');
+        } else {
+            $query->orderBy('id', 'desc');
+        }
         
         $perPage = 20;
         $page = $request->get('page', 1);
