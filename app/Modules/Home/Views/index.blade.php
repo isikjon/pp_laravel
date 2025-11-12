@@ -24,7 +24,7 @@
                 @foreach(($initialGirls ?? $girls) as $girl)
                     @include('components.girl-card', array_merge($girl, [
                         'fetch_high' => $loop->first,
-                        'mobile_hidden' => !$loop->first
+                        'mobile_hidden' => false
                     ]))
                 @endforeach
             </div>

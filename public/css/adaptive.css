@@ -3208,10 +3208,6 @@ footer {
     .photoGirl {
         max-width: 100%;
     }
-    .girlCard.is-mobile-hidden,
-    .girlCard.mobile-hidden-default {
-        display: none !important;
-    }
 }
 .photoGirl {
     flex: 0 0 auto;
