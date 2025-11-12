@@ -141,22 +141,23 @@ class BulkPhoneReplace extends Page implements HasForms
     {
         $city = $this->data['city'] ?? 'Москва';
         $model = $this->getModelClass($resourceType);
+        $anketaIdField = $this->getAnketaIdField($resourceType);
         
         $query = $model::query()
-            ->select(['id', 'name'])
+            ->select(['id', 'name', $anketaIdField])
             ->where('city', $city)
             ->limit(50);
         
         if (!empty($search)) {
-            $query->where(function ($q) use ($search) {
-                $q->where('id', 'like', "%{$search}%")
+            $query->where(function ($q) use ($search, $anketaIdField) {
+                $q->where($anketaIdField, 'like', "%{$search}%")
                   ->orWhere('name', 'like', "%{$search}%");
             });
         }
         
         return $query->get()
             ->mapWithKeys(fn ($record) => [
-                $record->id => "ID: {$record->id} - {$record->name}"
+                $record->id => "ID: {$record->$anketaIdField} - {$record->name}"
             ])
             ->toArray();
     }
@@ -164,13 +165,14 @@ class BulkPhoneReplace extends Page implements HasForms
     protected function getRecordLabel(string $resourceType, $id): string
     {
         $model = $this->getModelClass($resourceType);
+        $anketaIdField = $this->getAnketaIdField($resourceType);
         $record = $model::find($id);
         
         if (!$record) {
             return "ID: {$id}";
         }
         
-        return "ID: {$record->id} - {$record->name}";
+        return "ID: {$record->$anketaIdField} - {$record->name}";
     }
 
     protected function getModelClass(string $resourceType): string
@@ -181,6 +183,17 @@ class BulkPhoneReplace extends Page implements HasForms
             'salons' => \App\Models\Salon::class,
             'strip_clubs' => \App\Models\StripClub::class,
             default => \App\Models\Girl::class,
+        };
+    }
+
+    protected function getAnketaIdField(string $resourceType): string
+    {
+        return match ($resourceType) {
+            'girls' => 'anketa_id',
+            'masseuses' => 'anketa_id',
+            'salons' => 'salon_id',
+            'strip_clubs' => 'club_id',
+            default => 'anketa_id',
         };
     }
 
