@@ -43,6 +43,23 @@ class BulkPhoneReplace extends Page implements HasForms
             ->schema([
                 Section::make('Выбор диапазона')
                     ->schema([
+                        Select::make('database')
+                            ->label('База данных (Город)')
+                            ->options([
+                                'moscow' => '🏛️ Москва',
+                                'spb' => '🌉 Санкт-Петербург',
+                            ])
+                            ->required()
+                            ->default('moscow')
+                            ->live()
+                            ->afterStateUpdated(fn ($state, callable $set) => [
+                                $set('resource_type', null),
+                                $set('range_type', null),
+                                $set('from_id', null),
+                                $set('to_id', null),
+                            ])
+                            ->helperText('Выберите базу данных для работы'),
+                        
                         Select::make('resource_type')
                             ->label('Тип ресурса')
                             ->options([
@@ -122,9 +139,10 @@ class BulkPhoneReplace extends Page implements HasForms
 
     protected function getRecordsForSelect(string $resourceType, string $search = ''): array
     {
+        $database = $this->data['database'] ?? 'moscow';
         $model = $this->getModelClass($resourceType);
         
-        $query = $model::query()
+        $query = $model::on($database)
             ->select(['id', 'name'])
             ->limit(50);
         
@@ -144,8 +162,9 @@ class BulkPhoneReplace extends Page implements HasForms
 
     protected function getRecordLabel(string $resourceType, $id): string
     {
+        $database = $this->data['database'] ?? 'moscow';
         $model = $this->getModelClass($resourceType);
-        $record = $model::find($id);
+        $record = $model::on($database)->find($id);
         
         if (!$record) {
             return "ID: {$id}";
@@ -169,6 +188,7 @@ class BulkPhoneReplace extends Page implements HasForms
     {
         $data = $this->form->getState();
         
+        $database = $data['database'];
         $resourceType = $data['resource_type'];
         $rangeType = $data['range_type'];
         $newPhone = $data['new_phone'];
@@ -176,9 +196,9 @@ class BulkPhoneReplace extends Page implements HasForms
         $model = $this->getModelClass($resourceType);
         
         try {
-            DB::beginTransaction();
+            DB::connection($database)->beginTransaction();
             
-            $query = $model::query();
+            $query = $model::on($database);
             
             // Определяем диапазон
             switch ($rangeType) {
@@ -221,21 +241,23 @@ class BulkPhoneReplace extends Page implements HasForms
             }
             
             // Выполняем массовое обновление
-            $model::whereIn('id', $recordIds)->update(['phone' => $newPhone]);
+            $model::on($database)->whereIn('id', $recordIds)->update(['phone' => $newPhone]);
             
-            DB::commit();
+            DB::connection($database)->commit();
+            
+            $cityName = $database === 'spb' ? 'Санкт-Петербурге' : 'Москве';
             
             Notification::make()
                 ->success()
                 ->title('Успешно!')
-                ->body("Номер телефона обновлен для {$count} записей.")
+                ->body("Номер телефона обновлен для {$count} записей в базе данных: {$cityName}.")
                 ->send();
             
             // Очищаем форму
             $this->form->fill();
             
         } catch (\Exception $e) {
-            DB::rollBack();
+            DB::connection($database ?? 'moscow')->rollBack();
             
             Notification::make()
                 ->danger()
@@ -256,7 +278,10 @@ class BulkPhoneReplace extends Page implements HasForms
                 ->modalHeading('Подтвердите массовую замену')
                 ->modalDescription(function () {
                     $data = $this->form->getState();
+                    $database = $data['database'] ?? 'moscow';
                     $rangeType = $data['range_type'] ?? 'all';
+                    
+                    $cityName = $database === 'spb' ? 'Санкт-Петербург' : 'Москва';
                     
                     $message = match ($rangeType) {
                         'all' => 'Вы собираетесь заменить номер для ВСЕХ записей.',
@@ -266,7 +291,7 @@ class BulkPhoneReplace extends Page implements HasForms
                         default => 'Вы собираетесь выполнить массовую замену номеров.',
                     };
                     
-                    return $message . ' Это действие нельзя отменить!';
+                    return $message . "\n\nБаза данных: {$cityName}\n\nЭто действие нельзя отменить!";
                 })
                 ->modalSubmitActionLabel('Да, заменить')
                 ->modalCancelActionLabel('Отмена')
