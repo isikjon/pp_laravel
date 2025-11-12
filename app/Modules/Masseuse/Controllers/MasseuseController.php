@@ -7,28 +7,45 @@ use App\Models\Masseuse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 class MasseuseController extends Controller
 {
     public function index(Request $request)
     {
+        // ДЕТАЛЬНОЕ ЛОГИРОВАНИЕ
+        Log::info('=== MASSEUSE CONTROLLER START ===');
+        Log::info('URL: ' . $request->fullUrl());
+        Log::info('Path: ' . $request->path());
+        Log::info('Route: ' . $request->route()->getName());
+        Log::info('All params: ' . json_encode($request->all()));
+        Log::info('Cookie city: ' . $request->cookie('selectedCity', 'NOT_SET'));
+        
         $selectedCity = $request->input('city', $request->cookie('selectedCity', 'moscow'));
+        Log::info('Selected city: ' . $selectedCity);
         
         if ($request->has('city')) {
             cookie()->queue('selectedCity', $selectedCity, 525600);
+            Log::info('City cookie queued: ' . $selectedCity);
         }
         
         $cityName = $selectedCity === 'spb' ? 'Санкт-Петербург' : 'Москва';
         $tableName = $selectedCity === 'spb' ? 'masseuses_spb' : 'masseuses_moscow';
+        Log::info('Table name: ' . $tableName);
+        Log::info('City name: ' . $cityName);
         
         // Жестко используем DB::table() чтобы не было переключения
         $query = DB::table($tableName)->orderBy('sort_order', 'asc');
+        Log::info('Query table: ' . $tableName);
         
         $perPage = 20;
         $page = $request->get('page', 1);
+        Log::info('Page: ' . $page . ', PerPage: ' . $perPage);
         
         $total = $query->count();
+        Log::info('Total records: ' . $total);
         $girls = $query->skip(($page - 1) * $perPage)->take($perPage)->get();
+        Log::info('Fetched records count: ' . $girls->count());
         
         // Преобразуем stdClass в объект модели для совместимости
         $girlsFormatted = $girls->map(function ($girl) {
@@ -54,16 +71,27 @@ class MasseuseController extends Controller
             ]);
         }
         
+        $paginatorPath = $request->url();
+        $paginatorQuery = $request->query();
+        Log::info('Paginator path: ' . $paginatorPath);
+        Log::info('Paginator query: ' . json_encode($paginatorQuery));
+        
         $girls = new \Illuminate\Pagination\LengthAwarePaginator(
             $girlsFormatted,
             $total,
             $perPage,
             $page,
-            ['path' => $request->url(), 'query' => $request->query()]
+            ['path' => $paginatorPath, 'query' => $paginatorQuery]
         );
         
         // Сохраняем параметр city в пагинации
         $girls->appends(['city' => $selectedCity]);
+        
+        // Логируем URL пагинации
+        Log::info('Next page URL: ' . $girls->nextPageUrl());
+        Log::info('Previous page URL: ' . $girls->previousPageUrl());
+        Log::info('Current page URL: ' . $girls->url($page));
+        Log::info('=== MASSEUSE CONTROLLER END ===');
         
         return view('masseuse::index', compact('girls', 'cityName', 'selectedCity'));
     }

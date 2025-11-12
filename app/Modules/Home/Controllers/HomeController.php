@@ -7,12 +7,20 @@ use App\Models\Girl;
 use App\Models\HomePageSettings;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Schema;
+use Illuminate\Support\Facades\Log;
 
 class HomeController extends Controller
 {
     public function index(Request $request)
     {
+        // ДЕТАЛЬНОЕ ЛОГИРОВАНИЕ
+        Log::info('=== HOME CONTROLLER START ===');
+        Log::info('URL: ' . $request->fullUrl());
+        Log::info('Path: ' . $request->path());
+        Log::info('Route: ' . ($request->route() ? $request->route()->getName() : 'NO_ROUTE'));
+        
         $selectedCity = $request->input('city', $request->cookie('selectedCity', 'moscow'));
+        Log::info('Selected city: ' . $selectedCity);
         
         if ($request->has('city')) {
             cookie()->queue('selectedCity', $selectedCity, 525600);
@@ -20,6 +28,7 @@ class HomeController extends Controller
         
         $cityName = $selectedCity === 'spb' ? 'Санкт-Петербург' : 'Москва';
         $tableName = $selectedCity === 'spb' ? 'girls_spb' : 'girls_moscow';
+        Log::info('Table name: ' . $tableName);
         $query = Girl::from($tableName);
         
         $query->orderBy('sort_order', 'asc');
