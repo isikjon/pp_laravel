@@ -135,6 +135,9 @@
 @endsection
 
 @section('page_scripts')
+    <script>
+        window.__SELECTED_CITY = @json($selectedCity ?? 'moscow');
+    </script>
     <script src="{{ asset('js/filters.js') }}?v={{ time() }}"></script>
 @endsection
 

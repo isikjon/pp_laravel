@@ -51,7 +51,7 @@ class MasseuseController extends Controller
         
         $girls->appends($request->except('page'));
         
-        return view('masseuse::index', compact('girls', 'cityName'));
+        return view('masseuse::index', compact('girls', 'cityName', 'selectedCity'));
     }
     
     public function show($id)
