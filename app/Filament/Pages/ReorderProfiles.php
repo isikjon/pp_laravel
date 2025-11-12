@@ -241,7 +241,7 @@ class ReorderProfiles extends Page implements HasForms
                                     ]
                                 ]);
                             })
-                            ->disabled(fn () => {
+                            ->disabled(function () {
                                 $disabled = empty($this->selectedProfile);
                                 Log::info('ReorderProfiles: newPosition disabled check', [
                                     'disabled' => $disabled,
