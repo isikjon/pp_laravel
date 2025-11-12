@@ -47,6 +47,14 @@ class ReorderProfiles extends Page implements HasForms
             'component_id' => $this->getId()
         ]);
         
+        // Преобразуем значения в правильные типы
+        if ($this->selectedProfile !== null && !is_int($this->selectedProfile)) {
+            $this->selectedProfile = is_numeric($this->selectedProfile) ? (int) $this->selectedProfile : null;
+        }
+        if ($this->newPosition !== null && !is_int($this->newPosition)) {
+            $this->newPosition = is_numeric($this->newPosition) ? (int) $this->newPosition : null;
+        }
+        
         $this->form->fill([
             'resourceType' => $this->resourceType,
             'city' => $this->city,
@@ -58,7 +66,9 @@ class ReorderProfiles extends Page implements HasForms
             'resourceType' => $this->resourceType,
             'city' => $this->city,
             'selectedProfile' => $this->selectedProfile,
-            'newPosition' => $this->newPosition
+            'selectedProfile_type' => gettype($this->selectedProfile),
+            'newPosition' => $this->newPosition,
+            'newPosition_type' => gettype($this->newPosition)
         ]);
     }
     
@@ -86,6 +96,9 @@ class ReorderProfiles extends Page implements HasForms
                                     'component_id' => $this->getId()
                                 ]);
                                 $this->resourceType = $state;
+                                // Сбрасываем выбор при изменении типа ресурса
+                                $this->selectedProfile = null;
+                                $this->newPosition = null;
                                 $this->loadProfiles();
                                 Log::info('ReorderProfiles: after loadProfiles', [
                                     'resourceType' => $this->resourceType,
@@ -109,6 +122,9 @@ class ReorderProfiles extends Page implements HasForms
                                     'component_id' => $this->getId()
                                 ]);
                                 $this->city = $state;
+                                // Сбрасываем выбор при изменении города
+                                $this->selectedProfile = null;
+                                $this->newPosition = null;
                                 $this->loadProfiles();
                                 Log::info('ReorderProfiles: after loadProfiles', [
                                     'resourceType' => $this->resourceType,
@@ -132,14 +148,28 @@ class ReorderProfiles extends Page implements HasForms
                                 Log::info('ReorderProfiles: selectedProfile changed', [
                                     'old' => $this->selectedProfile,
                                     'new' => $state,
+                                    'new_type' => gettype($state),
                                     'component_id' => $this->getId(),
                                     'resourceType' => $this->resourceType,
                                     'city' => $this->city
                                 ]);
+                                
+                                // Преобразуем в int, если это строка
+                                if (is_string($state) && is_numeric($state)) {
+                                    $state = (int) $state;
+                                }
+                                
                                 $this->selectedProfile = $state;
+                                
+                                // При изменении selectedProfile сбрасываем newPosition
+                                // так как позиции зависят от выбранной анкеты
+                                $this->newPosition = null;
+                                
                                 Log::info('ReorderProfiles: selectedProfile set', [
                                     'selectedProfile' => $this->selectedProfile,
+                                    'selectedProfile_type' => gettype($this->selectedProfile),
                                     'newPosition' => $this->newPosition,
+                                    'newPosition_reset' => true,
                                     'canSubmit' => !empty($this->selectedProfile) && !empty($this->newPosition)
                                 ]);
                             })
@@ -154,13 +184,25 @@ class ReorderProfiles extends Page implements HasForms
                                 Log::info('ReorderProfiles: newPosition changed', [
                                     'old' => $this->newPosition,
                                     'new' => $state,
+                                    'new_type' => gettype($state),
                                     'component_id' => $this->getId(),
                                     'selectedProfile' => $this->selectedProfile
                                 ]);
+                                
+                                // Преобразуем в int, если это строка
+                                if (is_string($state) && is_numeric($state)) {
+                                    $state = (int) $state;
+                                }
+                                
                                 $this->newPosition = $state;
+                                
                                 Log::info('ReorderProfiles: newPosition set', [
                                     'selectedProfile' => $this->selectedProfile,
+                                    'selectedProfile_type' => gettype($this->selectedProfile),
                                     'newPosition' => $this->newPosition,
+                                    'newPosition_type' => gettype($this->newPosition),
+                                    'selectedProfile_empty' => empty($this->selectedProfile),
+                                    'newPosition_empty' => empty($this->newPosition),
                                     'canSubmit' => !empty($this->selectedProfile) && !empty($this->newPosition)
                                 ]);
                             })
@@ -220,13 +262,21 @@ class ReorderProfiles extends Page implements HasForms
             
             Log::info('ReorderProfiles: loadProfiles - profiles loaded', [
                 'count' => count($this->profilesList),
-                'first_few_ids' => array_slice(array_column($this->profilesList, 'id'), 0, 5)
+                'first_few_ids' => array_slice(array_column($this->profilesList, 'id'), 0, 5),
+                'before_clear_selectedProfile' => $this->selectedProfile,
+                'before_clear_newPosition' => $this->newPosition
             ]);
             
-            $this->selectedProfile = null;
-            $this->newPosition = null;
+            // НЕ сбрасываем selectedProfile и newPosition, если они уже установлены
+            // Сбрасываем только если список профилей изменился (новый resourceType или city)
+            // Это позволит сохранить выбор пользователя
+            // $this->selectedProfile = null;
+            // $this->newPosition = null;
             
-            Log::info('ReorderProfiles: loadProfiles - cleared selectedProfile and newPosition');
+            Log::info('ReorderProfiles: loadProfiles - profiles loaded, keeping user selections', [
+                'selectedProfile' => $this->selectedProfile,
+                'newPosition' => $this->newPosition
+            ]);
         } catch (\Exception $e) {
             Log::error('ReorderProfiles::loadProfiles error: ' . $e->getMessage(), [
                 'resourceType' => $this->resourceType,
