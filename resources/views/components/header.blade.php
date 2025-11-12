@@ -58,7 +58,7 @@
                                             <path d="M12.7449 13.9097C14.468 13.9097 15.8649 12.5128 15.8649 10.7897C15.8649 9.06655 14.468 7.66968 12.7449 7.66968C11.0217 7.66968 9.62488 9.06655 9.62488 10.7897C9.62488 12.5128 11.0217 13.9097 12.7449 13.9097Z" fill="white"/>
                                         </svg>
                                         <p>
-                                            Ваш город: <span class="modal-cityChoose">Москва</span>
+                                            Ваш город: <span class="modal-cityChoose">{{ $cityName ?? 'Москва' }}</span>
                                         </p>
                                     </div>
                                     <div class="headerMetro" data-metro-trigger style="cursor: pointer;">
