@@ -10,6 +10,7 @@ use Filament\Forms\Contracts\HasForms;
 use Filament\Forms\Form;
 use Filament\Notifications\Notification;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Schema;
 use App\Models\Girl;
 use App\Models\Masseuse;
@@ -36,11 +37,14 @@ class ReorderProfiles extends Page implements HasForms
     public ?int $newPosition = null;
     public array $profilesList = [];
     
-    public array $data = [];
-    
     public function mount(): void
     {
-        $this->form->fill();
+        $this->form->fill([
+            'resourceType' => $this->resourceType,
+            'city' => $this->city,
+            'selectedProfile' => $this->selectedProfile,
+            'newPosition' => $this->newPosition,
+        ]);
     }
     
     public function form(Form $form): Form
@@ -106,8 +110,7 @@ class ReorderProfiles extends Page implements HasForms
                     ])
                     ->columns(2)
                     ->visible(fn () => !empty($this->resourceType) && !empty($this->city)),
-            ])
-            ->statePath('data');
+            ]);
     }
     
     protected function loadProfiles(): void
@@ -142,6 +145,11 @@ class ReorderProfiles extends Page implements HasForms
             $this->selectedProfile = null;
             $this->newPosition = null;
         } catch (\Exception $e) {
+            Log::error('ReorderProfiles::loadProfiles error: ' . $e->getMessage(), [
+                'resourceType' => $this->resourceType,
+                'city' => $this->city,
+                'trace' => $e->getTraceAsString()
+            ]);
             $this->profilesList = [];
             $this->selectedProfile = null;
             $this->newPosition = null;
@@ -210,7 +218,7 @@ class ReorderProfiles extends Page implements HasForms
         };
     }
     
-    protected function getIdField(): string
+    public function getIdField(): string
     {
         return match($this->resourceType) {
             'girls' => 'anketa_id',
