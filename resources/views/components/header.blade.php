@@ -36,9 +36,9 @@
                         </svg>
                     </button>
                 </form>
-                <a href="#contactFormModal" class="modalRegistration" data-open-contact>
+                {{-- <a href="#contactFormModal" class="modalRegistration" data-open-contact>
                     Обратная связь
-                </a>
+                </a> --}}
                 <div class="hamburger-menu">
                     <input id="menu__toggle" type="checkbox" aria-label="Открыть главное меню" aria-controls="mainMobileMenu">
                     <label class="menu__btn" for="menu__toggle">
@@ -104,9 +104,9 @@
                                             </svg>
                                         </button>
                                     </form>
-                                    <a href="#contactFormModal" class="modalRegistration" data-open-contact>
+                                    {{-- <a href="#contactFormModal" class="modalRegistration" data-open-contact>
                                         Обратная связь
-                                    </a>
+                                    </a> --}}
                                 </li>
                             </ul>
                         </li>

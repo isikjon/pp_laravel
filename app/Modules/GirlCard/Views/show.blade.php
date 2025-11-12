@@ -264,9 +264,9 @@
                                 </div>
                             </div>
                             <a href="#!" class="lookOnMap">Показать на карте</a>
-                            <button onclick="openContactModal({id: '{{ $girl['id'] }}', name: '{{ $girl['name'] }}', phone: '{{ $girl['phone'] }}', url: '{{ url()->current() }}'})" class="contactButton">
+                            {{-- <button onclick="openContactModal({id: '{{ $girl['id'] }}', name: '{{ $girl['name'] }}', phone: '{{ $girl['phone'] }}', url: '{{ url()->current() }}'})" class="contactButton">
                                 Обратная связь
-                            </button>
+                            </button> --}}
                         </div>
                         <div class="centerInfo-flexInfo-right-flexWrapperGirlCard">
                             <h3>
