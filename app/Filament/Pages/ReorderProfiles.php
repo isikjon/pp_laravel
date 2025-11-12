@@ -145,12 +145,14 @@ class ReorderProfiles extends Page implements HasForms
                                 // Сбрасываем выбор при изменении типа ресурса
                                 $this->selectedProfile = null;
                                 $this->newPosition = null;
-                                $this->loadProfiles();
-                                Log::info('ReorderProfiles: after loadProfiles', [
-                                    'resourceType' => $this->resourceType,
-                                    'city' => $this->city,
-                                    'profilesCount' => count($this->profilesList)
-                                ]);
+                                
+                                // Сбрасываем кэш Computed property
+                                unset($this->profilesList);
+                                
+                                // Обновляем форму чтобы перезагрузить данные
+                                $this->dispatch('$refresh');
+                                
+                                Log::info('ReorderProfiles: resourceType changed - cache cleared and refresh dispatched');
                             }),
                         
                         Select::make('city')
@@ -171,12 +173,14 @@ class ReorderProfiles extends Page implements HasForms
                                 // Сбрасываем выбор при изменении города
                                 $this->selectedProfile = null;
                                 $this->newPosition = null;
-                                $this->loadProfiles();
-                                Log::info('ReorderProfiles: after loadProfiles', [
-                                    'resourceType' => $this->resourceType,
-                                    'city' => $this->city,
-                                    'profilesCount' => count($this->profilesList)
-                                ]);
+                                
+                                // Сбрасываем кэш Computed property
+                                unset($this->profilesList);
+                                
+                                // Обновляем форму чтобы перезагрузить данные
+                                $this->dispatch('$refresh');
+                                
+                                Log::info('ReorderProfiles: city changed - cache cleared and refresh dispatched');
                             }),
                     ])
                     ->columns(2),
@@ -639,10 +643,13 @@ class ReorderProfiles extends Page implements HasForms
                 ->success()
                 ->send();
             
-            // Перезагружаем список
-            $this->loadProfiles();
+            // Сбрасываем кэш Computed property и перезагружаем
+            unset($this->profilesList);
             $this->selectedProfile = null;
             $this->newPosition = null;
+            
+            // Обновляем компонент чтобы перезагрузить данные
+            $this->dispatch('$refresh');
             
         } catch (\Exception $e) {
             DB::rollBack();
