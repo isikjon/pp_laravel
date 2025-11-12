@@ -20,7 +20,7 @@ class HomeController extends Controller
         
         $cityName = $selectedCity === 'spb' ? 'Санкт-Петербург' : 'Москва';
         $tableName = $selectedCity === 'spb' ? 'girls_spb' : 'girls_moscow';
-        $query = Girl::from($tableName)->query();
+        $query = Girl::from($tableName);
         
         $query->orderBy('sort_order', 'asc');
         

@@ -19,7 +19,7 @@ class MasseuseController extends Controller
         
         $cityName = $selectedCity === 'spb' ? 'Санкт-Петербург' : 'Москва';
         $tableName = $selectedCity === 'spb' ? 'masseuses_spb' : 'masseuses_moscow';
-        $query = Masseuse::from($tableName)->query();
+        $query = Masseuse::from($tableName);
         $query->orderBy('sort_order', 'asc');
         
         $perPage = 20;
