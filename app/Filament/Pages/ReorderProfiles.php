@@ -289,10 +289,12 @@ class ReorderProfiles extends Page implements HasForms
             Log::info('ReorderProfiles: loadProfiles - querying database', [
                 'table' => $tableName,
                 'city' => $this->city,
-                'model' => $model
+                'model' => $model,
+                'resourceType' => $this->resourceType
             ]);
             
-            $query = $model::where('city', $this->city);
+            // Используем правильную таблицу через from()
+            $query = $model::from($tableName);
             
             // Проверяем наличие колонки sort_order
             if (Schema::hasColumn($tableName, 'sort_order')) {
@@ -334,9 +336,11 @@ class ReorderProfiles extends Page implements HasForms
     
     protected function getTableName(): string
     {
+        $cityCode = $this->city === 'Москва' ? 'moscow' : 'spb';
+        
         return match($this->resourceType) {
-            'girls' => 'girls',
-            'masseuses' => 'masseuses',
+            'girls' => $cityCode === 'moscow' ? 'girls_moscow' : 'girls_spb',
+            'masseuses' => $cityCode === 'moscow' ? 'masseuses_moscow' : 'masseuses_spb',
             'salons' => 'salons',
             'strip_clubs' => 'strip_clubs',
             default => '',
@@ -554,7 +558,14 @@ class ReorderProfiles extends Page implements HasForms
             
             // Находим профили
             $tableName = $this->getTableName();
-            $query = $model::where('city', $this->city);
+            Log::info('ReorderProfiles: reorder() - querying database', [
+                'table' => $tableName,
+                'city' => $this->city,
+                'resourceType' => $this->resourceType
+            ]);
+            
+            // Используем правильную таблицу через from()
+            $query = $model::from($tableName);
             
             if (Schema::hasColumn($tableName, 'sort_order')) {
                 $query->orderBy('sort_order', 'asc');
