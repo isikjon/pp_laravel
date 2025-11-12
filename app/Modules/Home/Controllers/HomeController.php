@@ -23,11 +23,11 @@ class HomeController extends Controller
         $cityName = $selectedCity === 'spb' ? 'Санкт-Петербург' : 'Москва';
         $query->where('city', $cityName);
         
-        // Сортировка по позиции, затем по ID (если колонка существует)
+        // СТРОГО сортировка по позиции по возрастанию 1,2,3,4,5...
         if (\Schema::hasColumn('girls', 'sort_order')) {
-            $query->orderBy('sort_order', 'asc')->orderBy('id', 'desc');
+            $query->orderBy('sort_order', 'asc');
         } else {
-            $query->orderBy('id', 'desc');
+            $query->orderBy('id', 'asc');
         }
         
         $filterServices = [];

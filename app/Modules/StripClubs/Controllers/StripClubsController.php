@@ -21,11 +21,11 @@ class StripClubsController extends Controller
         
         $query = StripClub::where('city', $cityName);
         
-        // Сортировка по позиции, затем по ID (если колонка существует)
+        // СТРОГО сортировка по позиции по возрастанию 1,2,3,4,5...
         if (\Schema::hasColumn('strip_clubs', 'sort_order')) {
-            $query->orderBy('sort_order', 'asc')->orderBy('id', 'desc');
+            $query->orderBy('sort_order', 'asc');
         } else {
-            $query->orderBy('id', 'desc');
+            $query->orderBy('id', 'asc');
         }
         
         $clubs = $query->paginate(12);
