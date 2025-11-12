@@ -177,7 +177,7 @@ class ReorderProfiles extends Page implements HasForms
                         
                         Select::make('newPosition')
                             ->label('Новая позиция')
-                            ->options(fn () => {
+                            ->options(function () {
                                 $options = $this->getPositionOptions();
                                 Log::info('ReorderProfiles: getPositionOptions called', [
                                     'options_count' => count($options),
