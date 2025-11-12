@@ -119,6 +119,9 @@
 
 @section('page_scripts')
 <script>
+window.__SELECTED_CITY = @json($selectedCity ?? 'moscow');
+</script>
+<script>
 document.addEventListener('DOMContentLoaded', function() {
     if (typeof lightGallery !== 'undefined') {
         document.querySelectorAll('.club-lightbox-trigger').forEach(function(trigger) {

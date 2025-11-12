@@ -10,6 +10,14 @@ class SelectedController extends Controller
 {
     public function index(Request $request)
     {
+        $selectedCity = $request->input('city', $request->cookie('selectedCity', 'moscow'));
+        
+        if ($request->has('city')) {
+            cookie()->queue('selectedCity', $selectedCity, 525600);
+        }
+        
+        $cityName = $selectedCity === 'spb' ? 'Санкт-Петербург' : 'Москва';
+        
         if ($request->ajax() && $request->has('ids')) {
             $ids = $request->input('ids');
             
@@ -37,7 +45,7 @@ class SelectedController extends Controller
             ]);
         }
         
-        return view('selected::index');
+        return view('selected::index', compact('selectedCity', 'cityName'));
     }
     
     private function formatGirlForCard($girl)

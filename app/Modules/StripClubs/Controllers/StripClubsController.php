@@ -22,7 +22,7 @@ class StripClubsController extends Controller
             ->orderBy('created_at', 'desc')
             ->paginate(12);
         
-        return view('stripclubs::index', compact('clubs', 'cityName'));
+        return view('stripclubs::index', compact('clubs', 'cityName', 'selectedCity'));
     }
     
     public function show($id)

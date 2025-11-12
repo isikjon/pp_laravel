@@ -121,6 +121,9 @@
 @endsection
 
 @section('page_scripts')
+<script>
+window.__SELECTED_CITY = @json($selectedCity ?? 'moscow');
+</script>
 <script src="https://api-maps.yandex.ru/2.1/?apikey=YOUR_API_KEY&lang=ru_RU" type="text/javascript"></script>
 <script>
 let myMap;

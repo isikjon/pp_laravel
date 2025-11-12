@@ -20,6 +20,9 @@
 @endsection
 
 @section('page_scripts')
+    <script>
+        window.__SELECTED_CITY = @json($selectedCity ?? 'moscow');
+    </script>
     <script src="{{ asset('js/favorites-page.js') }}?v={{ time() }}"></script>
 @endsection
 

@@ -22,7 +22,7 @@ class SalonsController extends Controller
             ->orderBy('created_at', 'desc')
             ->paginate(12);
         
-        return view('salons::index', compact('salons', 'cityName'));
+        return view('salons::index', compact('salons', 'cityName', 'selectedCity'));
     }
     
     public function show($id)
