@@ -19,14 +19,26 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        // Share cityName with all views
+        // Share cityName and selectedCity with all views
         view()->composer('*', function ($view) {
             $request = request();
             
             // Если cityName уже установлена в view, не переопределяем
             if (!$view->offsetExists('cityName')) {
-                $selectedCity = $request->input('city', $request->cookie('selectedCity', 'moscow'));
+                // Приоритет: URL параметр > cookie > default
+                $selectedCity = $request->input('city');
+                
+                if (!$selectedCity) {
+                    $selectedCity = $request->cookie('selectedCity', 'moscow');
+                }
+                
+                // Validate city
+                if (!in_array($selectedCity, ['moscow', 'spb'])) {
+                    $selectedCity = 'moscow';
+                }
+                
                 $cityName = $selectedCity === 'spb' ? 'Санкт-Петербург' : 'Москва';
+                
                 $view->with('cityName', $cityName);
                 $view->with('selectedCity', $selectedCity);
             }
