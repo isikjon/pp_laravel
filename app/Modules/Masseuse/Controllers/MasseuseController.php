@@ -21,6 +21,9 @@ class MasseuseController extends Controller
         $query = Masseuse::query();
         $query->where('city', $cityName);
         
+        // Сортировка по позиции, затем по ID
+        $query->orderBy('sort_order', 'asc')->orderBy('id', 'desc');
+        
         $perPage = 20;
         $page = $request->get('page', 1);
         

@@ -8,6 +8,7 @@ class Salon extends Model
 {
     protected $fillable = [
         'salon_id',
+        'sort_order',
         'url',
         'title',
         'name',

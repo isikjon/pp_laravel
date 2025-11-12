@@ -22,6 +22,9 @@ class HomeController extends Controller
         $cityName = $selectedCity === 'spb' ? 'Санкт-Петербург' : 'Москва';
         $query->where('city', $cityName);
         
+        // Сортировка по позиции, затем по ID
+        $query->orderBy('sort_order', 'asc')->orderBy('id', 'desc');
+        
         $filterServices = [];
         $filterPlaces = [];
         $filterFinish = [];

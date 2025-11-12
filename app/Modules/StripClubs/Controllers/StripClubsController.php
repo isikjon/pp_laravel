@@ -19,7 +19,8 @@ class StripClubsController extends Controller
         $cityName = $selectedCity === 'spb' ? 'Санкт-Петербург' : 'Москва';
         
         $clubs = StripClub::where('city', $cityName)
-            ->orderBy('created_at', 'desc')
+            ->orderBy('sort_order', 'asc')
+            ->orderBy('id', 'desc')
             ->paginate(12);
         
         return view('stripclubs::index', compact('clubs', 'cityName', 'selectedCity'));

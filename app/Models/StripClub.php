@@ -8,6 +8,7 @@ class StripClub extends Model
 {
     protected $fillable = [
         'club_id',
+        'sort_order',
         'url',
         'title',
         'name',

@@ -8,6 +8,7 @@ class Girl extends Model
 {
     protected $fillable = [
         'anketa_id',
+        'sort_order',
         'title',
         'name',
         'age',
