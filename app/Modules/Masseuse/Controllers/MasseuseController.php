@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Masseuse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Schema;
+use Illuminate\Support\Facades\DB;
 
 class MasseuseController extends Controller
 {
@@ -19,18 +20,29 @@ class MasseuseController extends Controller
         
         $cityName = $selectedCity === 'spb' ? 'Санкт-Петербург' : 'Москва';
         $tableName = $selectedCity === 'spb' ? 'masseuses_spb' : 'masseuses_moscow';
-        $query = Masseuse::from($tableName);
-        $query->orderBy('sort_order', 'asc');
+        
+        // Жестко используем DB::table() чтобы не было переключения
+        $query = DB::table($tableName)->orderBy('sort_order', 'asc');
         
         $perPage = 20;
         $page = $request->get('page', 1);
         
-        $allGirls = $query->get();
-        $total = $allGirls->count();
-        $girls = $allGirls->forPage($page, $perPage);
+        $total = $query->count();
+        $girls = $query->skip(($page - 1) * $perPage)->take($perPage)->get();
         
+        // Преобразуем stdClass в объект модели для совместимости
         $girlsFormatted = $girls->map(function ($girl) {
-            return $this->formatGirlForCard($girl);
+            $girlObj = new Masseuse();
+            foreach ((array)$girl as $key => $value) {
+                // Декодируем JSON поля
+                if (in_array($key, ['meeting_places', 'tariffs', 'services', 'media_images']) && is_string($value)) {
+                    $decoded = json_decode($value, true);
+                    $girlObj->$key = $decoded !== null ? $decoded : $value;
+                } else {
+                    $girlObj->$key = $value;
+                }
+            }
+            return $this->formatGirlForCard($girlObj);
         })->values();
         
         if ($request->ajax() || $request->wantsJson() || $request->header('X-Requested-With') === 'XMLHttpRequest') {
@@ -60,10 +72,24 @@ class MasseuseController extends Controller
     {
         $selectedCity = request()->input('city', request()->cookie('selectedCity', 'moscow'));
         $tableName = $selectedCity === 'spb' ? 'masseuses_spb' : 'masseuses_moscow';
-        $girlData = Masseuse::from($tableName)->where('anketa_id', $id)->first();
         
-        if (!$girlData) {
+        // Жестко используем DB::table() чтобы не было переключения
+        $girlDataRaw = DB::table($tableName)->where('anketa_id', $id)->first();
+        
+        if (!$girlDataRaw) {
             abort(404, 'Девушка не найдена');
+        }
+        
+        // Преобразуем в объект модели
+        $girlData = new Masseuse();
+        foreach ((array)$girlDataRaw as $key => $value) {
+            // Декодируем JSON поля
+            if (in_array($key, ['meeting_places', 'tariffs', 'services', 'media_images']) && is_string($value)) {
+                $decoded = json_decode($value, true);
+                $girlData->$key = $decoded !== null ? $decoded : $value;
+            } else {
+                $girlData->$key = $value;
+            }
         }
         
         $images = $girlData->media_images ?? [];
@@ -417,7 +443,9 @@ class MasseuseController extends Controller
     {
         $selectedCity = request()->input('city', request()->cookie('selectedCity', 'moscow'));
         $tableName = $selectedCity === 'spb' ? 'masseuses_spb' : 'masseuses_moscow';
-        $similarGirls = Masseuse::from($tableName)
+        
+        // Жестко используем DB::table() чтобы не было переключения
+        $similarGirlsRaw = DB::table($tableName)
             ->where('anketa_id', '!=', $currentGirl->anketa_id)
             ->whereNotNull('media_images')
             ->where('media_images', '!=', '')
@@ -427,7 +455,17 @@ class MasseuseController extends Controller
             ->limit(6)
             ->get();
         
-        return $similarGirls->map(function($girl) {
+        return $similarGirlsRaw->map(function($girlRaw) {
+            $girl = new Masseuse();
+            foreach ((array)$girlRaw as $key => $value) {
+                // Декодируем JSON поля
+                if (in_array($key, ['meeting_places', 'tariffs', 'services', 'media_images']) && is_string($value)) {
+                    $decoded = json_decode($value, true);
+                    $girl->$key = $decoded !== null ? $decoded : $value;
+                } else {
+                    $girl->$key = $value;
+                }
+            }
             return $this->formatGirlForCard($girl);
         })->values();
     }
