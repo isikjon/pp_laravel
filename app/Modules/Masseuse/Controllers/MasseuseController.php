@@ -68,6 +68,7 @@ class MasseuseController extends Controller
         
         $paginatorPath = $request->url();
         $paginatorQuery = $request->query();
+        unset($paginatorQuery['city']);
         Log::info('Paginator path: ' . $paginatorPath);
         Log::info('Paginator query: ' . json_encode($paginatorQuery));
         

@@ -278,12 +278,15 @@ class HomeController extends Controller
             ]);
         }
         
+        $queryParams = $request->query();
+        unset($queryParams['city']);
+        
         $paginatorGirls = new \Illuminate\Pagination\LengthAwarePaginator(
             $girlsFormatted,
             $total,
             $perPage,
             $page,
-            ['path' => $request->url(), 'query' => $request->query()]
+            ['path' => $request->url(), 'query' => $queryParams]
         );
         
         // Сохраняем параметр city в пагинации
