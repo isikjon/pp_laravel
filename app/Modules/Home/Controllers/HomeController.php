@@ -19,12 +19,8 @@ class HomeController extends Controller
         Log::info('Path: ' . $request->path());
         Log::info('Route: ' . ($request->route() ? $request->route()->getName() : 'NO_ROUTE'));
         
-        $selectedCity = $request->input('city', $request->cookie('selectedCity', 'moscow'));
+        $selectedCity = $request->cookie('selectedCity', 'moscow');
         Log::info('Selected city: ' . $selectedCity);
-        
-        if ($request->has('city')) {
-            cookie()->queue('selectedCity', $selectedCity, 525600);
-        }
         
         $cityName = $selectedCity === 'spb' ? 'Санкт-Петербург' : 'Москва';
         $tableName = $selectedCity === 'spb' ? 'girls_spb' : 'girls_moscow';
@@ -291,7 +287,6 @@ class HomeController extends Controller
         );
         
         // Сохраняем параметр city в пагинации
-        $paginatorGirls->appends(['city' => $selectedCity]);
         
         $tableName = $selectedCity === 'spb' ? 'girls_spb' : 'girls_moscow';
         $metros = Girl::from($tableName)->select('metro')

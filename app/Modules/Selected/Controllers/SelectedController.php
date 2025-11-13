@@ -10,11 +10,7 @@ class SelectedController extends Controller
 {
     public function index(Request $request)
     {
-        $selectedCity = $request->input('city', $request->cookie('selectedCity', 'moscow'));
-        
-        if ($request->has('city')) {
-            cookie()->queue('selectedCity', $selectedCity, 525600);
-        }
+        $selectedCity = $request->cookie('selectedCity', 'moscow');
         
         $cityName = $selectedCity === 'spb' ? 'Санкт-Петербург' : 'Москва';
         

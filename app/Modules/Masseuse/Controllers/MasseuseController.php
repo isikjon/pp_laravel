@@ -21,13 +21,8 @@ class MasseuseController extends Controller
         Log::info('All params: ' . json_encode($request->all()));
         Log::info('Cookie city: ' . $request->cookie('selectedCity', 'NOT_SET'));
         
-        $selectedCity = $request->input('city', $request->cookie('selectedCity', 'moscow'));
+        $selectedCity = $request->cookie('selectedCity', 'moscow');
         Log::info('Selected city: ' . $selectedCity);
-        
-        if ($request->has('city')) {
-            cookie()->queue('selectedCity', $selectedCity, 525600);
-            Log::info('City cookie queued: ' . $selectedCity);
-        }
         
         $cityName = $selectedCity === 'spb' ? 'Санкт-Петербург' : 'Москва';
         $tableName = $selectedCity === 'spb' ? 'masseuses_spb' : 'masseuses_moscow';
@@ -85,7 +80,6 @@ class MasseuseController extends Controller
         );
         
         // Сохраняем параметр city в пагинации
-        $girls->appends(['city' => $selectedCity]);
         
         // Логируем URL пагинации
         Log::info('Next page URL: ' . $girls->nextPageUrl());
@@ -98,7 +92,7 @@ class MasseuseController extends Controller
     
     public function show($id)
     {
-        $selectedCity = request()->input('city', request()->cookie('selectedCity', 'moscow'));
+        $selectedCity = request()->cookie('selectedCity', 'moscow');
         $tableName = $selectedCity === 'spb' ? 'masseuses_spb' : 'masseuses_moscow';
         
         // Жестко используем DB::table() чтобы не было переключения
@@ -469,7 +463,7 @@ class MasseuseController extends Controller
     
     private function getSimilarGirls($currentGirl)
     {
-        $selectedCity = request()->input('city', request()->cookie('selectedCity', 'moscow'));
+        $selectedCity = request()->cookie('selectedCity', 'moscow');
         $tableName = $selectedCity === 'spb' ? 'masseuses_spb' : 'masseuses_moscow';
         
         // Жестко используем DB::table() чтобы не было переключения

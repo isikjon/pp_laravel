@@ -18,7 +18,7 @@ class SearchController extends Controller
             ]);
         }
         
-        $selectedCity = $request->input('city', $request->cookie('selectedCity', 'moscow'));
+        $selectedCity = $request->cookie('selectedCity', 'moscow');
         $tableName = $selectedCity === 'spb' ? 'girls_spb' : 'girls_moscow';
         $girls = Girl::from($tableName)
             ->where('name', 'LIKE', '%' . $query . '%')

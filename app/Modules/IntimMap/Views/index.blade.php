@@ -157,7 +157,7 @@ function getSelectedTypes() {
 async function loadMapMarkers() {
     try {
         const types = getSelectedTypes();
-        const response = await fetch(`{{ route('intimmap.data') }}?city=${selectedCity}&types=${types.join(',')}`);
+        const response = await fetch(`{{ route('intimmap.data') }}?types=${types.join(',')}`);
         const data = await response.json();
         
         myMap.geoObjects.removeAll();

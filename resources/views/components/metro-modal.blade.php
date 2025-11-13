@@ -202,8 +202,7 @@ document.addEventListener('DOMContentLoaded', function() {
         try {
             metroList.innerHTML = '<div class="metro-modal-loader">Загрузка...</div>';
             
-            const selectedCity = localStorage.getItem('selectedCity') || 'moscow';
-            const response = await fetch(`{{ route("metro.list") }}?city=${selectedCity}`);
+            const response = await fetch(`{{ route("metro.list") }}`);
             const data = await response.json();
             
             if (data.success && data.metros) {

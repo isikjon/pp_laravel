@@ -9,7 +9,7 @@ class FilterOptionsController extends Controller
 {
     public function getFilterOptions(Request $request)
     {
-        $selectedCity = $request->input('city', $request->cookie('selectedCity', 'moscow'));
+        $selectedCity = $request->cookie('selectedCity', 'moscow');
         $tableName = $selectedCity === 'spb' ? 'girls_spb' : 'girls_moscow';
         
         $hairColors = Girl::from($tableName)->select('hair_color')

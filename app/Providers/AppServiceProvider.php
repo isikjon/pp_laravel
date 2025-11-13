@@ -25,14 +25,8 @@ class AppServiceProvider extends ServiceProvider
             
             // Если cityName уже установлена в view, не переопределяем
             if (!$view->offsetExists('cityName')) {
-                // Приоритет: URL параметр > cookie > default
-                $selectedCity = $request->input('city');
+                $selectedCity = $request->cookie('selectedCity', 'moscow');
                 
-                if (!$selectedCity) {
-                    $selectedCity = $request->cookie('selectedCity', 'moscow');
-                }
-                
-                // Validate city
                 if (!in_array($selectedCity, ['moscow', 'spb'])) {
                     $selectedCity = 'moscow';
                 }

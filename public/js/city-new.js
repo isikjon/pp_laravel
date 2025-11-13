@@ -57,23 +57,19 @@ document.addEventListener("DOMContentLoaded", function() {
             })
             .then(response => response.json())
             .then(data => {
-                // Закрываем модалку
                 cityModal.style.opacity = "0";
                 setTimeout(function() {
                     cityModal.style.display = "none";
                 }, 300);
-                
-                // Перезагружаем страницу с параметром города
-                const currentUrl = new URL(window.location.href);
-                currentUrl.searchParams.set('city', city);
-                window.location.href = currentUrl.toString();
+                window.location.reload();
             })
             .catch(error => {
                 console.error('Error setting city:', error);
-                // В случае ошибки все равно перезагружаем
-                const currentUrl = new URL(window.location.href);
-                currentUrl.searchParams.set('city', city);
-                window.location.href = currentUrl.toString();
+                cityModal.style.opacity = "0";
+                setTimeout(function() {
+                    cityModal.style.display = "none";
+                }, 300);
+                window.location.reload();
             });
         });
     });
@@ -88,57 +84,17 @@ document.addEventListener("DOMContentLoaded", function() {
         return null;
     }
     
-    // Инициализация отображения города и проверка URL параметра
     function initializeCityDisplay() {
-        const urlParams = new URLSearchParams(window.location.search);
-        const cityFromUrl = urlParams.get('city');
+        let selectedCity = localStorage.getItem('selectedCity') || getCookie('selectedCity') || 'moscow';
         
-        // Приоритет: URL > localStorage > cookie > default
-        let selectedCity = cityFromUrl || localStorage.getItem('selectedCity') || getCookie('selectedCity') || 'moscow';
-        
-        // Валидация города
         if (!['moscow', 'spb'].includes(selectedCity)) {
             selectedCity = 'moscow';
         }
         
-        // Если в URL нет параметра city, добавляем его и перенаправляем
-        // Но только для основных страниц сайта (не админка, не API)
-        if (!cityFromUrl) {
-            const pathname = window.location.pathname;
-            
-            // Пропускаем админку, API и другие служебные маршруты
-            if (pathname.startsWith('/admin') || 
-                pathname.startsWith('/api') || 
-                pathname.startsWith('/livewire') ||
-                pathname.startsWith('/_')) {
-                // Для служебных страниц просто обновляем отображение
-                const cityName = selectedCity === 'spb' ? 'Санкт-Петербург' : 'Москва';
-                cityChooseTriggers.forEach(function(element) {
-                    element.textContent = cityName;
-                });
-                return;
-            }
-            
-            // Сохраняем в localStorage
-            localStorage.setItem('selectedCity', selectedCity);
-            
-            // Добавляем параметр city в URL и перенаправляем
-            const currentUrl = new URL(window.location.href);
-            currentUrl.searchParams.set('city', selectedCity);
-            
-            // Используем replace вместо href, чтобы не добавлять запись в историю
-            window.location.replace(currentUrl.toString());
-            return; // Прерываем выполнение, так как произойдет редирект
-        }
-        
-        // Сохраняем в localStorage если пришло из URL
-        if (cityFromUrl) {
-            localStorage.setItem('selectedCity', cityFromUrl);
-        }
+        localStorage.setItem('selectedCity', selectedCity);
         
         const cityName = selectedCity === 'spb' ? 'Санкт-Петербург' : 'Москва';
         
-        // Обновляем отображение города везде
         cityChooseTriggers.forEach(function(element) {
             element.textContent = cityName;
         });

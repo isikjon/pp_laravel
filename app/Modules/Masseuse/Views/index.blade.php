@@ -154,31 +154,6 @@
                 console.log(`Link ${index}:`, link.href, link.textContent.trim());
             });
             
-            // Проверяем что все ссылки содержат city параметр
-            paginationLinks.forEach((link) => {
-                const url = new URL(link.href);
-                const cityParam = url.searchParams.get('city');
-                if (!cityParam) {
-                    console.error('❌ MISSING CITY PARAM IN LINK:', link.href);
-                } else {
-                    console.log('✓ Link has city param:', link.href, 'city=' + cityParam);
-                }
-            });
-        });
-        
-        // Перехватываем клики по пагинации
-        document.addEventListener('click', function(e) {
-            if (e.target.closest('.paginationGirls a')) {
-                const link = e.target.closest('.paginationGirls a');
-                console.log('=== PAGINATION CLICK ===');
-                console.log('Link href:', link.href);
-                console.log('Link text:', link.textContent.trim());
-                const url = new URL(link.href);
-                console.log('URL pathname:', url.pathname);
-                console.log('URL search:', url.search);
-                console.log('City param:', url.searchParams.get('city'));
-                console.log('Page param:', url.searchParams.get('page'));
-            }
         });
     </script>
     <script src="{{ asset('js/filters.js') }}?v={{ time() }}"></script>

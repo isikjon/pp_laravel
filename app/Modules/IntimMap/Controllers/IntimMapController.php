@@ -12,11 +12,7 @@ class IntimMapController extends Controller
 {
     public function index(Request $request)
     {
-        $selectedCity = $request->input('city', $request->cookie('selectedCity', 'moscow'));
-        
-        if ($request->has('city')) {
-            cookie()->queue('selectedCity', $selectedCity, 525600);
-        }
+        $selectedCity = $request->cookie('selectedCity', 'moscow');
         
         $cityName = $selectedCity === 'spb' ? 'Санкт-Петербург' : 'Москва';
         
@@ -25,7 +21,7 @@ class IntimMapController extends Controller
     
     public function getMapData(Request $request)
     {
-        $selectedCity = $request->input('city', $request->cookie('selectedCity', 'moscow'));
+        $selectedCity = $request->cookie('selectedCity', 'moscow');
         $typesString = $request->input('types', '');
         $types = !empty($typesString) ? explode(',', $typesString) : ['1', '2', '3'];
         

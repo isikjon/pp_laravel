@@ -9,7 +9,7 @@ class GirlCardController extends Controller
 {
     public function show($id)
     {
-        $selectedCity = request()->input('city', request()->cookie('selectedCity', 'moscow'));
+        $selectedCity = request()->cookie('selectedCity', 'moscow');
         $tableName = $selectedCity === 'spb' ? 'girls_spb' : 'girls_moscow';
         $girlData = Girl::from($tableName)->where('anketa_id', $id)->first();
         
@@ -451,7 +451,7 @@ class GirlCardController extends Controller
         
         $currentPriceInt = $currentPrice ? (int)str_replace(' ', '', $currentPrice) : null;
         
-        $selectedCity = request()->input('city', request()->cookie('selectedCity', 'moscow'));
+        $selectedCity = request()->cookie('selectedCity', 'moscow');
         $tableName = $selectedCity === 'spb' ? 'girls_spb' : 'girls_moscow';
         $similarGirls = Girl::from($tableName)
             ->where('anketa_id', '!=', $currentGirl->anketa_id)
