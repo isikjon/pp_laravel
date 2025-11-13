@@ -4,18 +4,6 @@ document.addEventListener("DOMContentLoaded", function() {
     const closeCityModal = document.querySelector(".closeCityModal");
     const cityItems = document.querySelectorAll(".cityItem");
     
-    // Открытие модалки выбора города
-    cityChooseTriggers.forEach(function(trigger) {
-        trigger.style.cursor = "pointer";
-        trigger.addEventListener("click", function(e) {
-            e.preventDefault();
-            e.stopPropagation();
-            cityModal.style.display = "block";
-            setTimeout(function() {
-                cityModal.style.opacity = "1";
-            }, 10);
-        });
-    });
     
     // Закрытие модалки
     if (closeCityModal) {

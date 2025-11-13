@@ -30,6 +30,7 @@
         .center-flexTopHeader p{margin:0;white-space:nowrap;}
         .cityChoose,.headerMetro{display:flex;align-items:center;gap:10px;padding:6px 12px;border-radius:12px;background:rgba(238,238,238,.4);min-height:44px;min-width:220px;}
         .cityChoose span,.headerMetro span{display:inline-block;min-width:90px;}
+        .modal-cityChoose{cursor:default!important;pointer-events:none;}
         .rightHeaderTop{flex:1 1 auto;display:flex;align-items:center;justify-content:flex-end;gap:20px;min-width:260px;}
         .search-rightHeaderTop{position:relative;width:100%;max-width:240px;}
         .search-rightHeaderTop input{width:100%;min-height:48px;padding:12px 60px 12px 16px;border-radius:12px;border:1px solid #D7D7D7;font-size:16px;font-weight:500;color:#292D33;}
