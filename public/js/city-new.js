@@ -30,11 +30,9 @@ document.addEventListener("DOMContentLoaded", function() {
         item.addEventListener("click", function() {
             const city = this.getAttribute("data-city");
             
-            // Сохраняем в localStorage
             localStorage.setItem("selectedCity", city);
             localStorage.removeItem("selectedMetro");
             
-            // Устанавливаем cookie через AJAX
             fetch('/api/city/set', {
                 method: 'POST',
                 headers: {
@@ -49,7 +47,12 @@ document.addEventListener("DOMContentLoaded", function() {
                 setTimeout(function() {
                     cityModal.style.display = "none";
                 }, 300);
-                window.location.reload();
+                
+                if (data.redirect_url) {
+                    window.location.href = data.redirect_url;
+                } else {
+                    window.location.reload();
+                }
             })
             .catch(error => {
                 console.error('Error setting city:', error);

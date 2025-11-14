@@ -10,17 +10,37 @@ class CityController extends Controller
     {
         $city = $request->input('city', 'moscow');
         
-        // Validate city
         if (!in_array($city, ['moscow', 'spb'])) {
             $city = 'moscow';
         }
         
-        // Set cookie for 1 year
         cookie()->queue('selectedCity', $city, 525600);
+        
+        $host = $request->getHost();
+        $currentSubdomain = explode('.', $host)[0];
+        
+        $redirectUrl = null;
+        
+        if ($city === 'spb' && $currentSubdomain !== 'spb') {
+            $protocol = $request->getScheme();
+            $redirectUrl = $protocol . '://spb.prostitutkitest.com' . $request->getPathInfo();
+            $query = $request->getQueryString();
+            if ($query) {
+                $redirectUrl .= '?' . $query;
+            }
+        } elseif ($city === 'moscow' && $currentSubdomain === 'spb') {
+            $protocol = $request->getScheme();
+            $redirectUrl = $protocol . '://prostitutkitest.com' . $request->getPathInfo();
+            $query = $request->getQueryString();
+            if ($query) {
+                $redirectUrl .= '?' . $query;
+            }
+        }
         
         return response()->json([
             'success' => true,
-            'city' => $city
+            'city' => $city,
+            'redirect_url' => $redirectUrl
         ]);
     }
 }

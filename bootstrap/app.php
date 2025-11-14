@@ -13,6 +13,9 @@ return Application::configure(basePath: dirname(__DIR__))
     )
     ->withMiddleware(function (Middleware $middleware) {
         $middleware->trustProxies(at: ['*']);
+        $middleware->web(prepend: [
+            \App\Http\Middleware\DetectCityFromSubdomain::class,
+        ]);
         $middleware->web(append: [
             \App\Http\Middleware\RemoveCityFromUrl::class,
         ]);

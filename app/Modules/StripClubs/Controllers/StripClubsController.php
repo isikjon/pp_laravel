@@ -11,7 +11,7 @@ class StripClubsController extends Controller
 {
     public function index(Request $request)
     {
-        $selectedCity = $request->cookie('selectedCity', 'moscow');
+        $selectedCity = getSelectedCity($request);
         
         $cityName = $selectedCity === 'spb' ? 'Санкт-Петербург' : 'Москва';
         

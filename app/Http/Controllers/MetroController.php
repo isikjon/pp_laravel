@@ -9,7 +9,7 @@ class MetroController extends Controller
 {
     public function getMetroList(Request $request)
     {
-        $selectedCity = $request->cookie('selectedCity', 'moscow');
+        $selectedCity = getSelectedCity($request);
         $tableName = $selectedCity === 'spb' ? 'girls_spb' : 'girls_moscow';
         $metroList = Girl::from($tableName)->select('metro')
             ->whereNotNull('metro')
@@ -46,7 +46,7 @@ class MetroController extends Controller
             ], 400);
         }
         
-        $selectedCity = $request->cookie('selectedCity', 'moscow');
+        $selectedCity = getSelectedCity($request);
         $tableName = $selectedCity === 'spb' ? 'girls_spb' : 'girls_moscow';
         $girls = Girl::from($tableName)
             ->where(function($query) use ($metro) {
