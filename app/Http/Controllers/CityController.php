@@ -26,24 +26,24 @@ class CityController extends Controller
                 $path = '';
             }
             
-            $redirectUrl = null;
+            $protocol = $request->getScheme();
+            $query = $request->getQueryString();
             
             if ($city === 'spb' && $currentSubdomain !== 'spb') {
-                $protocol = $request->getScheme();
                 $redirectUrl = $protocol . '://spb.prostitutkitest.com' . $path;
-                $query = $request->getQueryString();
                 if ($query) {
                     $redirectUrl .= '?' . $query;
                 }
             } elseif ($city === 'moscow' && $currentSubdomain === 'spb') {
-                $protocol = $request->getScheme();
                 $redirectUrl = $protocol . '://prostitutkitest.com' . $path;
-                $query = $request->getQueryString();
                 if ($query) {
                     $redirectUrl .= '?' . $query;
                 }
             } else {
-                $redirectUrl = $request->fullUrl();
+                $redirectUrl = $protocol . '://' . $host . $path;
+                if ($query) {
+                    $redirectUrl .= '?' . $query;
+                }
             }
             
             return response()->json([

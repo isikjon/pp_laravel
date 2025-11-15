@@ -68,9 +68,13 @@ document.addEventListener("DOMContentLoaded", function() {
                 return;
             }
             
-            console.log('Sending city request:', clickedCity, 'CSRF:', csrfToken.substring(0, 10) + '...');
+            const currentHost = window.location.hostname;
+            const protocol = window.location.protocol;
+            const apiUrl = protocol + '//' + currentHost + '/api/city/set';
             
-            fetch('/api/city/set', {
+            console.log('Sending city request:', clickedCity, 'to:', apiUrl, 'CSRF:', csrfToken.substring(0, 10) + '...');
+            
+            fetch(apiUrl, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
