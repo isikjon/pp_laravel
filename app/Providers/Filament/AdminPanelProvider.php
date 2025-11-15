@@ -26,6 +26,7 @@ class AdminPanelProvider extends PanelProvider
             ->default()
             ->id('admin')
             ->path('admin')
+            ->domain('prostitutkitest.com')
             ->login()
             ->colors([
                 'primary' => Color::Amber,
