@@ -12,9 +12,7 @@ class DetectCityFromSubdomain
     {
         $city = getSelectedCity($request);
         
-        if (!$request->hasCookie('selectedCity') || $request->cookie('selectedCity') !== $city) {
-            cookie()->queue('selectedCity', $city, 525600);
-        }
+        cookie()->queue('selectedCity', $city, 525600);
         
         return $next($request);
     }

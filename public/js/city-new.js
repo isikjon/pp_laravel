@@ -70,10 +70,6 @@ document.addEventListener("DOMContentLoaded", function() {
         if (subdomain === 'spb') {
             selectedCity = 'spb';
         } else {
-            selectedCity = localStorage.getItem('selectedCity') || getCookie('selectedCity') || 'moscow';
-        }
-        
-        if (!['moscow', 'spb'].includes(selectedCity)) {
             selectedCity = 'moscow';
         }
         

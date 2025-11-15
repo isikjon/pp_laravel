@@ -24,17 +24,7 @@ if (! function_exists('getSelectedCity')) {
             return 'spb';
         }
         
-        if ($subdomain === 'www' || $subdomain === 'prostitutkitest') {
-            return 'moscow';
-        }
-        
-        $city = $request->cookie('selectedCity', 'moscow');
-        
-        if (!in_array($city, ['moscow', 'spb'])) {
-            return 'moscow';
-        }
-        
-        return $city;
+        return 'moscow';
     }
 }
 
