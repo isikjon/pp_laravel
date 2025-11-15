@@ -42,21 +42,45 @@ document.addEventListener("DOMContentLoaded", function() {
     
     // Выбор города
     cityItems.forEach(function(item) {
-        item.addEventListener("click", function() {
+        item.addEventListener("click", function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            
             const city = this.getAttribute("data-city");
+            
+            if (!city) {
+                console.error('City not found in data-city attribute');
+                return;
+            }
             
             localStorage.setItem("selectedCity", city);
             localStorage.removeItem("selectedMetro");
+            
+            const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '';
+            
+            if (!csrfToken) {
+                console.error('CSRF token not found');
+                window.location.reload();
+                return;
+            }
             
             fetch('/api/city/set', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
-                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || ''
+                    'X-CSRF-TOKEN': csrfToken,
+                    'Accept': 'application/json'
                 },
                 body: JSON.stringify({ city: city })
             })
-            .then(response => response.json())
+            .then(response => {
+                if (!response.ok) {
+                    return response.text().then(text => {
+                        throw new Error('Network response was not ok: ' + text);
+                    });
+                }
+                return response.json();
+            })
             .then(data => {
                 cityModal.style.opacity = "0";
                 setTimeout(function() {

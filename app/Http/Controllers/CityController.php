@@ -20,21 +20,27 @@ class CityController extends Controller
         $currentSubdomain = explode('.', $host)[0];
         
         $redirectUrl = null;
+        $path = $request->getPathInfo();
+        if ($path === '/') {
+            $path = '';
+        }
         
         if ($city === 'spb' && $currentSubdomain !== 'spb') {
             $protocol = $request->getScheme();
-            $redirectUrl = $protocol . '://spb.prostitutkitest.com' . $request->getPathInfo();
+            $redirectUrl = $protocol . '://spb.prostitutkitest.com' . $path;
             $query = $request->getQueryString();
             if ($query) {
                 $redirectUrl .= '?' . $query;
             }
         } elseif ($city === 'moscow' && $currentSubdomain === 'spb') {
             $protocol = $request->getScheme();
-            $redirectUrl = $protocol . '://prostitutkitest.com' . $request->getPathInfo();
+            $redirectUrl = $protocol . '://prostitutkitest.com' . $path;
             $query = $request->getQueryString();
             if ($query) {
                 $redirectUrl .= '?' . $query;
             }
+        } else {
+            $redirectUrl = $request->fullUrl();
         }
         
         return response()->json([
