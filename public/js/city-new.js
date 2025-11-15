@@ -1,9 +1,24 @@
 document.addEventListener("DOMContentLoaded", function() {
     const cityModal = document.getElementById("cityModal");
     const cityChooseTriggers = document.querySelectorAll(".modal-cityChoose");
+    const cityChooseElements = document.querySelectorAll(".cityChoose");
     const closeCityModal = document.querySelector(".closeCityModal");
     const cityItems = document.querySelectorAll(".cityItem");
     
+    // Открытие модалки при клике на cityChoose
+    cityChooseElements.forEach(function(element) {
+        element.addEventListener("click", function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            if (cityModal) {
+                cityModal.style.display = "block";
+                cityModal.style.opacity = "0";
+                setTimeout(function() {
+                    cityModal.style.opacity = "1";
+                }, 10);
+            }
+        });
+    });
     
     // Закрытие модалки
     if (closeCityModal) {
@@ -76,7 +91,16 @@ document.addEventListener("DOMContentLoaded", function() {
     }
     
     function initializeCityDisplay() {
-        let selectedCity = localStorage.getItem('selectedCity') || getCookie('selectedCity') || 'moscow';
+        const host = window.location.hostname;
+        const subdomain = host.split('.')[0];
+        
+        let selectedCity;
+        
+        if (subdomain === 'spb') {
+            selectedCity = 'spb';
+        } else {
+            selectedCity = localStorage.getItem('selectedCity') || getCookie('selectedCity') || 'moscow';
+        }
         
         if (!['moscow', 'spb'].includes(selectedCity)) {
             selectedCity = 'moscow';

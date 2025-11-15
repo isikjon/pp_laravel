@@ -26,6 +26,15 @@
 </div>
 
 <style>
+#cityModal {
+    transition: opacity 0.3s ease;
+    opacity: 0;
+}
+
+#cityModal[style*="display: block"] {
+    opacity: 1;
+}
+
 .modal-content-city {
     max-width: 500px;
     padding: 40px;
