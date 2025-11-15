@@ -33,6 +33,16 @@ class HomePageSettingsResource extends Resource
             ->schema([
                 Forms\Components\Section::make('SEO Главной страницы')
                     ->schema([
+                        Forms\Components\Select::make('city')
+                            ->label('Город')
+                            ->required()
+                            ->options([
+                                'moscow' => 'Москва',
+                                'spb' => 'Санкт-Петербург',
+                            ])
+                            ->default('moscow')
+                            ->helperText('Выберите город для настройки SEO'),
+                        
                         Forms\Components\TextInput::make('title')
                             ->label('Title (Заголовок)')
                             ->required()
@@ -55,6 +65,13 @@ class HomePageSettingsResource extends Resource
     {
         return $table
             ->columns([
+                Tables\Columns\TextColumn::make('city')
+                    ->label('Город')
+                    ->formatStateUsing(fn (string $state): string => $state === 'spb' ? 'Санкт-Петербург' : 'Москва')
+                    ->badge()
+                    ->color(fn (string $state): string => $state === 'spb' ? 'success' : 'primary')
+                    ->sortable(),
+                
                 Tables\Columns\TextColumn::make('title')
                     ->label('Title')
                     ->searchable()
@@ -71,7 +88,12 @@ class HomePageSettingsResource extends Resource
                     ->sortable(),
             ])
             ->filters([
-                //
+                Tables\Filters\SelectFilter::make('city')
+                    ->label('Город')
+                    ->options([
+                        'moscow' => 'Москва',
+                        'spb' => 'Санкт-Петербург',
+                    ]),
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),

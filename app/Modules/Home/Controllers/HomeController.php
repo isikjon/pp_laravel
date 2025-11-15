@@ -308,7 +308,7 @@ class HomeController extends Controller
         }
 
         try {
-            $homeSettings = HomePageSettings::first();
+            $homeSettings = HomePageSettings::where('city', $selectedCity)->first();
             $pageTitle = $homeSettings->title ?? 'ProstitutkiMoscow';
             $pageDescription = $homeSettings->description ?? 'Каталог анкет с подробными фильтрами и проверенными предложениями в Москве и Санкт-Петербурге.';
         } catch (\Exception $e) {

@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class HomePageSettings extends Model
 {
     protected $fillable = [
+        'city',
         'title',
         'description',
     ];
