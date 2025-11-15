@@ -6,20 +6,20 @@
         <div class="cityModalContent">
             <h3 style="text-align: center; margin-bottom: 30px; font-size: 24px; color: #7E1D32;">Выберите город</h3>
             <div class="cityList">
-                <div class="cityItem" data-city="moscow">
+                <a href="https://prostitutkitest.com{{ request()->getPathInfo() }}{{ request()->getQueryString() ? '?' . request()->getQueryString() : '' }}" class="cityItem" data-city="moscow">
                     <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 25 25" fill="none">
                         <path d="M4.36489 8.96968C6.33489 0.309678 19.1649 0.319678 21.1249 8.97968C22.2749 14.0597 19.1149 18.3597 16.3449 21.0197C14.3349 22.9597 11.1549 22.9597 9.13489 21.0197C6.37489 18.3597 3.21489 14.0497 4.36489 8.96968Z" fill="#7E1D32"/>
                         <path d="M12.7449 13.9097C14.468 13.9097 15.8649 12.5128 15.8649 10.7897C15.8649 9.06655 14.468 7.66968 12.7449 7.66968C11.0217 7.66968 9.62488 9.06655 9.62488 10.7897C9.62488 12.5128 11.0217 13.9097 12.7449 13.9097Z" fill="white"/>
                     </svg>
                     <span>Москва</span>
-                </div>
-                <div class="cityItem" data-city="spb">
+                </a>
+                <a href="https://spb.prostitutkitest.com{{ request()->getPathInfo() }}{{ request()->getQueryString() ? '?' . request()->getQueryString() : '' }}" class="cityItem" data-city="spb">
                     <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 25 25" fill="none">
                         <path d="M4.36489 8.96968C6.33489 0.309678 19.1649 0.319678 21.1249 8.97968C22.2749 14.0597 19.1149 18.3597 16.3449 21.0197C14.3349 22.9597 11.1549 22.9597 9.13489 21.0197C6.37489 18.3597 3.21489 14.0497 4.36489 8.96968Z" fill="#7E1D32"/>
                         <path d="M12.7449 13.9097C14.468 13.9097 15.8649 12.5128 15.8649 10.7897C15.8649 9.06655 14.468 7.66968 12.7449 7.66968C11.0217 7.66968 9.62488 9.06655 9.62488 10.7897C9.62488 12.5128 11.0217 13.9097 12.7449 13.9097Z" fill="white"/>
                     </svg>
                     <span>Санкт-Петербург</span>
-                </div>
+                </a>
             </div>
         </div>
     </div>
@@ -55,6 +55,8 @@
     border-radius: 10px;
     cursor: pointer;
     transition: all 0.3s;
+    text-decoration: none;
+    color: inherit;
 }
 
 .cityItem:hover {

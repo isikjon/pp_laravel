@@ -40,104 +40,15 @@ document.addEventListener("DOMContentLoaded", function() {
         }
     });
     
-    // Выбор города
+    // Выбор города - просто сохраняем в localStorage перед переходом
     cityItems.forEach(function(item) {
-        item.style.cursor = 'pointer';
-        
-        const handleCityClick = function(e) {
-            e.preventDefault();
-            e.stopPropagation();
-            
-            const clickedCity = item.getAttribute("data-city");
-            
-            if (!clickedCity) {
-                console.error('City not found in data-city attribute');
-                return;
+        item.addEventListener("click", function(e) {
+            const clickedCity = this.getAttribute("data-city");
+            if (clickedCity) {
+                localStorage.setItem("selectedCity", clickedCity);
+                localStorage.removeItem("selectedMetro");
             }
-            
-            console.log('City selected:', clickedCity);
-            
-            localStorage.setItem("selectedCity", clickedCity);
-            localStorage.removeItem("selectedMetro");
-            
-            const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '';
-            
-            if (!csrfToken) {
-                console.error('CSRF token not found');
-                alert('Ошибка: CSRF токен не найден. Перезагрузите страницу.');
-                return;
-            }
-            
-            const currentHost = window.location.hostname;
-            const protocol = window.location.protocol;
-            const apiUrl = protocol + '//' + currentHost + '/api/city/set';
-            
-            console.log('Sending city request:', clickedCity, 'to:', apiUrl, 'CSRF:', csrfToken.substring(0, 10) + '...');
-            
-            fetch(apiUrl, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRF-TOKEN': csrfToken,
-                    'Accept': 'application/json',
-                    'X-Requested-With': 'XMLHttpRequest'
-                },
-                credentials: 'same-origin',
-                body: JSON.stringify({ city: clickedCity })
-            })
-            .then(response => {
-                console.log('Response status:', response.status);
-                if (!response.ok) {
-                    return response.text().then(text => {
-                        console.error('Response error:', text);
-                        throw new Error('Network response was not ok: ' + response.status + ' - ' + text);
-                    });
-                }
-                return response.json();
-            })
-            .then(data => {
-                console.log('Response data:', data);
-                cityModal.style.opacity = "0";
-                setTimeout(function() {
-                    cityModal.style.display = "none";
-                }, 100);
-                
-                if (data.redirect_url) {
-                    console.log('Redirecting to:', data.redirect_url);
-                    setTimeout(function() {
-                        window.location.href = data.redirect_url;
-                    }, 150);
-                } else {
-                    console.log('Reloading page');
-                    setTimeout(function() {
-                        window.location.reload();
-                    }, 150);
-                }
-            })
-            .catch(error => {
-                console.error('Error setting city:', error);
-                alert('Ошибка при выборе города: ' + error.message);
-                cityModal.style.opacity = "0";
-                setTimeout(function() {
-                    cityModal.style.display = "none";
-                }, 300);
-            });
-        };
-        
-        item.addEventListener("click", handleCityClick);
-        
-        const span = item.querySelector("span");
-        const svg = item.querySelector("svg");
-        
-        if (span) {
-            span.style.pointerEvents = 'none';
-            span.addEventListener("click", handleCityClick);
-        }
-        
-        if (svg) {
-            svg.style.pointerEvents = 'none';
-            svg.addEventListener("click", handleCityClick);
-        }
+        });
     });
     
     // Функция для получения cookie
