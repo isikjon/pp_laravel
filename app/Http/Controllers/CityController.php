@@ -30,12 +30,12 @@ class CityController extends Controller
             $query = $request->getQueryString();
             
             if ($city === 'spb' && $currentSubdomain !== 'spb') {
-                $redirectUrl = $protocol . '://spb.prostitutkitest.com' . $path;
+                $redirectUrl = $protocol . '://spb.prostitutkimoskvytake.org' . $path;
                 if ($query) {
                     $redirectUrl .= '?' . $query;
                 }
             } elseif ($city === 'moscow' && $currentSubdomain === 'spb') {
-                $redirectUrl = $protocol . '://prostitutkitest.com' . $path;
+                $redirectUrl = $protocol . '://prostitutkimoskvytake.org' . $path;
                 if ($query) {
                     $redirectUrl .= '?' . $query;
                 }
