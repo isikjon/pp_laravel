@@ -43,15 +43,8 @@ class DeployController extends Controller
                 ]
             ];
             
-            // Настройка SSL если указан поддомен (пропускаем, т.к. certbot не установлен)
-            if ($subdomain && $fileExists && false) { // Отключено временно
-                $sslOutput = shell_exec("/usr/bin/sudo /usr/local/bin/setup-ssl-for-subdomain {$subdomain} 2>&1");
-                
-                $response['ssl'] = [
-                    'status' => 'skipped',
-                    'output' => 'SSL настройка отключена (certbot не установлен)'
-                ];
-            }
+            // Настройка SSL отключена (certbot не установлен)
+            // После установки certbot можно включить через скрипт setup-ssl-for-subdomain
             
             Log::info('Deploy executed', $response);
             
