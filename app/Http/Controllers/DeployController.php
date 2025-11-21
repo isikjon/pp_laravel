@@ -23,25 +23,24 @@ class DeployController extends Controller
         $subdomain = $request->get('subdomain');
         
         try {
-            // Деплой nginx конфига через shell_exec для лучшего вывода
-            $deployOutput = shell_exec('/usr/bin/sudo /usr/local/bin/deploy-nginx-config 2>&1');
+            // Деплой nginx конфига через wrapper (без sudo пароля)
+            $deployOutput = shell_exec('/usr/bin/sudo /usr/local/bin/deploy-nginx-wrapper 2>&1');
             
             // Проверяем что файлы действительно скопировались
             $targetFile = '/etc/nginx/vhosts/noviysayt/' . basename($subdomain ?: 'prostitutkimoskvytake.org') . '.conf';
             $fileExists = file_exists($targetFile);
             
+            // Читаем последние строки лога деплоя для подтверждения
+            $deployLogFile = storage_path('logs/deploy.log');
+            $deployLog = file_exists($deployLogFile) ? shell_exec("tail -10 {$deployLogFile}") : 'Лог не найден';
+            
             $response = [
                 'success' => $fileExists,
                 'deploy' => [
                     'status' => $fileExists ? 'success' : 'error',
-                    'output' => $deployOutput ?: 'Команда выполнена, но вывод пуст',
-                    'file_check' => $fileExists ? "✓ Файл {$targetFile} создан" : "✗ Файл {$targetFile} не найден"
-                ],
-                'debug' => [
-                    'subdomain' => $subdomain,
-                    'target_file' => $targetFile,
-                    'php_user' => shell_exec('whoami'),
-                    'sudo_works' => shell_exec('sudo -n true 2>&1; echo $?')
+                    'output' => $deployOutput ?: 'Wrapper вызван',
+                    'file_check' => $fileExists ? "✓ Конфиг создан" : "✗ Конфиг не найден",
+                    'log' => $deployLog
                 ]
             ];
             
