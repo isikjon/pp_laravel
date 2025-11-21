@@ -302,11 +302,11 @@ class CityResource extends Resource
         File::put("{$configDir}/{$subdomain}.conf", $config);
         
         // Автоматически деплоим конфиг на сервер
-        exec('sudo /usr/local/bin/deploy-nginx-config 2>&1', $deployOutput, $deployReturn);
+        exec('/usr/bin/sudo /usr/local/bin/deploy-nginx-config 2>&1', $deployOutput, $deployReturn);
         
         // Автоматически настраиваем SSL если нужно
         if ($record->subdomain) {
-            exec("sudo /usr/local/bin/setup-ssl-for-subdomain {$subdomain} 2>&1", $sslOutput, $sslReturn);
+            exec("/usr/bin/sudo /usr/local/bin/setup-ssl-for-subdomain {$subdomain} 2>&1", $sslOutput, $sslReturn);
         }
     }
     
