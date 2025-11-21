@@ -150,36 +150,53 @@ class CityResource extends Resource
                     ->modalHeading('Задеплоить конфиг?')
                     ->modalDescription('Скопирует nginx конфиг на сервер и настроит SSL')
                     ->action(function ($record) {
-                        $domain = config('app.domain', 'prostitutkimoskvytake.org');
-                        $subdomain = $record->subdomain ? "{$record->subdomain}.{$domain}" : $domain;
-                        
-                        // Деплой nginx конфига
-                        exec('/usr/bin/sudo /usr/local/bin/deploy-nginx-config 2>&1', $deployOutput, $deployReturn);
-                        
-                        if ($deployReturn === 0) {
-                            $message = "✓ Nginx конфиг задеплоен\n" . implode("\n", $deployOutput ?? []);
+                        try {
+                            $domain = config('app.domain', 'prostitutkimoskvytake.org');
+                            $subdomain = $record->subdomain ? "{$record->subdomain}.{$domain}" : $domain;
+                            $deployToken = config('app.deploy_token', 'your-secret-deploy-token-here');
                             
-                            // Настройка SSL если это поддомен
-                            if ($record->subdomain) {
-                                exec("/usr/bin/sudo /usr/local/bin/setup-ssl-for-subdomain {$subdomain} 2>&1", $sslOutput, $sslReturn);
+                            // Вызываем API endpoint для деплоя
+                            $response = \Http::timeout(120)->post(url('/api/deploy-config'), [
+                                'subdomain' => $subdomain,
+                                'token' => $deployToken
+                            ]);
+                            
+                            if ($response->successful()) {
+                                $data = $response->json();
                                 
-                                if ($sslReturn === 0) {
-                                    $message .= "\n\n✓ SSL настроен успешно";
+                                if ($data['success']) {
+                                    $message = "✓ Nginx: " . ($data['deploy']['output'] ?? 'OK');
+                                    
+                                    if (isset($data['ssl'])) {
+                                        $sslStatus = $data['ssl']['status'] === 'success' ? '✓' : '⚠';
+                                        $message .= "\n\n{$sslStatus} SSL: " . ($data['ssl']['output'] ?? 'OK');
+                                    }
+                                    
+                                    Notification::make()
+                                        ->success()
+                                        ->title('Деплой выполнен')
+                                        ->body($message)
+                                        ->duration(10000)
+                                        ->send();
                                 } else {
-                                    $message .= "\n\n⚠ SSL: " . implode("\n", $sslOutput ?? []);
+                                    Notification::make()
+                                        ->warning()
+                                        ->title('Деплой выполнен с предупреждениями')
+                                        ->body($data['deploy']['output'] ?? 'Проверьте логи')
+                                        ->send();
                                 }
+                            } else {
+                                Notification::make()
+                                    ->danger()
+                                    ->title('Ошибка деплоя')
+                                    ->body('HTTP ' . $response->status() . ': ' . $response->body())
+                                    ->send();
                             }
-                            
-                            Notification::make()
-                                ->success()
-                                ->title('Деплой выполнен')
-                                ->body($message)
-                                ->send();
-                        } else {
+                        } catch (\Exception $e) {
                             Notification::make()
                                 ->danger()
-                                ->title('Ошибка деплоя')
-                                ->body(implode("\n", $deployOutput ?? ['Неизвестная ошибка']))
+                                ->title('Ошибка')
+                                ->body($e->getMessage())
                                 ->send();
                         }
                     })

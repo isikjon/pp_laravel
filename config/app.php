@@ -56,6 +56,28 @@ return [
 
     /*
     |--------------------------------------------------------------------------
+    | Application Domain
+    |--------------------------------------------------------------------------
+    |
+    | Main domain for the application and city subdomains
+    |
+    */
+
+    'domain' => env('APP_DOMAIN', 'prostitutkimoskvytake.org'),
+
+    /*
+    |--------------------------------------------------------------------------
+    | Deploy Token
+    |--------------------------------------------------------------------------
+    |
+    | Secret token for deploy API endpoint security
+    |
+    */
+
+    'deploy_token' => env('DEPLOY_TOKEN', 'change-this-secret-token-in-production'),
+
+    /*
+    |--------------------------------------------------------------------------
     | Application Timezone
     |--------------------------------------------------------------------------
     |
