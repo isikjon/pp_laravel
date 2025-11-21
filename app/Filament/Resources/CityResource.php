@@ -48,7 +48,17 @@ class CityResource extends Resource
                         Forms\Components\TextInput::make('subdomain')
                             ->label('Поддомен')
                             ->helperText('Оставьте пустым для основного домена')
-                            ->maxLength(50),
+                            ->maxLength(50)
+                            ->regex('/^[a-z0-9-]*$/')
+                            ->validationMessages([
+                                'regex' => 'Только маленькие буквы, цифры и дефис. Без точек!'
+                            ])
+                            ->reactive()
+                            ->afterStateUpdated(function ($state, callable $set) {
+                                // Убираем точки автоматически
+                                $cleaned = preg_replace('/[^a-z0-9-]/', '', strtolower($state ?? ''));
+                                $set('subdomain', $cleaned);
+                            }),
 
                         Forms\Components\Toggle::make('is_active')
                             ->label('Активен')
@@ -290,6 +300,14 @@ class CityResource extends Resource
         }
         
         File::put("{$configDir}/{$subdomain}.conf", $config);
+        
+        // Автоматически деплоим конфиг на сервер
+        exec('sudo /usr/local/bin/deploy-nginx-config 2>&1', $deployOutput, $deployReturn);
+        
+        // Автоматически настраиваем SSL если нужно
+        if ($record->subdomain) {
+            exec("sudo /usr/local/bin/setup-ssl-for-subdomain {$subdomain} 2>&1", $sslOutput, $sslReturn);
+        }
     }
     
     protected static function syncData($fromCity, $toCity)
