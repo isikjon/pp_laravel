@@ -204,6 +204,64 @@ class CityResource extends Resource
                     })
                     ->visible(fn ($record) => $record->subdomain),
                 
+                Tables\Actions\Action::make('setupSSL')
+                    ->label('SSL')
+                    ->icon('heroicon-o-lock-closed')
+                    ->color('success')
+                    ->requiresConfirmation()
+                    ->modalHeading('Установить SSL сертификат?')
+                    ->modalDescription('Убедитесь что DNS настроен! A-запись должна указывать на IP сервера.')
+                    ->action(function ($record) {
+                        try {
+                            $domain = config('app.domain', 'prostitutkimoskvytake.org');
+                            $subdomain = $record->subdomain ? "{$record->subdomain}.{$domain}" : $domain;
+                            $deployToken = config('app.deploy_token', 'your-secret-deploy-token-here');
+                            
+                            \Log::info("=== SSL УСТАНОВКА ===", [
+                                'city' => $record->name,
+                                'subdomain' => $subdomain,
+                                'time' => now()->toDateTimeString()
+                            ]);
+                            
+                            $response = \Http::timeout(120)->post(url('/api/setup-ssl'), [
+                                'subdomain' => $subdomain,
+                                'token' => $deployToken
+                            ]);
+                            
+                            if ($response->successful()) {
+                                $data = $response->json();
+                                
+                                if ($data['success']) {
+                                    Notification::make()
+                                        ->success()
+                                        ->title('SSL установлен')
+                                        ->body($data['message'] ?? '✓ Сертификат установлен')
+                                        ->duration(5000)
+                                        ->send();
+                                } else {
+                                    Notification::make()
+                                        ->warning()
+                                        ->title('SSL не установлен')
+                                        ->body($data['message'] ?? 'Проверьте DNS настройки')
+                                        ->send();
+                                }
+                            } else {
+                                Notification::make()
+                                    ->danger()
+                                    ->title('Ошибка SSL')
+                                    ->body('HTTP ' . $response->status() . ': ' . $response->body())
+                                    ->send();
+                            }
+                        } catch (\Exception $e) {
+                            Notification::make()
+                                ->danger()
+                                ->title('Ошибка')
+                                ->body($e->getMessage())
+                                ->send();
+                        }
+                    })
+                    ->visible(fn ($record) => $record->subdomain),
+                
                 Tables\Actions\Action::make('syncFrom')
                     ->label('Синхронизировать')
                     ->icon('heroicon-o-arrow-path')

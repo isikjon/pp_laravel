@@ -15,5 +15,6 @@ Route::get('/api/metro/girls', [MetroController::class, 'getGirlsByMetro'])->nam
 Route::get('/api/search', [SearchController::class, 'search'])->name('search');
 Route::get('/api/filter-options', [FilterOptionsController::class, 'getFilterOptions'])->name('filter.options');
 
-// Deploy API endpoint
+// Deploy API endpoints
 Route::post('/api/deploy-config', [DeployController::class, 'deployNginxConfig'])->name('deploy.config');
+Route::post('/api/setup-ssl', [DeployController::class, 'setupSSL'])->name('setup.ssl');
