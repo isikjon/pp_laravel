@@ -48,17 +48,8 @@ class DeployController extends Controller
                 'files' => array_map('basename', $allConfigs)
             ]);
             
-            // ЖДЁМ 60 СЕКУНД
-            Log::info("⏱️ ЗАДЕРЖКА 60 СЕКУНД НАЧАТА", ['start' => now()->toDateTimeString()]);
-            
-            for ($i = 1; $i <= 60; $i++) {
-                sleep(1);
-                if ($i % 10 == 0) {
-                    Log::info("⏱️ Прошло {$i} секунд...");
-                }
-            }
-            
-            Log::info("⏱️ ЗАДЕРЖКА ЗАВЕРШЕНА", ['end' => now()->toDateTimeString()]);
+            // Небольшая задержка для гарантии записи файла на диск
+            usleep(500000); // 0.5 секунды
             
             // Деплой nginx конфига через wrapper
             Log::info("Запуск wrapper...");
