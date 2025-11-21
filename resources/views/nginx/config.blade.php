@@ -32,7 +32,7 @@ server {
 	location @php {
 		include /etc/nginx/vhosts-resources/{{ $subdomain }}/dynamic/*.conf;
 		fastcgi_index index.php;
-		fastcgi_param PHP_ADMIN_VALUE "sendmail_path = /usr/sbin/sendmail -t -i -f webmaster@{{ $subdomain }}";
+		fastcgi_param PHP_ADMIN_VALUE "sendmail_path = /usr/sbin/sendmail -t -i -f webmaster{{ '@' }}{{ $subdomain }}";
 		fastcgi_pass unix:{{ $phpFpmSock }};
 		fastcgi_split_path_info ^((?U).+\.ph(?:p\d*|tml))(/?.+)$;
 		try_files $uri =404;
@@ -90,7 +90,7 @@ server {
 	location @php {
 		include /etc/nginx/vhosts-resources/{{ $subdomain }}/dynamic/*.conf;
 		fastcgi_index index.php;
-		fastcgi_param PHP_ADMIN_VALUE "sendmail_path = /usr/sbin/sendmail -t -i -f webmaster@{{ $subdomain }}";
+		fastcgi_param PHP_ADMIN_VALUE "sendmail_path = /usr/sbin/sendmail -t -i -f webmaster{{ '@' }}{{ $subdomain }}";
 		fastcgi_pass unix:{{ $phpFpmSock }};
 		fastcgi_split_path_info ^((?U).+\.ph(?:p\d*|tml))(/?.+)$;
 		try_files $uri =404;
