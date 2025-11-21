@@ -136,13 +136,34 @@ class CityResource extends Resource
                     ->modalDescription('Создаст и скопирует nginx конфиг на сервер')
                     ->action(function ($record) {
                         try {
-                            // 1. Сначала генерируем конфиг
-                            self::generateNginxConfig($record);
-                            
-                            // 2. Деплоим через API
                             $domain = config('app.domain', 'prostitutkimoskvytake.org');
                             $subdomain = $record->subdomain ? "{$record->subdomain}.{$domain}" : $domain;
+                            
+                            \Log::info("=== ДЕПЛОЙ СТАРТ ===", [
+                                'city' => $record->name,
+                                'code' => $record->code,
+                                'subdomain' => $subdomain,
+                                'time' => now()->toDateTimeString()
+                            ]);
+                            
+                            // 1. Генерируем конфиг
+                            \Log::info("Генерация конфига...");
+                            self::generateNginxConfig($record);
+                            
+                            $configPath = storage_path("nginx/{$subdomain}.conf");
+                            $configExists = file_exists($configPath);
+                            $configSize = $configExists ? filesize($configPath) : 0;
+                            
+                            \Log::info("Конфиг создан", [
+                                'path' => $configPath,
+                                'exists' => $configExists,
+                                'size' => $configSize
+                            ]);
+                            
+                            // 2. Деплоим через API
                             $deployToken = config('app.deploy_token', 'your-secret-deploy-token-here');
+                            
+                            \Log::info("Вызов API деплоя...", ['subdomain' => $subdomain]);
                             
                             $response = \Http::timeout(120)->post(url('/api/deploy-config'), [
                                 'subdomain' => $subdomain,
