@@ -127,35 +127,23 @@ class CityResource extends Resource
                     })
                     ->visible(fn ($record) => !self::tablesExist($record)),
                 
-                Tables\Actions\Action::make('generateConfig')
-                    ->label('Nginx конфиг')
-                    ->icon('heroicon-o-document-text')
-                    ->color('info')
-                    ->action(function ($record) {
-                        self::generateNginxConfig($record);
-                        
-                        Notification::make()
-                            ->success()
-                            ->title('Конфиг создан')
-                            ->body("Конфиг создан в storage/nginx/{$record->subdomain}.prostitutkimoskvytake.org.conf")
-                            ->send();
-                    })
-                    ->visible(fn ($record) => $record->subdomain),
-                
                 Tables\Actions\Action::make('deployConfig')
-                    ->label('Деплой и SSL')
+                    ->label('Деплой')
                     ->icon('heroicon-o-rocket-launch')
                     ->color('warning')
                     ->requiresConfirmation()
                     ->modalHeading('Задеплоить конфиг?')
-                    ->modalDescription('Скопирует nginx конфиг на сервер и настроит SSL')
+                    ->modalDescription('Создаст и скопирует nginx конфиг на сервер')
                     ->action(function ($record) {
                         try {
+                            // 1. Сначала генерируем конфиг
+                            self::generateNginxConfig($record);
+                            
+                            // 2. Деплоим через API
                             $domain = config('app.domain', 'prostitutkimoskvytake.org');
                             $subdomain = $record->subdomain ? "{$record->subdomain}.{$domain}" : $domain;
                             $deployToken = config('app.deploy_token', 'your-secret-deploy-token-here');
                             
-                            // Вызываем API endpoint для деплоя
                             $response = \Http::timeout(120)->post(url('/api/deploy-config'), [
                                 'subdomain' => $subdomain,
                                 'token' => $deployToken
@@ -165,24 +153,17 @@ class CityResource extends Resource
                                 $data = $response->json();
                                 
                                 if ($data['success']) {
-                                    $message = "✓ Nginx: " . ($data['deploy']['output'] ?? 'OK');
-                                    
-                                    if (isset($data['ssl'])) {
-                                        $sslStatus = $data['ssl']['status'] === 'success' ? '✓' : '⚠';
-                                        $message .= "\n\n{$sslStatus} SSL: " . ($data['ssl']['output'] ?? 'OK');
-                                    }
-                                    
                                     Notification::make()
                                         ->success()
                                         ->title('Деплой выполнен')
-                                        ->body($message)
-                                        ->duration(10000)
+                                        ->body('✓ Nginx: OK')
+                                        ->duration(5000)
                                         ->send();
                                 } else {
                                     Notification::make()
                                         ->warning()
                                         ->title('Деплой выполнен с предупреждениями')
-                                        ->body($data['deploy']['output'] ?? 'Проверьте логи')
+                                        ->body($data['message'] ?? 'Проверьте логи')
                                         ->send();
                                 }
                             } else {
