@@ -142,6 +142,49 @@ class CityResource extends Resource
                     })
                     ->visible(fn ($record) => $record->subdomain),
                 
+                Tables\Actions\Action::make('deployConfig')
+                    ->label('Деплой и SSL')
+                    ->icon('heroicon-o-rocket-launch')
+                    ->color('warning')
+                    ->requiresConfirmation()
+                    ->modalHeading('Задеплоить конфиг?')
+                    ->modalDescription('Скопирует nginx конфиг на сервер и настроит SSL')
+                    ->action(function ($record) {
+                        $domain = config('app.domain', 'prostitutkimoskvytake.org');
+                        $subdomain = $record->subdomain ? "{$record->subdomain}.{$domain}" : $domain;
+                        
+                        // Деплой nginx конфига
+                        exec('/usr/bin/sudo /usr/local/bin/deploy-nginx-config 2>&1', $deployOutput, $deployReturn);
+                        
+                        if ($deployReturn === 0) {
+                            $message = "✓ Nginx конфиг задеплоен\n" . implode("\n", $deployOutput ?? []);
+                            
+                            // Настройка SSL если это поддомен
+                            if ($record->subdomain) {
+                                exec("/usr/bin/sudo /usr/local/bin/setup-ssl-for-subdomain {$subdomain} 2>&1", $sslOutput, $sslReturn);
+                                
+                                if ($sslReturn === 0) {
+                                    $message .= "\n\n✓ SSL настроен успешно";
+                                } else {
+                                    $message .= "\n\n⚠ SSL: " . implode("\n", $sslOutput ?? []);
+                                }
+                            }
+                            
+                            Notification::make()
+                                ->success()
+                                ->title('Деплой выполнен')
+                                ->body($message)
+                                ->send();
+                        } else {
+                            Notification::make()
+                                ->danger()
+                                ->title('Ошибка деплоя')
+                                ->body(implode("\n", $deployOutput ?? ['Неизвестная ошибка']))
+                                ->send();
+                        }
+                    })
+                    ->visible(fn ($record) => $record->subdomain),
+                
                 Tables\Actions\Action::make('syncFrom')
                     ->label('Синхронизировать')
                     ->icon('heroicon-o-arrow-path')
@@ -300,18 +343,6 @@ class CityResource extends Resource
         }
         
         File::put("{$configDir}/{$subdomain}.conf", $config);
-        
-        // Автоматически деплоим конфиг на сервер
-        \Log::info("Starting nginx deploy for: {$subdomain}");
-        exec('/usr/bin/sudo /usr/local/bin/deploy-nginx-config 2>&1', $deployOutput, $deployReturn);
-        \Log::info("Deploy result - Return: {$deployReturn}, Output: " . implode("\n", $deployOutput ?? []));
-        
-        // Автоматически настраиваем SSL если нужно
-        if ($record->subdomain) {
-            \Log::info("Starting SSL setup for: {$subdomain}");
-            exec("/usr/bin/sudo /usr/local/bin/setup-ssl-for-subdomain {$subdomain} 2>&1", $sslOutput, $sslReturn);
-            \Log::info("SSL result - Return: {$sslReturn}, Output: " . implode("\n", $sslOutput ?? []));
-        }
     }
     
     protected static function syncData($fromCity, $toCity)
