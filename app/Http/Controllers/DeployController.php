@@ -24,23 +24,22 @@ class DeployController extends Controller
         
         try {
             // Деплой nginx конфига через wrapper (без sudo пароля)
-            $deployOutput = shell_exec('/usr/bin/sudo /usr/local/bin/deploy-nginx-wrapper 2>&1');
-            
-            // Проверяем что файлы действительно скопировались
-            $targetFile = '/etc/nginx/vhosts/noviysayt/' . basename($subdomain ?: 'prostitutkimoskvytake.org') . '.conf';
-            $fileExists = file_exists($targetFile);
+            exec('/usr/bin/sudo /usr/local/bin/deploy-nginx-wrapper 2>&1', $wrapperOutput, $wrapperReturn);
             
             // Читаем последние строки лога деплоя для подтверждения
             $deployLogFile = storage_path('logs/deploy.log');
             $deployLog = file_exists($deployLogFile) ? shell_exec("tail -10 {$deployLogFile}") : 'Лог не найден';
             
+            // Проверяем успешность по exit code wrapper'а
+            $success = $wrapperReturn === 0;
+            
             $response = [
-                'success' => $fileExists,
+                'success' => $success,
                 'deploy' => [
-                    'status' => $fileExists ? 'success' : 'error',
-                    'output' => $deployOutput ?: 'Wrapper вызван',
-                    'file_check' => $fileExists ? "✓ Конфиг создан" : "✗ Конфиг не найден",
-                    'log' => $deployLog
+                    'status' => $success ? 'success' : 'error',
+                    'message' => $success ? '✓ Nginx конфиг задеплоен и перезагружен' : '✗ Ошибка деплоя',
+                    'wrapper_output' => implode("\n", $wrapperOutput ?? []),
+                    'deploy_log' => $deployLog
                 ]
             ];
             
