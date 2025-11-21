@@ -48,33 +48,46 @@ class DeployController extends Controller
                 'files' => array_map('basename', $allConfigs)
             ]);
             
-            // Небольшая задержка для гарантии записи файла на диск
-            usleep(500000); // 0.5 секунды
+            // Создаём флаг-файл для cron
+            $triggerFile = storage_path('framework/deploy_trigger');
+            Log::info("Создание флага деплоя", ['file' => $triggerFile]);
             
-            // Деплой nginx конфига через wrapper
-            Log::info("Запуск wrapper...");
-            exec('/usr/bin/sudo /usr/local/bin/deploy-nginx-wrapper 2>&1', $wrapperOutput, $wrapperReturn);
+            touch($triggerFile);
             
-            Log::info("Wrapper выполнен", [
-                'exit_code' => $wrapperReturn,
-                'output' => $wrapperOutput
+            // Ждём пока cron обработает флаг (макс 65 секунд)
+            $maxWait = 65;
+            $waited = 0;
+            
+            Log::info("Ожидание выполнения cron...");
+            
+            while (file_exists($triggerFile) && $waited < $maxWait) {
+                sleep(1);
+                $waited++;
+                
+                if ($waited % 10 == 0) {
+                    Log::info("Ожидание: {$waited} сек...");
+                }
+            }
+            
+            // Проверяем результат
+            $success = !file_exists($triggerFile); // Если файл удалён - деплой выполнен
+            
+            Log::info("Результат ожидания", [
+                'success' => $success,
+                'waited' => $waited,
+                'trigger_exists' => file_exists($triggerFile)
             ]);
             
-            // Читаем последние строки лога деплоя
-            $deployLogFile = storage_path('logs/deploy.log');
-            $deployLog = file_exists($deployLogFile) ? shell_exec("tail -20 {$deployLogFile}") : 'Лог не найден';
-            
-            Log::info("Лог деплоя", ['log' => $deployLog]);
-            
-            // Проверяем успешность по exit code wrapper'а
-            $success = $wrapperReturn === 0;
+            // Читаем лог деплоя
+            $deployLogFile = storage_path('logs/deploy-script.log');
+            $deployLog = file_exists($deployLogFile) ? shell_exec("tail -30 {$deployLogFile}") : 'Лог не найден';
             
             $response = [
                 'success' => $success,
                 'deploy' => [
                     'status' => $success ? 'success' : 'error',
-                    'message' => $success ? '✓ Nginx конфиг задеплоен и перезагружен' : '✗ Ошибка деплоя',
-                    'wrapper_output' => implode("\n", $wrapperOutput ?? []),
+                    'message' => $success ? '✓ Nginx конфиг задеплоен через cron' : '⏱ Деплой в процессе (ожидание cron)',
+                    'waited' => $waited,
                     'deploy_log' => $deployLog
                 ]
             ];
