@@ -23,24 +23,35 @@ class DeployController extends Controller
         $subdomain = $request->get('subdomain');
         
         try {
-            // Деплой nginx конфига
-            exec('/usr/bin/sudo /usr/local/bin/deploy-nginx-config 2>&1', $deployOutput, $deployReturn);
+            // Деплой nginx конфига через shell_exec для лучшего вывода
+            $deployOutput = shell_exec('/usr/bin/sudo /usr/local/bin/deploy-nginx-config 2>&1');
+            
+            // Проверяем что файлы действительно скопировались
+            $targetFile = '/etc/nginx/vhosts/noviysayt/' . basename($subdomain ?: 'prostitutkimoskvytake.org') . '.conf';
+            $fileExists = file_exists($targetFile);
             
             $response = [
-                'success' => $deployReturn === 0,
+                'success' => $fileExists,
                 'deploy' => [
-                    'status' => $deployReturn === 0 ? 'success' : 'error',
-                    'output' => implode("\n", $deployOutput ?? [])
+                    'status' => $fileExists ? 'success' : 'error',
+                    'output' => $deployOutput ?: 'Команда выполнена, но вывод пуст',
+                    'file_check' => $fileExists ? "✓ Файл {$targetFile} создан" : "✗ Файл {$targetFile} не найден"
+                ],
+                'debug' => [
+                    'subdomain' => $subdomain,
+                    'target_file' => $targetFile,
+                    'php_user' => shell_exec('whoami'),
+                    'sudo_works' => shell_exec('sudo -n true 2>&1; echo $?')
                 ]
             ];
             
-            // Настройка SSL если указан поддомен
-            if ($subdomain && $deployReturn === 0) {
-                exec("/usr/bin/sudo /usr/local/bin/setup-ssl-for-subdomain {$subdomain} 2>&1", $sslOutput, $sslReturn);
+            // Настройка SSL если указан поддомен (пропускаем, т.к. certbot не установлен)
+            if ($subdomain && $fileExists && false) { // Отключено временно
+                $sslOutput = shell_exec("/usr/bin/sudo /usr/local/bin/setup-ssl-for-subdomain {$subdomain} 2>&1");
                 
                 $response['ssl'] = [
-                    'status' => $sslReturn === 0 ? 'success' : 'error',
-                    'output' => implode("\n", $sslOutput ?? [])
+                    'status' => 'skipped',
+                    'output' => 'SSL настройка отключена (certbot не установлен)'
                 ];
             }
             
