@@ -19,6 +19,10 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->web(append: [
             \App\Http\Middleware\RemoveCityFromUrl::class,
         ]);
+        // Исключаем API endpoint деплоя из CSRF защиты
+        $middleware->validateCsrfTokens(except: [
+            '/api/deploy-config',
+        ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {
         //
