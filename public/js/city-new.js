@@ -51,37 +51,7 @@ document.addEventListener("DOMContentLoaded", function() {
         });
     });
     
-    // Функция для получения cookie
-    function getCookie(name) {
-        const value = `; ${document.cookie}`;
-        const parts = value.split(`; ${name}=`);
-        if (parts.length === 2) {
-            return parts.pop().split(';').shift();
-        }
-        return null;
-    }
-    
-    function initializeCityDisplay() {
-        const host = window.location.hostname;
-        const subdomain = host.split('.')[0];
-        
-        let selectedCity;
-        
-        if (subdomain === 'spb') {
-            selectedCity = 'spb';
-        } else {
-            selectedCity = 'moscow';
-        }
-        
-        localStorage.setItem('selectedCity', selectedCity);
-        
-        const cityName = selectedCity === 'spb' ? 'Санкт-Петербург' : 'Москва';
-        
-        cityChooseTriggers.forEach(function(element) {
-            element.textContent = cityName;
-        });
-    }
-    
-    initializeCityDisplay();
+    // Город уже установлен сервером в blade шаблоне через {{ $cityName }}
+    // JavaScript только управляет модальным окном
 });
 

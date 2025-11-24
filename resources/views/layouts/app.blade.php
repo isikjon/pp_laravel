@@ -10,7 +10,7 @@
         $styleCssVersion = file_exists(public_path('css/style.css')) ? filemtime(public_path('css/style.css')) : time();
         $adaptiveCssVersion = file_exists(public_path('css/adaptive.css')) ? filemtime(public_path('css/adaptive.css')) : time();
         $appJsVersion = file_exists(public_path('js/app.js')) ? filemtime(public_path('js/app.js')) : time();
-        $cityJsVersion = file_exists(public_path('js/city.js')) ? filemtime(public_path('js/city.js')) : time();
+        $cityJsVersion = file_exists(public_path('js/city-new.js')) ? filemtime(public_path('js/city-new.js')) : time();
         $favoritesJsVersion = file_exists(public_path('js/favorites.js')) ? filemtime(public_path('js/favorites.js')) : time();
     @endphp
     <title>@yield('title', 'ProstitutkiMoscow')</title>
