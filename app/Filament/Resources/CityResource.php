@@ -471,34 +471,70 @@ class CityResource extends Resource
             DB::table($toTable)->delete();
         }
         
-        $query = DB::table($fromTable)->orderBy('id');
+        $totalCopied = 0;
+        $chunkSize = 100;
         
         if ($limit !== null && $limit > 0) {
-            $query->limit($limit);
-        }
-        
-        $totalCopied = 0;
-        
-        $query->chunk(100, function($records) use ($toTable, $commonColumns, $toCityName, &$totalCopied) {
-            foreach ($records as $record) {
-                $data = [];
-                foreach ($commonColumns as $column) {
-                    if ($column === 'id') {
-                        continue;
+            $offset = 0;
+            while ($totalCopied < $limit) {
+                $currentChunkSize = min($chunkSize, $limit - $totalCopied);
+                $records = DB::table($fromTable)
+                    ->orderBy('id')
+                    ->offset($offset)
+                    ->limit($currentChunkSize)
+                    ->get();
+                
+                if ($records->isEmpty()) {
+                    break;
+                }
+                
+                foreach ($records as $record) {
+                    if ($totalCopied >= $limit) {
+                        break;
                     }
-                    if ($column === 'city') {
-                        $data[$column] = $toCityName;
-                    } else {
-                        $data[$column] = $record->$column ?? null;
+                    
+                    $data = [];
+                    foreach ($commonColumns as $column) {
+                        if ($column === 'id') {
+                            continue;
+                        }
+                        if ($column === 'city') {
+                            $data[$column] = $toCityName;
+                        } else {
+                            $data[$column] = $record->$column ?? null;
+                        }
+                    }
+                    
+                    if (!empty($data)) {
+                        DB::table($toTable)->insert($data);
+                        $totalCopied++;
                     }
                 }
                 
-                if (!empty($data)) {
-                    DB::table($toTable)->insert($data);
-                    $totalCopied++;
-                }
+                $offset += $currentChunkSize;
             }
-        });
+        } else {
+            DB::table($fromTable)->orderBy('id')->chunk($chunkSize, function($records) use ($toTable, $commonColumns, $toCityName, &$totalCopied) {
+                foreach ($records as $record) {
+                    $data = [];
+                    foreach ($commonColumns as $column) {
+                        if ($column === 'id') {
+                            continue;
+                        }
+                        if ($column === 'city') {
+                            $data[$column] = $toCityName;
+                        } else {
+                            $data[$column] = $record->$column ?? null;
+                        }
+                    }
+                    
+                    if (!empty($data)) {
+                        DB::table($toTable)->insert($data);
+                        $totalCopied++;
+                    }
+                }
+            });
+        }
         
         $toRecord = City::where('code', $toCity)->first();
         if ($toRecord) {
