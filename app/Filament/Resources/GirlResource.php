@@ -167,22 +167,15 @@ class GirlResource extends Resource
                 Tables\Filters\SelectFilter::make('city')
                     ->label('City')
                     ->options(function () {
-                        $cities = \App\Models\City::where('is_active', true)->get();
-                        $allCities = [];
-                        
-                        foreach ($cities as $city) {
-                            $tableName = "girls_{$city->code}";
-                            if (\Schema::hasTable($tableName)) {
-                                $cityOptions = Girl::from($tableName)
-                                    ->whereNotNull('city')
-                                    ->distinct()
-                                    ->pluck('city', 'city')
-                                    ->toArray();
-                                $allCities = array_merge($allCities, $cityOptions);
-                            }
+                        return \App\Models\City::where('is_active', true)
+                            ->pluck('name', 'name')
+                            ->toArray();
+                    })
+                    ->query(function ($query, $state) {
+                        if (!$state['value']) {
+                            return $query;
                         }
-                        
-                        return $allCities;
+                        return $query->where('city', $state['value']);
                     }),
                 Tables\Filters\SelectFilter::make('metro')
                     ->label('Metro')
@@ -193,7 +186,7 @@ class GirlResource extends Resource
                         foreach ($cities as $city) {
                             $tableName = "girls_{$city->code}";
                             if (\Schema::hasTable($tableName)) {
-                                $metroOptions = Girl::from($tableName)
+                                $metroOptions = DB::table($tableName)
                                     ->whereNotNull('metro')
                                     ->distinct()
                                     ->pluck('metro', 'metro')
@@ -203,6 +196,12 @@ class GirlResource extends Resource
                         }
                         
                         return $allMetros;
+                    })
+                    ->query(function ($query, $state) {
+                        if (!$state['value']) {
+                            return $query;
+                        }
+                        return $query->where('metro', $state['value']);
                     }),
             ])
             ->actions([

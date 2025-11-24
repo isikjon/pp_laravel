@@ -159,22 +159,15 @@ class MasseuseResource extends Resource
                 Tables\Filters\SelectFilter::make('city')
                     ->label('City')
                     ->options(function () {
-                        $cities = \App\Models\City::where('is_active', true)->get();
-                        $allCities = [];
-                        
-                        foreach ($cities as $city) {
-                            $tableName = "masseuses_{$city->code}";
-                            if (\Schema::hasTable($tableName)) {
-                                $cityOptions = Masseuse::from($tableName)
-                                    ->whereNotNull('city')
-                                    ->distinct()
-                                    ->pluck('city', 'city')
-                                    ->toArray();
-                                $allCities = array_merge($allCities, $cityOptions);
-                            }
+                        return \App\Models\City::where('is_active', true)
+                            ->pluck('name', 'name')
+                            ->toArray();
+                    })
+                    ->query(function ($query, $state) {
+                        if (!$state['value']) {
+                            return $query;
                         }
-                        
-                        return $allCities;
+                        return $query->where('city', $state['value']);
                     }),
             ])
             ->actions([
