@@ -6,8 +6,6 @@ use Illuminate\Database\Eloquent\Model;
 
 class Girl extends Model
 {
-    protected $table = 'girls_moscow';
-
     protected $fillable = [
         'anketa_id',
         'sort_order',
@@ -43,4 +41,21 @@ class Girl extends Model
         'media_images' => 'array',
     ];
 
+    public function __construct(array $attributes = [])
+    {
+        parent::__construct($attributes);
+        
+        $cityCode = getSelectedCity();
+        $this->setTable("girls_{$cityCode}");
+    }
+
+    public function getTable()
+    {
+        if (!isset($this->table)) {
+            $cityCode = getSelectedCity();
+            $this->setTable("girls_{$cityCode}");
+        }
+        
+        return parent::getTable();
+    }
 }

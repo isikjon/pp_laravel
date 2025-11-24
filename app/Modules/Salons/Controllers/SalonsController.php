@@ -11,9 +11,7 @@ class SalonsController extends Controller
 {
     public function index(Request $request)
     {
-        $selectedCity = getSelectedCity($request);
-        
-        $cityName = $selectedCity === 'spb' ? 'Санкт-Петербург' : 'Москва';
+        $cityName = getCityName($request);
         
         $query = Salon::where('city', $cityName);
         
@@ -26,7 +24,7 @@ class SalonsController extends Controller
         
         $salons = $query->paginate(12);
         
-        return view('salons::index', compact('salons', 'cityName', 'selectedCity'));
+        return view('salons::index', compact('salons'));
     }
     
     public function show($id)

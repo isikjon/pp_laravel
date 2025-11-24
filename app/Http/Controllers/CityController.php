@@ -10,16 +10,22 @@ class CityController extends Controller
     public function setCity(Request $request)
     {
         try {
-            $city = $request->input('city', 'moscow');
+            $cityCode = $request->input('city', 'moscow');
             
-            if (!in_array($city, ['moscow', 'spb'])) {
-                $city = 'moscow';
+            $city = \App\Models\City::where('code', $cityCode)
+                ->where('is_active', true)
+                ->first();
+            
+            if (!$city) {
+                $city = \App\Models\City::where('code', 'moscow')->where('is_active', true)->first();
+                $cityCode = $city ? $city->code : 'moscow';
             }
             
-            cookie()->queue('selectedCity', $city, 525600);
+            cookie()->queue('selectedCity', $cityCode, 525600);
             
             $host = $request->getHost();
-            $currentSubdomain = explode('.', $host)[0];
+            $hostParts = explode('.', $host);
+            $currentSubdomain = count($hostParts) > 2 ? $hostParts[0] : null;
             
             $path = $request->getPathInfo();
             if ($path === '/') {
@@ -28,14 +34,15 @@ class CityController extends Controller
             
             $protocol = $request->getScheme();
             $query = $request->getQueryString();
+            $domain = config('app.domain', 'prostitutkimoskvytake.org');
             
-            if ($city === 'spb' && $currentSubdomain !== 'spb') {
-                $redirectUrl = $protocol . '://spb.prostitutkimoskvytake.org' . $path;
+            if ($city && $city->subdomain && $currentSubdomain !== $city->subdomain) {
+                $redirectUrl = $protocol . '://' . $city->subdomain . '.' . $domain . $path;
                 if ($query) {
                     $redirectUrl .= '?' . $query;
                 }
-            } elseif ($city === 'moscow' && $currentSubdomain === 'spb') {
-                $redirectUrl = $protocol . '://prostitutkimoskvytake.org' . $path;
+            } elseif ($city && !$city->subdomain && $currentSubdomain) {
+                $redirectUrl = $protocol . '://' . $domain . $path;
                 if ($query) {
                     $redirectUrl .= '?' . $query;
                 }
@@ -48,7 +55,7 @@ class CityController extends Controller
             
             return response()->json([
                 'success' => true,
-                'city' => $city,
+                'city' => $cityCode,
                 'redirect_url' => $redirectUrl
             ]);
         } catch (\Exception $e) {

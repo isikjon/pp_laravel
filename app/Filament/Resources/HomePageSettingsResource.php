@@ -36,10 +36,11 @@ class HomePageSettingsResource extends Resource
                         Forms\Components\Select::make('city')
                             ->label('Город')
                             ->required()
-                            ->options([
-                                'moscow' => 'Москва',
-                                'spb' => 'Санкт-Петербург',
-                            ])
+                            ->options(function () {
+                                return \App\Models\City::where('is_active', true)
+                                    ->orderBy('name')
+                                    ->pluck('name', 'code');
+                            })
                             ->default('moscow')
                             ->helperText('Выберите город для настройки SEO'),
                         
@@ -67,9 +68,11 @@ class HomePageSettingsResource extends Resource
             ->columns([
                 Tables\Columns\TextColumn::make('city')
                     ->label('Город')
-                    ->formatStateUsing(fn (string $state): string => $state === 'spb' ? 'Санкт-Петербург' : 'Москва')
+                    ->formatStateUsing(function (string $state): string {
+                        $city = \App\Models\City::where('code', $state)->first();
+                        return $city ? $city->name : $state;
+                    })
                     ->badge()
-                    ->color(fn (string $state): string => $state === 'spb' ? 'success' : 'primary')
                     ->sortable(),
                 
                 Tables\Columns\TextColumn::make('title')
@@ -90,10 +93,11 @@ class HomePageSettingsResource extends Resource
             ->filters([
                 Tables\Filters\SelectFilter::make('city')
                     ->label('Город')
-                    ->options([
-                        'moscow' => 'Москва',
-                        'spb' => 'Санкт-Петербург',
-                    ]),
+                    ->options(function () {
+                        return \App\Models\City::where('is_active', true)
+                            ->orderBy('name')
+                            ->pluck('name', 'code');
+                    }),
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),

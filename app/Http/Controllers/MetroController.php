@@ -9,9 +9,7 @@ class MetroController extends Controller
 {
     public function getMetroList(Request $request)
     {
-        $selectedCity = getSelectedCity($request);
-        $tableName = $selectedCity === 'spb' ? 'girls_spb' : 'girls_moscow';
-        $metroList = Girl::from($tableName)->select('metro')
+        $metroList = Girl::select('metro')
             ->whereNotNull('metro')
             ->where('metro', '!=', '')
             ->get()
@@ -46,10 +44,7 @@ class MetroController extends Controller
             ], 400);
         }
         
-        $selectedCity = getSelectedCity($request);
-        $tableName = $selectedCity === 'spb' ? 'girls_spb' : 'girls_moscow';
-        $girls = Girl::from($tableName)
-            ->where(function($query) use ($metro) {
+        $girls = Girl::where(function($query) use ($metro) {
                 $query->where('metro', $metro)
                       ->orWhere('metro', 'м. ' . $metro);
             })

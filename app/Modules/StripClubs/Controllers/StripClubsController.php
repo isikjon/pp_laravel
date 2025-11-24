@@ -11,9 +11,7 @@ class StripClubsController extends Controller
 {
     public function index(Request $request)
     {
-        $selectedCity = getSelectedCity($request);
-        
-        $cityName = $selectedCity === 'spb' ? 'Санкт-Петербург' : 'Москва';
+        $cityName = getCityName($request);
         
         $query = StripClub::where('city', $cityName);
         
@@ -26,7 +24,7 @@ class StripClubsController extends Controller
         
         $clubs = $query->paginate(12);
         
-        return view('stripclubs::index', compact('clubs', 'cityName', 'selectedCity'));
+        return view('stripclubs::index', compact('clubs'));
     }
     
     public function show($id)

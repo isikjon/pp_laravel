@@ -12,20 +12,15 @@ class IntimMapController extends Controller
 {
     public function index(Request $request)
     {
-        $selectedCity = getSelectedCity($request);
-        
-        $cityName = $selectedCity === 'spb' ? 'Санкт-Петербург' : 'Москва';
-        
-        return view('intimmap::index', compact('cityName', 'selectedCity'));
+        return view('intimmap::index');
     }
     
     public function getMapData(Request $request)
     {
-        $selectedCity = getSelectedCity($request);
         $typesString = $request->input('types', '');
         $types = !empty($typesString) ? explode(',', $typesString) : ['1', '2', '3'];
         
-        $cityName = $selectedCity === 'spb' ? 'Санкт-Петербург' : 'Москва';
+        $cityName = getCityName($request);
         
         $data = [
             'girls' => [],
@@ -34,9 +29,7 @@ class IntimMapController extends Controller
         ];
         
         if (in_array('1', $types)) {
-            $tableName = $selectedCity === 'spb' ? 'girls_spb' : 'girls_moscow';
-            $girls = Girl::from($tableName)
-                ->whereNotNull('coordinates')
+            $girls = Girl::whereNotNull('coordinates')
                 ->where('coordinates', '!=', '')
                 ->where('coordinates', '!=', 'null')
                 ->select('id', 'anketa_id', 'name', 'coordinates')

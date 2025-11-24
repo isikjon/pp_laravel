@@ -21,11 +21,13 @@ class AppServiceProvider extends ServiceProvider
     {
         view()->composer('*', function ($view) {
             if (!$view->offsetExists('cityName')) {
-                $selectedCity = getSelectedCity();
-                $cityName = $selectedCity === 'spb' ? 'Санкт-Петербург' : 'Москва';
+                $city = getCurrentCity();
+                $cityName = $city ? $city->name : 'Москва';
+                $selectedCity = $city ? $city->code : 'moscow';
                 
                 $view->with('cityName', $cityName);
                 $view->with('selectedCity', $selectedCity);
+                $view->with('currentCity', $city);
             }
         });
     }

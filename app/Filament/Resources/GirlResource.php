@@ -167,16 +167,42 @@ class GirlResource extends Resource
                 Tables\Filters\SelectFilter::make('city')
                     ->label('City')
                     ->options(function () {
-                        $moscow = Girl::from('girls_moscow')->whereNotNull('city')->distinct()->pluck('city', 'city')->toArray();
-                        $spb = Girl::from('girls_spb')->whereNotNull('city')->distinct()->pluck('city', 'city')->toArray();
-                        return array_merge($moscow, $spb);
+                        $cities = \App\Models\City::where('is_active', true)->get();
+                        $allCities = [];
+                        
+                        foreach ($cities as $city) {
+                            $tableName = "girls_{$city->code}";
+                            if (\Schema::hasTable($tableName)) {
+                                $cityOptions = Girl::from($tableName)
+                                    ->whereNotNull('city')
+                                    ->distinct()
+                                    ->pluck('city', 'city')
+                                    ->toArray();
+                                $allCities = array_merge($allCities, $cityOptions);
+                            }
+                        }
+                        
+                        return $allCities;
                     }),
                 Tables\Filters\SelectFilter::make('metro')
                     ->label('Metro')
                     ->options(function () {
-                        $moscow = Girl::from('girls_moscow')->whereNotNull('metro')->distinct()->pluck('metro', 'metro')->toArray();
-                        $spb = Girl::from('girls_spb')->whereNotNull('metro')->distinct()->pluck('metro', 'metro')->toArray();
-                        return array_merge($moscow, $spb);
+                        $cities = \App\Models\City::where('is_active', true)->get();
+                        $allMetros = [];
+                        
+                        foreach ($cities as $city) {
+                            $tableName = "girls_{$city->code}";
+                            if (\Schema::hasTable($tableName)) {
+                                $metroOptions = Girl::from($tableName)
+                                    ->whereNotNull('metro')
+                                    ->distinct()
+                                    ->pluck('metro', 'metro')
+                                    ->toArray();
+                                $allMetros = array_merge($allMetros, $metroOptions);
+                            }
+                        }
+                        
+                        return $allMetros;
                     }),
             ])
             ->actions([
@@ -194,13 +220,26 @@ class GirlResource extends Resource
 
     public static function getEloquentQuery(): Builder
     {
-        // Объединяем данные из обеих таблиц через union
-        $moscow = DB::table('girls_moscow')->select('*');
-        $spb = DB::table('girls_spb')->select('*');
+        $cities = \App\Models\City::where('is_active', true)->get();
+        $unions = [];
         
-        $union = $moscow->unionAll($spb);
+        foreach ($cities as $city) {
+            $tableName = "girls_{$city->code}";
+            if (\Schema::hasTable($tableName)) {
+                $unions[] = DB::table($tableName)->select('*');
+            }
+        }
         
-        // Создаем подзапрос и используем его как таблицу
+        if (empty($unions)) {
+            return Girl::query()->whereRaw('1 = 0');
+        }
+        
+        $union = array_shift($unions);
+        
+        foreach ($unions as $unionQuery) {
+            $union = $union->unionAll($unionQuery);
+        }
+        
         return Girl::fromSub($union, 'girls_combined');
     }
 

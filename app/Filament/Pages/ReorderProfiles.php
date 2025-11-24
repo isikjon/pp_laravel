@@ -157,10 +157,11 @@ class ReorderProfiles extends Page implements HasForms
                         
                         Select::make('city')
                             ->label('Город')
-                            ->options([
-                                'Москва' => 'Москва',
-                                'Санкт-Петербург' => 'Санкт-Петербург',
-                            ])
+                            ->options(function () {
+                                return \App\Models\City::where('is_active', true)
+                                    ->orderBy('name')
+                                    ->pluck('name', 'name');
+                            })
                             ->required()
                             ->live()
                             ->afterStateUpdated(function ($state) {
@@ -170,14 +171,11 @@ class ReorderProfiles extends Page implements HasForms
                                     'component_id' => $this->getId()
                                 ]);
                                 $this->city = $state;
-                                // Сбрасываем выбор при изменении города
                                 $this->selectedProfile = null;
                                 $this->newPosition = null;
                                 
-                                // Сбрасываем кэш Computed property
                                 unset($this->profilesList);
                                 
-                                // Обновляем форму чтобы перезагрузить данные
                                 $this->dispatch('$refresh');
                                 
                                 Log::info('ReorderProfiles: city changed - cache cleared and refresh dispatched');
@@ -331,11 +329,15 @@ class ReorderProfiles extends Page implements HasForms
     
     protected function getTableName(): string
     {
-        $cityCode = $this->city === 'Москва' ? 'moscow' : 'spb';
+        $city = \App\Models\City::where('name', $this->city)->first();
+        
+        if (!$city) {
+            return '';
+        }
         
         return match($this->resourceType) {
-            'girls' => $cityCode === 'moscow' ? 'girls_moscow' : 'girls_spb',
-            'masseuses' => $cityCode === 'moscow' ? 'masseuses_moscow' : 'masseuses_spb',
+            'girls' => "girls_{$city->code}",
+            'masseuses' => "masseuses_{$city->code}",
             'salons' => 'salons',
             'strip_clubs' => 'strip_clubs',
             default => '',

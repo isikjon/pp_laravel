@@ -22,10 +22,10 @@ class HomeController extends Controller
         $selectedCity = getSelectedCity($request);
         Log::info('Selected city: ' . $selectedCity);
         
-        $cityName = $selectedCity === 'spb' ? 'Санкт-Петербург' : 'Москва';
-        $tableName = $selectedCity === 'spb' ? 'girls_spb' : 'girls_moscow';
-        Log::info('Table name: ' . $tableName);
-        $query = Girl::from($tableName);
+        $cityName = getCityName($request);
+        Log::info('City name: ' . $cityName);
+        
+        $query = Girl::query();
         
         $query->orderBy('sort_order', 'asc');
         
@@ -291,9 +291,7 @@ class HomeController extends Controller
         
         // Сохраняем параметр city в пагинации
         
-        $selectedCity = getSelectedCity($request);
-        $tableName = $selectedCity === 'spb' ? 'girls_spb' : 'girls_moscow';
-        $metros = Girl::from($tableName)->select('metro')
+        $metros = Girl::select('metro')
             ->distinct()
             ->whereNotNull('metro')
             ->where('metro', '!=', '')

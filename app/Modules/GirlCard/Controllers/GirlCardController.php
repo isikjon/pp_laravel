@@ -9,9 +9,7 @@ class GirlCardController extends Controller
 {
     public function show($id)
     {
-        $selectedCity = getSelectedCity();
-        $tableName = $selectedCity === 'spb' ? 'girls_spb' : 'girls_moscow';
-        $girlData = Girl::from($tableName)->where('anketa_id', $id)->first();
+        $girlData = Girl::where('anketa_id', $id)->first();
         
         if (!$girlData) {
             abort(404, 'Девушка не найдена');
@@ -451,10 +449,7 @@ class GirlCardController extends Controller
         
         $currentPriceInt = $currentPrice ? (int)str_replace(' ', '', $currentPrice) : null;
         
-        $selectedCity = getSelectedCity();
-        $tableName = $selectedCity === 'spb' ? 'girls_spb' : 'girls_moscow';
-        $similarGirls = Girl::from($tableName)
-            ->where('anketa_id', '!=', $currentGirl->anketa_id)
+        $similarGirls = Girl::where('anketa_id', '!=', $currentGirl->anketa_id)
             ->whereNotNull('media_images')
             ->where('media_images', '!=', '')
             ->where('media_images', '!=', '[]')

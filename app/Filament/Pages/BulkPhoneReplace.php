@@ -84,13 +84,17 @@ class BulkPhoneReplace extends Page implements HasForms
         }
     }
     
-    protected function getTableName(string $resourceType, string $city): string
+    protected function getTableName(string $resourceType, string $cityName): string
     {
-        $cityCode = $city === 'Москва' ? 'moscow' : 'spb';
+        $city = \App\Models\City::where('name', $cityName)->first();
+        
+        if (!$city) {
+            return '';
+        }
         
         return match($resourceType) {
-            'girls' => $cityCode === 'moscow' ? 'girls_moscow' : 'girls_spb',
-            'masseuses' => $cityCode === 'moscow' ? 'masseuses_moscow' : 'masseuses_spb',
+            'girls' => "girls_{$city->code}",
+            'masseuses' => "masseuses_{$city->code}",
             'salons' => 'salons',
             'strip_clubs' => 'strip_clubs',
             default => '',
@@ -116,10 +120,11 @@ class BulkPhoneReplace extends Page implements HasForms
                     ->schema([
                         Select::make('city')
                             ->label('Город')
-                            ->options([
-                                'Москва' => 'Москва',
-                                'Санкт-Петербург' => 'Санкт-Петербург',
-                            ])
+                            ->options(function () {
+                                return \App\Models\City::where('is_active', true)
+                                    ->orderBy('name')
+                                    ->pluck('name', 'name');
+                            })
                             ->required()
                             ->default('Москва')
                             ->live()

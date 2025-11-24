@@ -159,9 +159,22 @@ class MasseuseResource extends Resource
                 Tables\Filters\SelectFilter::make('city')
                     ->label('City')
                     ->options(function () {
-                        $moscow = Masseuse::from('masseuses_moscow')->whereNotNull('city')->distinct()->pluck('city', 'city')->toArray();
-                        $spb = Masseuse::from('masseuses_spb')->whereNotNull('city')->distinct()->pluck('city', 'city')->toArray();
-                        return array_merge($moscow, $spb);
+                        $cities = \App\Models\City::where('is_active', true)->get();
+                        $allCities = [];
+                        
+                        foreach ($cities as $city) {
+                            $tableName = "masseuses_{$city->code}";
+                            if (\Schema::hasTable($tableName)) {
+                                $cityOptions = Masseuse::from($tableName)
+                                    ->whereNotNull('city')
+                                    ->distinct()
+                                    ->pluck('city', 'city')
+                                    ->toArray();
+                                $allCities = array_merge($allCities, $cityOptions);
+                            }
+                        }
+                        
+                        return $allCities;
                     }),
             ])
             ->actions([
@@ -179,13 +192,26 @@ class MasseuseResource extends Resource
 
     public static function getEloquentQuery(): Builder
     {
-        // Объединяем данные из обеих таблиц через union
-        $moscow = DB::table('masseuses_moscow')->select('*');
-        $spb = DB::table('masseuses_spb')->select('*');
+        $cities = \App\Models\City::where('is_active', true)->get();
+        $unions = [];
         
-        $union = $moscow->unionAll($spb);
+        foreach ($cities as $city) {
+            $tableName = "masseuses_{$city->code}";
+            if (\Schema::hasTable($tableName)) {
+                $unions[] = DB::table($tableName)->select('*');
+            }
+        }
         
-        // Создаем подзапрос и используем его как таблицу
+        if (empty($unions)) {
+            return Masseuse::query()->whereRaw('1 = 0');
+        }
+        
+        $union = array_shift($unions);
+        
+        foreach ($unions as $unionQuery) {
+            $union = $union->unionAll($unionQuery);
+        }
+        
         return Masseuse::fromSub($union, 'masseuses_combined');
     }
 

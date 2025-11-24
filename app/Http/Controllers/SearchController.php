@@ -18,10 +18,7 @@ class SearchController extends Controller
             ]);
         }
         
-        $selectedCity = getSelectedCity($request);
-        $tableName = $selectedCity === 'spb' ? 'girls_spb' : 'girls_moscow';
-        $girls = Girl::from($tableName)
-            ->where('name', 'LIKE', '%' . $query . '%')
+        $girls = Girl::where('name', 'LIKE', '%' . $query . '%')
             ->whereNotNull('media_images')
             ->where('media_images', '!=', '')
             ->where('media_images', '!=', '[]')

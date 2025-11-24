@@ -9,10 +9,7 @@ class FilterOptionsController extends Controller
 {
     public function getFilterOptions(Request $request)
     {
-        $selectedCity = getSelectedCity($request);
-        $tableName = $selectedCity === 'spb' ? 'girls_spb' : 'girls_moscow';
-        
-        $hairColors = Girl::from($tableName)->select('hair_color')
+        $hairColors = Girl::select('hair_color')
             ->distinct()
             ->whereNotNull('hair_color')
             ->where('hair_color', '!=', '')
@@ -21,7 +18,7 @@ class FilterOptionsController extends Controller
             ->sort()
             ->values();
 
-        $intimateTrims = Girl::from($tableName)->select('intimate_trim')
+        $intimateTrims = Girl::select('intimate_trim')
             ->distinct()
             ->whereNotNull('intimate_trim')
             ->where('intimate_trim', '!=', '')
@@ -30,7 +27,7 @@ class FilterOptionsController extends Controller
             ->sort()
             ->values();
 
-        $nationalities = Girl::from($tableName)->select('nationality')
+        $nationalities = Girl::select('nationality')
             ->distinct()
             ->whereNotNull('nationality')
             ->where('nationality', '!=', '')
@@ -39,7 +36,7 @@ class FilterOptionsController extends Controller
             ->sort()
             ->values();
 
-        $districts = Girl::from($tableName)->select('district')
+        $districts = Girl::select('district')
             ->distinct()
             ->whereNotNull('district')
             ->where('district', '!=', '')

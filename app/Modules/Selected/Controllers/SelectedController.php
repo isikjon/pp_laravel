@@ -10,10 +10,6 @@ class SelectedController extends Controller
 {
     public function index(Request $request)
     {
-        $selectedCity = getSelectedCity($request);
-        
-        $cityName = $selectedCity === 'spb' ? 'Санкт-Петербург' : 'Москва';
-        
         if ($request->ajax() && $request->has('ids')) {
             $ids = $request->input('ids');
             
@@ -24,8 +20,7 @@ class SelectedController extends Controller
                 ]);
             }
             
-            $tableName = $selectedCity === 'spb' ? 'girls_spb' : 'girls_moscow';
-            $girls = Girl::from($tableName)->whereIn('anketa_id', $ids)
+            $girls = Girl::whereIn('anketa_id', $ids)
                 ->whereNotNull('media_images')
                 ->where('media_images', '!=', '')
                 ->where('media_images', '!=', '[]')
@@ -42,7 +37,7 @@ class SelectedController extends Controller
             ]);
         }
         
-        return view('selected::index', compact('selectedCity', 'cityName'));
+        return view('selected::index');
     }
     
     private function formatGirlForCard($girl)
