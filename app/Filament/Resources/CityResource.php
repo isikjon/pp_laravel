@@ -465,7 +465,12 @@ class CityResource extends Resource
         }
         
         $toCityRecord = City::where('code', $toCity)->first();
-        $toCityName = $toCityRecord ? $toCityRecord->name : $toCity;
+        if (!$toCityRecord) {
+            throw new \Exception("Город с кодом {$toCity} не найден");
+        }
+        $toCityName = $toCityRecord->name;
+        
+        $hasCityColumn = in_array('city', $toColumns);
         
         if ($limit === null) {
             DB::table($toTable)->delete();
@@ -498,11 +503,11 @@ class CityResource extends Resource
                         if ($column === 'id') {
                             continue;
                         }
-                        if ($column === 'city') {
-                            $data[$column] = $toCityName;
-                        } else {
-                            $data[$column] = $record->$column ?? null;
-                        }
+                        $data[$column] = $record->$column ?? null;
+                    }
+                    
+                    if ($hasCityColumn) {
+                        $data['city'] = $toCityName;
                     }
                     
                     if (!empty($data)) {
@@ -514,18 +519,18 @@ class CityResource extends Resource
                 $offset += $currentChunkSize;
             }
         } else {
-            DB::table($fromTable)->orderBy('id')->chunk($chunkSize, function($records) use ($toTable, $commonColumns, $toCityName, &$totalCopied) {
+            DB::table($fromTable)->orderBy('id')->chunk($chunkSize, function($records) use ($toTable, $commonColumns, $toCityName, $hasCityColumn, &$totalCopied) {
                 foreach ($records as $record) {
                     $data = [];
                     foreach ($commonColumns as $column) {
                         if ($column === 'id') {
                             continue;
                         }
-                        if ($column === 'city') {
-                            $data[$column] = $toCityName;
-                        } else {
-                            $data[$column] = $record->$column ?? null;
-                        }
+                        $data[$column] = $record->$column ?? null;
+                    }
+                    
+                    if ($hasCityColumn) {
+                        $data['city'] = $toCityName;
                     }
                     
                     if (!empty($data)) {
