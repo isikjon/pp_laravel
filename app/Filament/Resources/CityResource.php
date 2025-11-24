@@ -273,15 +273,40 @@ class CityResource extends Resource
                                 return City::where('id', '!=', $record->id)
                                     ->pluck('name', 'code');
                             })
-                            ->required(),
+                            ->required()
+                            ->reactive(),
+                        
+                        Forms\Components\Select::make('table_type')
+                            ->label('Тип таблицы')
+                            ->options([
+                                'girls' => 'Девушки (girls)',
+                                'masseuses' => 'Массажистки (masseuses)',
+                            ])
+                            ->default('girls')
+                            ->required()
+                            ->reactive(),
+                        
+                        Forms\Components\TextInput::make('limit')
+                            ->label('Количество анкет')
+                            ->helperText('Оставьте пустым, чтобы скопировать все. Укажите число для копирования первых N анкет (например: 500, 1500, 2000)')
+                            ->numeric()
+                            ->minValue(1)
+                            ->placeholder('Все'),
                     ])
                     ->action(function ($record, array $data) {
-                        self::syncData($data['source_city'], $record->code);
+                        $count = self::syncData(
+                            $data['source_city'], 
+                            $record->code, 
+                            $data['table_type'],
+                            $data['limit'] ?? null
+                        );
+                        
+                        $limitText = isset($data['limit']) ? " ({$data['limit']} анкет)" : '';
                         
                         Notification::make()
                             ->success()
                             ->title('Данные скопированы')
-                            ->body("Данные из {$data['source_city']} скопированы в {$record->code}")
+                            ->body("Скопировано {$count} анкет из {$data['source_city']} в {$record->code}{$limitText}")
                             ->send();
                     }),
                 
@@ -422,32 +447,82 @@ class CityResource extends Resource
         File::put("{$configDir}/{$subdomain}.conf", $config);
     }
     
-    protected static function syncData($fromCity, $toCity)
+    protected static function syncData($fromCity, $toCity, $tableType = 'girls', $limit = null)
     {
-        $tables = ['girls', 'masseuses'];
+        $fromTable = "{$tableType}_{$fromCity}";
+        $toTable = "{$tableType}_{$toCity}";
         
-        foreach ($tables as $baseTable) {
-            $fromTable = "{$baseTable}_{$fromCity}";
-            $toTable = "{$baseTable}_{$toCity}";
-            
-            if (!Schema::hasTable($fromTable) || !Schema::hasTable($toTable)) {
-                continue;
-            }
-            
-            DB::table($toTable)->truncate();
-            
-            DB::table($fromTable)->orderBy('id')->chunk(100, function($records) use ($toTable) {
-                foreach ($records as $record) {
-                    $data = (array) $record;
-                    unset($data['id']);
-                    DB::table($toTable)->insert($data);
-                }
-            });
+        if (!Schema::hasTable($fromTable) || !Schema::hasTable($toTable)) {
+            throw new \Exception("Таблица {$fromTable} или {$toTable} не существует");
         }
+        
+        $fromColumns = self::getTableColumns($fromTable);
+        $toColumns = self::getTableColumns($toTable);
+        $commonColumns = array_intersect($fromColumns, $toColumns);
+        
+        if (empty($commonColumns)) {
+            throw new \Exception("Нет общих столбцов между таблицами");
+        }
+        
+        $toCityRecord = City::where('code', $toCity)->first();
+        $toCityName = $toCityRecord ? $toCityRecord->name : $toCity;
+        
+        if ($limit === null) {
+            DB::table($toTable)->delete();
+        }
+        
+        $query = DB::table($fromTable)->orderBy('id');
+        
+        if ($limit !== null && $limit > 0) {
+            $query->limit($limit);
+        }
+        
+        $totalCopied = 0;
+        
+        $query->chunk(100, function($records) use ($toTable, $commonColumns, $toCityName, &$totalCopied) {
+            foreach ($records as $record) {
+                $data = [];
+                foreach ($commonColumns as $column) {
+                    if ($column === 'id') {
+                        continue;
+                    }
+                    if ($column === 'city') {
+                        $data[$column] = $toCityName;
+                    } else {
+                        $data[$column] = $record->$column ?? null;
+                    }
+                }
+                
+                if (!empty($data)) {
+                    DB::table($toTable)->insert($data);
+                    $totalCopied++;
+                }
+            }
+        });
         
         $toRecord = City::where('code', $toCity)->first();
         if ($toRecord) {
             self::updateCounts($toRecord);
+        }
+        
+        return $totalCopied;
+    }
+    
+    protected static function getTableColumns($tableName)
+    {
+        try {
+            $result = DB::select("PRAGMA table_info({$tableName})");
+            $columns = [];
+            foreach ($result as $row) {
+                $columns[] = $row->name;
+            }
+            return $columns;
+        } catch (\Exception $e) {
+            try {
+                return Schema::getColumnListing($tableName);
+            } catch (\Exception $e2) {
+                return [];
+            }
         }
     }
     
