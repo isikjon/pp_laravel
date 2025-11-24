@@ -223,10 +223,16 @@ class GirlResource extends Resource
         $cities = \App\Models\City::where('is_active', true)->get();
         $unions = [];
         
+        $commonColumns = [
+            'id', 'anketa_id', 'name', 'age', 'city', 'metro', 'district',
+            'phone', 'height', 'weight', 'hair_color', 'services', 'tariffs',
+            'meeting_places', 'media_images', 'sort_order', 'created_at', 'updated_at'
+        ];
+        
         foreach ($cities as $city) {
             $tableName = "girls_{$city->code}";
             if (\Schema::hasTable($tableName)) {
-                $unions[] = DB::table($tableName)->select('*');
+                $unions[] = DB::table($tableName)->select($commonColumns);
             }
         }
         
