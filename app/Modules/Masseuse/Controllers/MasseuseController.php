@@ -107,7 +107,11 @@ class MasseuseController extends Controller
             $district = trim(end($districtParts));
         }
         
-        $city = $girlData->city ?? 'Москва';
+        $city = $girlData->city;
+        if (empty($city)) {
+            $currentCity = getCurrentCity();
+            $city = $currentCity ? $currentCity->name : 'Москва';
+        }
         if (strpos($city, 'г. ') === 0) {
             $city = substr($city, 3);
         }

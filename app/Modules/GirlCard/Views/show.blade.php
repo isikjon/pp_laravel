@@ -241,7 +241,7 @@
                                     </span>
                                     <div class="line-centerInfo-flexInfo-right-flexWrapperGirlCard"></div>
                                     <p>
-                                        Москва
+                                        {{ $girl['city'] }}
                                     </p>
                                 </div>
                                 <div class="lineBLocks-centerInfo-flexInfo-right-flexWrapperGirlCard">
