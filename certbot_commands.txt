@@ -1,0 +1,46 @@
+# КОМАНДЫ CERTBOT ДЛЯ МАССОВОЙ УСТАНОВКИ SSL
+# Всего 45 доменов, разбито на 9 команд по 5 доменов
+
+# Команда 1 из 9
+# Домены: Анапа, Астрахань, Барнаул, Белгород, Брянск
+sudo certbot --nginx --non-interactive --agree-tos --email admin@prostitutkimoskvytake.org --expand -d anapa.prostitutkimoskvytake.org -d www.anapa.prostitutkimoskvytake.org -d astrahan.prostitutkimoskvytake.org -d www.astrahan.prostitutkimoskvytake.org -d barnaul.prostitutkimoskvytake.org -d www.barnaul.prostitutkimoskvytake.org -d belgorod.prostitutkimoskvytake.org -d www.belgorod.prostitutkimoskvytake.org -d bryansk.prostitutkimoskvytake.org -d www.bryansk.prostitutkimoskvytake.org
+
+# Команда 2 из 9
+# Домены: Великий Новгород, Владивосток, Владимир, Волгоград, Воронеж
+sudo certbot --nginx --non-interactive --agree-tos --email admin@prostitutkimoskvytake.org --expand -d nov.prostitutkimoskvytake.org -d www.nov.prostitutkimoskvytake.org -d vladivostok.prostitutkimoskvytake.org -d www.vladivostok.prostitutkimoskvytake.org -d vladimir.prostitutkimoskvytake.org -d www.vladimir.prostitutkimoskvytake.org -d volgograd.prostitutkimoskvytake.org -d www.volgograd.prostitutkimoskvytake.org -d voronej.prostitutkimoskvytake.org -d www.voronej.prostitutkimoskvytake.org
+
+# Команда 3 из 9
+# Домены: Геленджик, Екатеринбург, Ижевск, Иркутск, Казань
+sudo certbot --nginx --non-interactive --agree-tos --email admin@prostitutkimoskvytake.org --expand -d gelendjik.prostitutkimoskvytake.org -d www.gelendjik.prostitutkimoskvytake.org -d ekb.prostitutkimoskvytake.org -d www.ekb.prostitutkimoskvytake.org -d izhevsk.prostitutkimoskvytake.org -d www.izhevsk.prostitutkimoskvytake.org -d irkutsk.prostitutkimoskvytake.org -d www.irkutsk.prostitutkimoskvytake.org -d kazan.prostitutkimoskvytake.org -d www.kazan.prostitutkimoskvytake.org
+
+# Команда 4 из 9
+# Домены: Киров, Краснодар, Красноярск, Курск, Липецк
+sudo certbot --nginx --non-interactive --agree-tos --email admin@prostitutkimoskvytake.org --expand -d kirov.prostitutkimoskvytake.org -d www.kirov.prostitutkimoskvytake.org -d krasnodar.prostitutkimoskvytake.org -d www.krasnodar.prostitutkimoskvytake.org -d krasnoyarsk.prostitutkimoskvytake.org -d www.krasnoyarsk.prostitutkimoskvytake.org -d kursk.prostitutkimoskvytake.org -d www.kursk.prostitutkimoskvytake.org -d lipetsk.prostitutkimoskvytake.org -d www.lipetsk.prostitutkimoskvytake.org
+
+# Команда 5 из 9
+# Домены: Москва, Новокузнецк, Новосибирск, Омск, Оренбург
+sudo certbot --nginx --non-interactive --agree-tos --email admin@prostitutkimoskvytake.org --expand -d prostitutkimoskvytake.org -d www.prostitutkimoskvytake.org -d novokuznetsk.prostitutkimoskvytake.org -d www.novokuznetsk.prostitutkimoskvytake.org -d novosibyrsk.prostitutkimoskvytake.org -d www.novosibyrsk.prostitutkimoskvytake.org -d omsk.prostitutkimoskvytake.org -d www.omsk.prostitutkimoskvytake.org -d orenburg.prostitutkimoskvytake.org -d www.orenburg.prostitutkimoskvytake.org
+
+# Команда 6 из 9
+# Домены: Пенза, Пермь, Подольск, Ростов-на-Дону, Рязань
+sudo certbot --nginx --non-interactive --agree-tos --email admin@prostitutkimoskvytake.org --expand -d penza.prostitutkimoskvytake.org -d www.penza.prostitutkimoskvytake.org -d perm.prostitutkimoskvytake.org -d www.perm.prostitutkimoskvytake.org -d podolsk.prostitutkimoskvytake.org -d www.podolsk.prostitutkimoskvytake.org -d rostov.prostitutkimoskvytake.org -d www.rostov.prostitutkimoskvytake.org -d ryazan.prostitutkimoskvytake.org -d www.ryazan.prostitutkimoskvytake.org
+
+# Команда 7 из 9
+# Домены: Самара, Санкт-Петербург, Саратов, Смоленск, Сочи
+sudo certbot --nginx --non-interactive --agree-tos --email admin@prostitutkimoskvytake.org --expand -d samara.prostitutkimoskvytake.org -d www.samara.prostitutkimoskvytake.org -d spb.prostitutkimoskvytake.org -d www.spb.prostitutkimoskvytake.org -d saratov.prostitutkimoskvytake.org -d www.saratov.prostitutkimoskvytake.org -d smolensk.prostitutkimoskvytake.org -d www.smolensk.prostitutkimoskvytake.org -d sochi.prostitutkimoskvytake.org -d www.sochi.prostitutkimoskvytake.org
+
+# Команда 8 из 9
+# Домены: Ставрополь, Тольятти, Томск, Тула, Тюмень
+sudo certbot --nginx --non-interactive --agree-tos --email admin@prostitutkimoskvytake.org --expand -d stavropol.prostitutkimoskvytake.org -d www.stavropol.prostitutkimoskvytake.org -d tollyaty.prostitutkimoskvytake.org -d www.tollyaty.prostitutkimoskvytake.org -d tomsk.prostitutkimoskvytake.org -d www.tomsk.prostitutkimoskvytake.org -d tula.prostitutkimoskvytake.org -d www.tula.prostitutkimoskvytake.org -d tyumen.prostitutkimoskvytake.org -d www.tyumen.prostitutkimoskvytake.org
+
+# Команда 9 из 9
+# Домены: Ульяновск, Уфа, Хабаровск, Челябинск, Ярославль
+sudo certbot --nginx --non-interactive --agree-tos --email admin@prostitutkimoskvytake.org --expand -d uyalnovsk.prostitutkimoskvytake.org -d www.uyalnovsk.prostitutkimoskvytake.org -d ufa.prostitutkimoskvytake.org -d www.ufa.prostitutkimoskvytake.org -d habarovsk.prostitutkimoskvytake.org -d www.habarovsk.prostitutkimoskvytake.org -d chelyabinsk.prostitutkimoskvytake.org -d www.chelyabinsk.prostitutkimoskvytake.org -d yaroslavl.prostitutkimoskvytake.org -d www.yaroslavl.prostitutkimoskvytake.org
+
+# ИНСТРУКЦИЯ ПО ИСПОЛЬЗОВАНИЮ:
+# 1. Скопируйте каждую команду по очереди
+# 2. Выполните на сервере (от root или с sudo)
+# 3. Дождитесь завершения перед запуском следующей
+# 4. Если команда завершится с ошибкой, можно продолжить со следующей
+# 5. После всех команд выполните: sudo systemctl reload nginx
+
