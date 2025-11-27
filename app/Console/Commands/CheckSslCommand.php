@@ -3,8 +3,7 @@
 namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
-use App\Models\City;
-use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\DB;
 
 class CheckSslCommand extends Command
 {
@@ -15,7 +14,20 @@ class CheckSslCommand extends Command
     public function handle()
     {
         $domain = config('app.domain', 'prostitutkimoskvytake.org');
-        $cities = City::where('is_active', true)->get();
+        
+        try {
+            $cities = DB::table('cities')->where('is_active', true)->get();
+        } catch (\Exception $e) {
+            $this->error("Ошибка подключения к БД: " . $e->getMessage());
+            $this->info("\nИспользую список поддоменов из конфигурации...\n");
+            
+            $cities = collect([
+                (object)['name' => 'Москва', 'subdomain' => null],
+                (object)['name' => 'Санкт-Петербург', 'subdomain' => 'spb'],
+                (object)['name' => 'Новгород', 'subdomain' => 'nov'],
+                (object)['name' => 'Казань', 'subdomain' => 'kazan'],
+            ]);
+        }
         
         $this->info("Проверка SSL для всех поддоменов...\n");
         
@@ -27,7 +39,7 @@ class CheckSslCommand extends Command
             
             $this->line("Проверка: {$subdomain}");
             
-            $hasSSL = $this->checkSSL($url);
+            $hasSSL = $this->checkSSL($subdomain);
             
             $results[] = [
                 'city' => $city->name,
@@ -66,26 +78,36 @@ class CheckSslCommand extends Command
         return 0;
     }
     
-    protected function checkSSL($url)
+    protected function checkSSL($domain)
     {
-        try {
-            $response = Http::timeout(10)->get($url);
-            return true;
-        } catch (\Illuminate\Http\Client\ConnectionException $e) {
-            if (str_contains($e->getMessage(), 'SSL') || str_contains($e->getMessage(), 'certificate')) {
-                return false;
-            }
-            
-            try {
-                $httpUrl = str_replace('https://', 'http://', $url);
-                Http::timeout(10)->get($httpUrl);
-                return false;
-            } catch (\Exception $e2) {
-                return false;
-            }
-        } catch (\Exception $e) {
+        $context = stream_context_create([
+            'ssl' => [
+                'capture_peer_cert' => true,
+                'verify_peer' => false,
+                'verify_peer_name' => false,
+            ]
+        ]);
+        
+        $errno = 0;
+        $errstr = '';
+        
+        $socket = @stream_socket_client(
+            "ssl://{$domain}:443",
+            $errno,
+            $errstr,
+            10,
+            STREAM_CLIENT_CONNECT,
+            $context
+        );
+        
+        if ($socket === false) {
             return false;
         }
+        
+        $params = stream_context_get_params($socket);
+        fclose($socket);
+        
+        return isset($params['options']['ssl']['peer_certificate']);
     }
 }
 
