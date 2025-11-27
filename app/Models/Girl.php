@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 
 class Girl extends Model
 {
@@ -38,8 +39,34 @@ class Girl extends Model
         'meeting_places' => 'array',
         'tariffs' => 'array',
         'services' => 'array',
-        'media_images' => 'array',
     ];
+
+    protected function mediaImages(): Attribute
+    {
+        return Attribute::make(
+            get: function ($value) {
+                $images = json_decode($value, true) ?? [];
+                return array_map(function ($url) {
+                    return $this->proxyImageUrl($url);
+                }, $images);
+            },
+        );
+    }
+
+    protected function proxyImageUrl($url)
+    {
+        $proxyDomain = config('app.image_proxy_url');
+        
+        if (!$proxyDomain) {
+            return $url;
+        }
+        
+        return str_replace(
+            'https://files.prostitutki-today.site/',
+            rtrim($proxyDomain, '/') . '/proxy/',
+            $url
+        );
+    }
 
     public function __construct(array $attributes = [])
     {
