@@ -479,6 +479,14 @@ class CityResource extends Resource
         $totalCopied = 0;
         $chunkSize = 100;
         
+        $hasAnketaId = in_array('anketa_id', $commonColumns);
+        $maxAnketaId = 0;
+        
+        if ($hasAnketaId) {
+            $maxExisting = DB::table($toTable)->max('anketa_id');
+            $maxAnketaId = is_numeric($maxExisting) ? (int)$maxExisting : 0;
+        }
+        
         if ($limit !== null && $limit > 0) {
             $offset = 0;
             while ($totalCopied < $limit) {
@@ -510,6 +518,11 @@ class CityResource extends Resource
                         $data['city'] = $toCityName;
                     }
                     
+                    if ($hasAnketaId) {
+                        $maxAnketaId++;
+                        $data['anketa_id'] = $maxAnketaId;
+                    }
+                    
                     if (!empty($data)) {
                         DB::table($toTable)->insert($data);
                         $totalCopied++;
@@ -519,7 +532,7 @@ class CityResource extends Resource
                 $offset += $currentChunkSize;
             }
         } else {
-            DB::table($fromTable)->orderBy('id')->chunk($chunkSize, function($records) use ($toTable, $commonColumns, $toCityName, $hasCityColumn, &$totalCopied) {
+            DB::table($fromTable)->orderBy('id')->chunk($chunkSize, function($records) use ($toTable, $commonColumns, $toCityName, $hasCityColumn, $hasAnketaId, &$maxAnketaId, &$totalCopied) {
                 foreach ($records as $record) {
                     $data = [];
                     foreach ($commonColumns as $column) {
@@ -531,6 +544,11 @@ class CityResource extends Resource
                     
                     if ($hasCityColumn) {
                         $data['city'] = $toCityName;
+                    }
+                    
+                    if ($hasAnketaId) {
+                        $maxAnketaId++;
+                        $data['anketa_id'] = $maxAnketaId;
                     }
                     
                     if (!empty($data)) {
