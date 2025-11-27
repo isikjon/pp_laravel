@@ -20,10 +20,10 @@ def main():
     
     domain = "prostitutkimoskvytake.org"
     nginx_dirs = [
+        '/etc/nginx/vhosts/noviysayt',
         '/etc/nginx/conf.d',
         '/etc/nginx/sites-enabled',
         '/etc/nginx/sites-available',
-        Path.home() / 'conf' / 'web',
     ]
     
     print("Проверка конфигов Nginx для всех поддоменов...\n")
